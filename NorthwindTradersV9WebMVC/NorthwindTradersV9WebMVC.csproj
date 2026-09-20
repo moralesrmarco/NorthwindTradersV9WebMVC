@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -16,10 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\NorthwindTradersV9BLL\NorthwindTradersV9BLL.csproj" />
     <ProjectReference Include="..\NorthwindTradersV9Entities\NorthwindTradersV9Entities.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\Empleados1\" />
   </ItemGroup>
 
 </Project>

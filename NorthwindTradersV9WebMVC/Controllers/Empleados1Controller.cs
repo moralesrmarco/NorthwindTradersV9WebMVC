@@ -39,5 +39,39 @@ namespace NorthwindTradersV9WebMVC.Controllers
             }
             return View(empleado);
         }
+        [HttpPost]
+        public IActionResult Editar(Empleado empleado)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(empleado);
+            }
+            _empleadoBLL.ActualizarEmpleado(empleado);
+            return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public IActionResult Eliminar(int id)
+        {
+            var empleado = _empleadoBLL.ObtenerEmpleadoPorId(id);
+            if (empleado == null)
+            {
+                return NotFound();
+            }
+            return View(empleado);
+        }
+        [HttpPost]
+        public IActionResult Eliminar(Empleado empleado)
+        {
+            _empleadoBLL.EliminarEmpleado(empleado.Id);
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EliminarConfirmado(int id)
+        {
+            _empleadoBLL.EliminarEmpleado(id);
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

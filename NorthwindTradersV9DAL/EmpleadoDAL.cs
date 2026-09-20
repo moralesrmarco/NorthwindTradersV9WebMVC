@@ -122,5 +122,21 @@ namespace NorthwindTradersV9DAL
                 }
             }
         }
+        public void EliminarEmpleado(int id)
+        {
+            using (SqlConnection cn = _connectionFactory.CreateConnection())
+            {
+                cn.Open();
+                string sql = """
+                    DELETE FROM Employees
+                    WHERE EmployeeID = @EmployeeID
+                    """;
+                using (SqlCommand cmd = new SqlCommand(sql, cn))
+                {
+                    cmd.Parameters.AddWithValue("@EmployeeID", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

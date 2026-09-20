@@ -8,5 +8,6 @@ namespace NorthwindTradersV9DAL
         void InsertarEmpleado(Empleado empleado);
         Empleado ObtenerEmpleadoPorId(int id);
         void ActualizarEmpleado(Empleado empleado);
+        void EliminarEmpleado(int id);
     }
 }

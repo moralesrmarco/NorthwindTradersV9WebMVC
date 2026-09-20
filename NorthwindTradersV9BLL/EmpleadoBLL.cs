@@ -28,5 +28,9 @@ namespace NorthwindTradersV9BLL
         {
             _empleadoDAL.ActualizarEmpleado(empleado);
         }
+        public void EliminarEmpleado(int id)
+        {
+            _empleadoDAL.EliminarEmpleado(id);
+        }
     }
 }

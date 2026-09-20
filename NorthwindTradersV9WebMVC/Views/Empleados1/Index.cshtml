@@ -8,12 +8,19 @@
     <h1 class="display-4">Empleados</h1>
 </div>
 
+<div class="mb-3">
+    <a asp-action="Crear" class="btn btn-sm btn-success">
+        Nuevo empleado
+    </a>
+</div>
+
 <table class="table table-bordered">
     <thead>
         <tr>
             <th>Id</th>
             <th>Nombre</th>
             <th>Apellido</th>
+            <th>Acciones</th>
         </tr>
     </thead>
 
@@ -24,6 +31,10 @@
                 <td>@empleado.Id</td>
                 <td>@empleado.Nombre</td>
                 <td>@empleado.Apellido</td>
+                <td>
+                    <a asp-action="Editar" asp-route-id="@empleado.Id" class="btn btn-sm btn-primary">Editar</a>
+                    <a asp-action="Eliminar" asp-route-id="@empleado.Id" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
             </tr>
         }
     </tbody>
