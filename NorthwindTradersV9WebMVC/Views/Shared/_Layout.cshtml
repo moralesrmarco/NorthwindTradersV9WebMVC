@@ -13,18 +13,33 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">NorthwindTradersV9WebMVC</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Northwind Traders V9 Web MVC</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <!-- Menú  empleados con submenús -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="empleadosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Empleados
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="empleadosDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="Index">Gestión de Empleados</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <!-- Submenú Reportes -->
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" href="#">
+                                        Reportes
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="Reporte1">Reporte de empleados</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="Reporte2">Reporte de empleados con foto</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="Reporte3">Reporte de empleados con foto 2</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
