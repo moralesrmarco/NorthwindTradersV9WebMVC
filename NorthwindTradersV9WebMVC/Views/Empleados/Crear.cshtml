@@ -1,0 +1,29 @@
+﻿@model NorthwindTradersV9Entities.Empleado
+
+@{
+    ViewData["Title"] = "Crear Empleado";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Crear Empleado</h1>
+</div>
+
+<form method="post">
+
+    <div class="mb-3">
+        <label asp-for="Nombre" class="form-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Apellido" class="form-label"></label>
+        <input asp-for="Apellido" class="form-control" />
+        <span asp-validation-for="Apellido" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-sm btn-primary">
+        Guardar
+    </button>
+
+</form>

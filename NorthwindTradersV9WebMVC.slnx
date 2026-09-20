@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="NorthwindTradersV9BLL/NorthwindTradersV9BLL.csproj" Id="91426848-fb69-428e-93c3-f03e92e2546a" />
+  <Project Path="NorthwindTradersV9Common/NorthwindTradersV9Common.csproj" Id="37c118b0-1cd2-40cc-bdb4-bac90eb0a0e9" />
+  <Project Path="NorthwindTradersV9DAL/NorthwindTradersV9DAL.csproj" Id="e149416d-ecdd-4062-bef4-96057e3c5e71" />
+  <Project Path="NorthwindTradersV9Entities/NorthwindTradersV9Entities.csproj" Id="22ef11a4-59ca-46b7-9a98-0bac33bb33d4" />
+  <Project Path="NorthwindTradersV9WebMVC/NorthwindTradersV9WebMVC.csproj" />
+</Solution>

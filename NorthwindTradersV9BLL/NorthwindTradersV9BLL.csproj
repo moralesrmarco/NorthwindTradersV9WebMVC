@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NorthwindTradersV9DAL\NorthwindTradersV9DAL.csproj" />
+    <ProjectReference Include="..\NorthwindTradersV9Entities\NorthwindTradersV9Entities.csproj" />
+  </ItemGroup>
+
+</Project>

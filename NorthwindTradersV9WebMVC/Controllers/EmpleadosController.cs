@@ -1,0 +1,43 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using NorthwindTradersV9BLL;
+using NorthwindTradersV9Entities;
+
+namespace NorthwindTradersV9WebMVC.Controllers
+{
+    public class EmpleadosController : Controller
+    {
+        private readonly EmpleadoBLL _empleadoBLL;
+        public EmpleadosController(EmpleadoBLL empleadoBLL)
+        {
+            _empleadoBLL = empleadoBLL;
+        }
+        public IActionResult Index()
+        {
+            var empleados = _empleadoBLL.ObtenerEmpleados();
+            return View(empleados);
+        }
+        public IActionResult Crear()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Crear(Empleado empleado)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(empleado);
+            }
+            _empleadoBLL.InsertarEmpleado(empleado);
+            return RedirectToAction("Index");
+        }
+        public IActionResult Editar(int id)
+        {
+            var empleado = _empleadoBLL.ObtenerEmpleadoPorId(id);
+            if (empleado == null)
+            {
+                return NotFound();
+            }
+            return View(empleado);
+        }
+    }
+}
