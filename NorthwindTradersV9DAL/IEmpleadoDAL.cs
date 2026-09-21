@@ -9,5 +9,6 @@ namespace NorthwindTradersV9DAL
         Empleado ObtenerEmpleadoPorId(int id);
         void ActualizarEmpleado(Empleado empleado);
         void EliminarEmpleado(int id);
+        List<Empleado> ObtenerTodosEmpleados();
     }
 }

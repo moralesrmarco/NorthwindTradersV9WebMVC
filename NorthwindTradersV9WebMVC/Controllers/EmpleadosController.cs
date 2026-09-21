@@ -13,31 +13,8 @@ namespace NorthwindTradersV9WebMVC.Controllers
         }
         public IActionResult Index()
         {
-            var empleados = _empleadoBLL.ObtenerEmpleados();
+            var empleados = _empleadoBLL.ObtenerTodosEmpleados();
             return View(empleados);
-        }
-        public IActionResult Crear()
-        {
-            return View();
-        }
-        [HttpPost]
-        public IActionResult Crear(Empleado empleado)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(empleado);
-            }
-            _empleadoBLL.InsertarEmpleado(empleado);
-            return RedirectToAction("Index");
-        }
-        public IActionResult Editar(int id)
-        {
-            var empleado = _empleadoBLL.ObtenerEmpleadoPorId(id);
-            if (empleado == null)
-            {
-                return NotFound();
-            }
-            return View(empleado);
         }
     }
 }

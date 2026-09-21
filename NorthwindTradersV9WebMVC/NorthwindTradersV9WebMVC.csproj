@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Views\Empleados\**" />
-    <Content Remove="Views\Empleados\**" />
-    <EmbeddedResource Remove="Views\Empleados\**" />
-    <None Remove="Views\Empleados\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\NorthwindTradersV9BLL\NorthwindTradersV9BLL.csproj" />
     <ProjectReference Include="..\NorthwindTradersV9Entities\NorthwindTradersV9Entities.csproj" />
   </ItemGroup>

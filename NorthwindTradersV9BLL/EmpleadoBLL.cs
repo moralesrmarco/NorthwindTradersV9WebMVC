@@ -32,5 +32,9 @@ namespace NorthwindTradersV9BLL
         {
             _empleadoDAL.EliminarEmpleado(id);
         }
+        public List<Empleado> ObtenerTodosEmpleados()
+        {
+            return _empleadoDAL.ObtenerTodosEmpleados();
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using NorthwindTradersV9DAL.Infrastructure;
 using NorthwindTradersV9Entities;
+using System.Data;
 
 namespace NorthwindTradersV9DAL
 {
@@ -137,6 +138,33 @@ namespace NorthwindTradersV9DAL
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+        public List<Empleado> ObtenerTodosEmpleados()
+        {
+            List<Empleado> empleados = new();
+            using (SqlConnection cn = _connectionFactory.CreateConnection())
+            {
+                cn.Open();
+                using (SqlCommand cmd = new SqlCommand("SpEmpleadoObtenerTodosV2", cn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            empleados.Add(new Empleado
+                            {
+                                EmployeeID = Convert.ToInt32(reader["EmployeeID"]),
+                                FirstName = reader["FirstName"].ToString(),
+                                LastName = reader["LastName"].ToString(),
+                                Country = reader["Country"].ToString(),
+                                Photo = reader["Photo"] as byte[]
+                            });
+                        }
+                    }
+                }
+            }
+            return empleados;
         }
     }
 }

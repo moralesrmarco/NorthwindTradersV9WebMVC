@@ -1,0 +1,72 @@
+﻿@model List<NorthwindTradersV9Entities.Empleado>
+@{
+    ViewData["Title"] = "Gestión de empleados";
+}
+<h2>@ViewData["Title"]</h2>
+<a asp-controller="Empleados" asp-action="Insertar" class="btn btn-sm btn-primary mb-3" title="Nuevo empleado">
+    <i class="bi bi-plus-circle"></i> 
+    <span class="d-none d-md-inline"> Nuevo empleado</span>
+</a>
+
+<a asp-controller="Empleados" asp-action="Buscar" class="btn btn-sm btn-buscar mb-3" title="Buscar"> 
+    <i class="bi bi-search"></i> 
+    <span class="d-none d-md-inline"> Buscar empleado</span> 
+</a>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th class="text-center">Foto</th>
+                <th class="text-center">ID</th>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th class="text-center">País</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var empleado in Model)
+            {
+                <tr class="align-middle">
+                    <td class="text-center">
+                        @if (empleado.Photo != null && empleado.Photo.Length > 0) 
+                        { 
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(empleado.Photo)" alt="Foto" class="img-thumbnail" style="max-width: 80px; max-height: 80px;" /> 
+                        }
+                    </td>
+                    <td class="text-center">@empleado.EmployeeID</td>
+                    <td>@empleado.FirstName</td>
+                    <td>@empleado.LastName</td>
+                    <td class="text-center">@empleado.Country</td>
+                    <td class="text-center text-nowrap">
+                        <a asp-controller="Empleados" 
+                            asp-action="Consultar" 
+                            asp-route-id="@empleado.EmployeeID" 
+                            class="btn btn-sm btn-success me-1 action-btn"
+                            title="Consultar">
+                            <i class="bi bi-eye"></i> 
+                            <span class="d-none d-md-inline"> Consultar</span>
+                        </a>
+                        <a asp-controller="Empleados" 
+                            asp-action="Editar" 
+                            asp-route-id="@empleado.EmployeeID" 
+                            class="btn btn-sm btn-warning me-1 action-btn" 
+                            title="Editar">
+                            <i class="bi bi-pencil"></i> 
+                            <span class="d-none d-md-inline"> Editar</span>
+                        </a>
+                        <a asp-controller="Empleados" 
+                            asp-action="Eliminar" 
+                            asp-route-id="@empleado.EmployeeID" 
+                            class="btn btn-sm btn-danger me-1 action-btn" 
+                            title="Eliminar">
+                            <i class="bi bi-trash"></i> 
+                            <span class="d-none d-md-inline"> Eliminar</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
