@@ -10,6 +10,36 @@
 
     }
 
+    const panelBusqueda = document.getElementById('panelBusqueda');
+    const mensajeBusqueda = document.getElementById('mensajeBusqueda');
+    const btnPestañaBuscar = document.getElementById('btnPestañaBuscar');
+
+    if (panelBusqueda && mensajeBusqueda && btnPestañaBuscar) {
+
+        panelBusqueda.addEventListener('shown.bs.collapse', function () {
+
+            mensajeBusqueda.classList.add('d-none');
+
+            // Una vez abierto, ya no se podrá colapsar
+            btnPestañaBuscar.removeAttribute('data-bs-toggle');
+
+        });
+
+        panelBusqueda.addEventListener('hidden.bs.collapse', function () {
+
+            mensajeBusqueda.classList.remove('d-none');
+
+        });
+
+        // Si la página ya llegó con la búsqueda abierta,
+        // tampoco permitimos que vuelva a colapsarse.
+        if (btnPestañaBuscar.getAttribute('aria-expanded') === 'true') {
+
+            btnPestañaBuscar.removeAttribute('data-bs-toggle');
+
+        }
+    }
+
     configurarNavegacion();
 
     const buttons = document.querySelectorAll(".action-btn");
@@ -21,7 +51,6 @@
             buttons.forEach(b => {
                 b.style.pointerEvents = "none";
             });
-
 
             const overlay = document.getElementById('loadingOverlay');
 

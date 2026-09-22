@@ -105,3 +105,17 @@ body {
         height: 320px;
     }
 }
+
+.nav-tabs .nav-link.pestaña-buscar.active {
+    background-color: rgb(25, 25, 112);
+    color: white;
+    font-weight: bold;
+    border-color: rgb(15, 15, 75);
+}
+
+.nav-tabs .nav-link.pestaña-buscar.active:hover {
+    background-color: rgb(0, 0, 255);
+    color: white;
+    font-weight: bold;
+    border-color: rgb(0, 0, 180);
+}

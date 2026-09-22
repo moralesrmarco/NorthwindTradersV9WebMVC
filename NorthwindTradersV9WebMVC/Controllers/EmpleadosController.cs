@@ -28,7 +28,8 @@ namespace NorthwindTradersV9WebMVC.Controllers
             string? Region = null,
             string? PostalCode = null,
             string? Country = null,
-            string? Phone = null)
+            string? Phone = null,
+            bool BuscarAbierto = false)
         {
             int pageSize = _appSettings.RowsPerPage;
 
@@ -74,6 +75,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 {
                     Controller = "Empleados",
                     Action = "Index",
+                    BuscarAbierto = BuscarAbierto,
                     Parametros = new Dictionary<string, string?>
                     {
                         ["IdIni"] = IdIni?.ToString(),
@@ -86,7 +88,8 @@ namespace NorthwindTradersV9WebMVC.Controllers
                         ["Region"] = Region,
                         ["PostalCode"] = PostalCode,
                         ["Country"] = Country,
-                        ["Phone"] = Phone
+                        ["Phone"] = Phone,
+                        ["BuscarAbierto"] = BuscarAbierto.ToString().ToLower()
                     }
                 }
             };
