@@ -7,18 +7,171 @@
         new { pageIndex = Model.Paginacion.PageIndex } );
 }
 <h2>@ViewData["Title"]</h2>
+<ul class="nav nav-tabs mb-0">
+    <li class="nav-item small">
+        <span class="nav-link active">
+            <i class="bi bi-search"></i>
+            Buscar empleado
+        </span>
+    </li>
+</ul>
+
+<div class="border border-top-0 p-3 small">
+
+    <form asp-controller="Empleados"
+          asp-action="Index"
+          method="get">
+
+        <div class="row mb-3">
+
+            <div class="col-md-3">
+                <label for="txtIdIni" class="form-label">Id inicial</label>
+                <input type="number"
+                       name="IdIni"
+                       id="txtIdIni"
+                       value="@Model.IdIni"
+                       class="form-control form-control-sm" />
+            </div>
+
+            <div class="col-md-3">
+                <label for="txtIdFin" class="form-label">Id final</label>
+                <input type="number"
+                       name="IdFin"
+                       id="txtIdFin"
+                       value="@Model.IdFin"
+                       class="form-control form-control-sm" />
+            </div>
+
+            <div class="col-md-3">
+                <label for="FirstName" class="form-label">Nombres</label>
+                <input type="text"
+                       name="FirstName"
+                       id="FirstName"
+                       value="@Model.FirstName"
+                       class="form-control form-control-sm" />
+            </div>
+
+            <div class="col-md-3">
+                <label for="LastName" class="form-label">Apellidos</label>
+                <input type="text"
+                       name="LastName"
+                       id="LastName"
+                       value="@Model.LastName"
+                       class="form-control form-control-sm" />
+            </div>
+
+        </div>
+
+        <div class="row mb-3">
+
+            <div class="col-md-3">
+                <label for="Title" class="form-label">Título</label>
+                <input type="text"
+                       name="Title"
+                       id="Title"
+                       value="@Model.Title"
+                       class="form-control form-control-sm" />
+            </div>
+
+            <div class="col-md-3">
+                <label for="Address" class="form-label">Domicilio</label>
+                <input type="text"
+                       name="Address"
+                       id="Address"
+                       value="@Model.Address"
+                       class="form-control form-control-sm" />
+            </div>
+
+            <div class="col-md-3">
+                <label for="City" class="form-label">Ciudad</label>
+                <input type="text"
+                       name="City"
+                       id="City"
+                       value="@Model.City"
+                       class="form-control form-control-sm" />
+            </div>
+
+            <div class="col-md-3">
+                <label for="Region" class="form-label">Región</label>
+                <input type="text"
+                       name="Region"
+                       id="Region"
+                       value="@Model.Region"
+                       class="form-control form-control-sm" />
+            </div>
+
+        </div>
+
+        <div class="row mb-3">
+
+            <div class="col-md-3">
+                <label for="PostalCode" class="form-label">Código Postal</label>
+                <input type="text"
+                       name="PostalCode"
+                       id="PostalCode"
+                       value="@Model.PostalCode"
+                       class="form-control form-control-sm" />
+            </div>
+
+            <div class="col-md-3">
+                <label for="Country" class="form-label">País</label>
+                <input type="text"
+                       name="Country"
+                       id="Country"
+                       value="@Model.Country"
+                       class="form-control form-control-sm" />
+            </div>
+
+            <div class="col-md-3">
+                <label for="Phone" class="form-label">Teléfono</label>
+                <input type="text"
+                       name="Phone"
+                       id="Phone"
+                       value="@Model.Phone"
+                       class="form-control form-control-sm" />
+            </div>
+
+            <div class="col-md-3 d-flex align-items-end gap-2">
+
+                <button type="submit"
+                        id="btnBuscar"
+                        class="btn btn-sm btn-buscar">
+                    <i class="bi bi-search"></i>
+                    <span class="d-none d-md-inline"> Buscar</span>
+                </button>
+
+                <a asp-controller="Empleados"
+                   asp-action="Index"
+                   class="btn btn-sm btn-primary navigation-btn">
+                    <i class="bi bi-eraser"></i>
+                    <span class="d-none d-md-inline"> Limpiar</span>
+                </a>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+<br />
+
 <a asp-controller="Empleados" asp-action="Insertar" class="btn btn-sm btn-primary mb-3" title="Nuevo empleado">
     <i class="bi bi-plus-circle"></i> 
     <span class="d-none d-md-inline"> Nuevo empleado</span>
 </a>
 
-<a asp-controller="Empleados" asp-action="Buscar" class="btn btn-sm btn-buscar mb-3" title="Buscar"> 
-    <i class="bi bi-search"></i> 
-    <span class="d-none d-md-inline"> Buscar empleado</span> 
-</a>
-
-<partial name="_Paginacion" model="Model.Paginacion" />
+<partial name="_Paginacion"
+         model="Model.ParametrosPaginacion"
+         view-data='new ViewDataDictionary(ViewData)
+         {
+             ["PageIndex"] = Model.Paginacion.PageIndex,
+             ["TotalPages"] = Model.Paginacion.TotalPages,
+             ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+         }' />
 <br />
+
 <div class="table-responsive">
     <table class="table table-bordered table-striped">
         <thead>
@@ -79,11 +232,21 @@
         </tbody>
     </table>
 </div>
+
 <br />
-<partial name="_Paginacion" model="Model.Paginacion" />
+<partial name="_Paginacion"
+         model="Model.ParametrosPaginacion"
+         view-data='new ViewDataDictionary(ViewData)
+         {
+             ["PageIndex"] = Model.Paginacion.PageIndex,
+             ["TotalPages"] = Model.Paginacion.TotalPages,
+             ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+         }' />
 
 @section Scripts {
     <script src="~/js/list-actions.js"></script>
+    <script src="~/js/navigation-actions.js"></script>
+    <script src="~/js/form-buscar.js"></script>
 
     <script>
         $(function () {

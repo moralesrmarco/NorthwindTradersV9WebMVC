@@ -58,5 +58,40 @@ namespace NorthwindTradersV9BLL
             }
             return _empleadoDAL.ObtenerEmpleadosPaginados(pageIndex, pageSize);
         }
+        public EmpleadoPaginadoDto ObtenerEmpleadosPaginadosConBusqueda(
+            int pageIndex,
+            int pageSize,
+            int? idIni,
+            int? idFin,
+            string? firstName,
+            string? lastName,
+            string? title,
+            string? address,
+            string? city,
+            string? region,
+            string? postalCode,
+            string? country,
+            string? phone)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+            {
+                Thread.Sleep(_appSettings.TiempoDemora);
+            }
+
+            return _empleadoDAL.ObtenerEmpleadosPaginadosConBusqueda(
+                pageIndex,
+                pageSize,
+                idIni,
+                idFin,
+                firstName,
+                lastName,
+                title,
+                address,
+                city,
+                region,
+                postalCode,
+                country,
+                phone);
+        }
     }
 }

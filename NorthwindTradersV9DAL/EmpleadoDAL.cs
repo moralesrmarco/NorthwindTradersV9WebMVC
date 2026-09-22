@@ -211,5 +211,115 @@ namespace NorthwindTradersV9DAL
             }
             return resultado;
         }
+        public EmpleadoPaginadoDto ObtenerEmpleadosPaginadosConBusqueda(
+            int pageIndex,
+            int pageSize,
+            int? idIni,
+            int? idFin,
+            string? firstName,
+            string? lastName,
+            string? title,
+            string? address,
+            string? city,
+            string? region,
+            string? postalCode,
+            string? country,
+            string? phone)
+        {
+            EmpleadoPaginadoDto resultado = new();
+
+            try
+            {
+                using (SqlConnection cn = _connectionFactory.CreateConnection())
+                {
+                    cn.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(
+                        "SpEmpleadosBuscarConPaginacion", cn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.Add("@PageIndex", SqlDbType.Int)
+                            .Value = pageIndex;
+
+                        cmd.Parameters.Add("@PageSize", SqlDbType.Int)
+                            .Value = pageSize;
+
+                        // Filtros
+                        cmd.Parameters.Add("@IdIni", SqlDbType.Int)
+                            .Value = (object?)idIni ?? DBNull.Value;
+
+                        cmd.Parameters.Add("@IdFin", SqlDbType.Int)
+                            .Value = (object?)idFin ?? DBNull.Value;
+
+                        cmd.Parameters.Add("@FirstName", SqlDbType.VarChar, 10)
+                            .Value = (object?)firstName ?? DBNull.Value;
+
+                        cmd.Parameters.Add("@LastName", SqlDbType.VarChar, 20)
+                            .Value = (object?)lastName ?? DBNull.Value;
+
+                        cmd.Parameters.Add("@Title", SqlDbType.VarChar, 30)
+                            .Value = (object?)title ?? DBNull.Value;
+
+                        cmd.Parameters.Add("@Address", SqlDbType.VarChar, 60)
+                            .Value = (object?)address ?? DBNull.Value;
+
+                        cmd.Parameters.Add("@City", SqlDbType.VarChar, 15)
+                            .Value = (object?)city ?? DBNull.Value;
+
+                        cmd.Parameters.Add("@Region", SqlDbType.VarChar, 15)
+                            .Value = (object?)region ?? DBNull.Value;
+
+                        cmd.Parameters.Add("@PostalCode", SqlDbType.VarChar, 10)
+                            .Value = (object?)postalCode ?? DBNull.Value;
+
+                        cmd.Parameters.Add("@Country", SqlDbType.VarChar, 15)
+                            .Value = (object?)country ?? DBNull.Value;
+
+                        cmd.Parameters.Add("@Phone", SqlDbType.VarChar, 24)
+                            .Value = (object?)phone ?? DBNull.Value;
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                resultado.TotalRegistros =
+                                    Convert.ToInt32(reader["TotalRegistros"]);
+                            }
+
+                            if (reader.NextResult())
+                            {
+                                while (reader.Read())
+                                {
+                                    resultado.Empleados.Add(new Empleado
+                                    {
+                                        EmployeeID =
+                                            Convert.ToInt32(reader["EmployeeID"]),
+
+                                        FirstName =
+                                            reader["FirstName"].ToString(),
+
+                                        LastName =
+                                            reader["LastName"].ToString(),
+
+                                        Country =
+                                            reader["Country"].ToString(),
+
+                                        Photo =
+                                            reader["Photo"] as byte[]
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Error al obtener empleados paginados " + ex.Message);
+            }
+            return resultado;
+        }
     }
 }

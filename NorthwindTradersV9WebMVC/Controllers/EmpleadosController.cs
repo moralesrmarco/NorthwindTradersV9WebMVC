@@ -16,20 +16,81 @@ namespace NorthwindTradersV9WebMVC.Controllers
             _empleadoBLL = empleadoBLL;
             _appSettings = appSettings.Value;
         }
-        public IActionResult Index(int pageIndex = 1)
+        public IActionResult Index(
+            int pageIndex = 1,
+            int? IdIni = null,
+            int? IdFin = null,
+            string? FirstName = null,
+            string? LastName = null,
+            string? Title = null,
+            string? Address = null,
+            string? City = null,
+            string? Region = null,
+            string? PostalCode = null,
+            string? Country = null,
+            string? Phone = null)
         {
             int pageSize = _appSettings.RowsPerPage;
-            var resultado = _empleadoBLL.ObtenerEmpleadosPaginados(pageIndex, pageSize);
+
+            var resultado = _empleadoBLL.ObtenerEmpleadosPaginadosConBusqueda(
+                pageIndex,
+                pageSize,
+                IdIni,
+                IdFin,
+                FirstName,
+                LastName,
+                Title,
+                Address,
+                City,
+                Region,
+                PostalCode,
+                Country,
+                Phone);
+
             var model = new EmpleadosIndexViewModel
             {
                 Empleados = resultado.Empleados,
+
+                IdIni = IdIni,
+                IdFin = IdFin,
+                FirstName = FirstName,
+                LastName = LastName,
+                Title = Title,
+                Address = Address,
+                City = City,
+                Region = Region,
+                PostalCode = PostalCode,
+                Country = Country,
+                Phone = Phone,
+
                 Paginacion = new PaginacionViewModel
                 {
                     PageIndex = pageIndex,
                     PageSize = pageSize,
                     TotalRegistros = resultado.TotalRegistros
+                },
+
+                ParametrosPaginacion = new ParametrosPaginacionViewModel
+                {
+                    Controller = "Empleados",
+                    Action = "Index",
+                    Parametros = new Dictionary<string, string?>
+                    {
+                        ["IdIni"] = IdIni?.ToString(),
+                        ["IdFin"] = IdFin?.ToString(),
+                        ["FirstName"] = FirstName,
+                        ["LastName"] = LastName,
+                        ["Title"] = Title,
+                        ["Address"] = Address,
+                        ["City"] = City,
+                        ["Region"] = Region,
+                        ["PostalCode"] = PostalCode,
+                        ["Country"] = Country,
+                        ["Phone"] = Phone
+                    }
                 }
             };
+
             return View(model);
         }
     }
