@@ -1,4 +1,5 @@
 ﻿using NorthwindTradersV9Entities;
+using NorthwindTradersV9Entities.DTOs;
 
 namespace NorthwindTradersV9DAL
 {
@@ -10,5 +11,6 @@ namespace NorthwindTradersV9DAL
         void ActualizarEmpleado(Empleado empleado);
         void EliminarEmpleado(int id);
         List<Empleado> ObtenerTodosEmpleados();
+        EmpleadoPaginadoDto ObtenerEmpleadosPaginados(int pageIndex, int pageSize);
     }
 }

@@ -1,6 +1,10 @@
-﻿@model List<NorthwindTradersV9Entities.Empleado>
+﻿@model NorthwindTradersV9WebMVC.Models.Empleados.EmpleadosIndexViewModel
 @{
     ViewData["Title"] = "Gestión de empleados";
+    var returnUrl = Url.Action( 
+        "Index", 
+        "Empleados", 
+        new { pageIndex = Model.Paginacion.PageIndex } );
 }
 <h2>@ViewData["Title"]</h2>
 <a asp-controller="Empleados" asp-action="Insertar" class="btn btn-sm btn-primary mb-3" title="Nuevo empleado">
@@ -13,6 +17,8 @@
     <span class="d-none d-md-inline"> Buscar empleado</span> 
 </a>
 
+<partial name="_Paginacion" model="Model.Paginacion" />
+<br />
 <div class="table-responsive">
     <table class="table table-bordered table-striped">
         <thead>
@@ -26,7 +32,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var empleado in Model)
+            @foreach (var empleado in Model.Empleados)
             {
                 <tr class="align-middle">
                     <td class="text-center">
@@ -43,6 +49,7 @@
                         <a asp-controller="Empleados" 
                             asp-action="Consultar" 
                             asp-route-id="@empleado.EmployeeID" 
+                            asp-route-returnUrl="@returnUrl"
                             class="btn btn-sm btn-success me-1 action-btn"
                             title="Consultar">
                             <i class="bi bi-eye"></i> 
@@ -51,6 +58,7 @@
                         <a asp-controller="Empleados" 
                             asp-action="Editar" 
                             asp-route-id="@empleado.EmployeeID" 
+                            asp-route-returnUrl="@returnUrl"
                             class="btn btn-sm btn-warning me-1 action-btn" 
                             title="Editar">
                             <i class="bi bi-pencil"></i> 
@@ -59,6 +67,7 @@
                         <a asp-controller="Empleados" 
                             asp-action="Eliminar" 
                             asp-route-id="@empleado.EmployeeID" 
+                            asp-route-returnUrl="@returnUrl"
                             class="btn btn-sm btn-danger me-1 action-btn" 
                             title="Eliminar">
                             <i class="bi bi-trash"></i> 
@@ -70,3 +79,15 @@
         </tbody>
     </table>
 </div>
+<br />
+<partial name="_Paginacion" model="Model.Paginacion" />
+
+@section Scripts {
+    <script src="~/js/list-actions.js"></script>
+
+    <script>
+        $(function () {
+            configurarAccionesListado();
+        });
+    </script>
+}

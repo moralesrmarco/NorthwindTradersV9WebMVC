@@ -1,5 +1,7 @@
-﻿using NorthwindTradersV9DAL;
+﻿using Microsoft.Extensions.Options;
+using NorthwindTradersV9DAL;
 using NorthwindTradersV9Entities;
+using NorthwindTradersV9Entities.DTOs;
 
 namespace NorthwindTradersV9BLL
 {
@@ -7,11 +9,16 @@ namespace NorthwindTradersV9BLL
     {
         private readonly IEmpleadoDAL _empleadoDAL;
 
-        public EmpleadoBLL(IEmpleadoDAL empleadoDAL)
+        private readonly AppSettings _appSettings;
+
+        public EmpleadoBLL(IEmpleadoDAL empleadoDAL, IOptions<AppSettings> appSettings)
         {
             _empleadoDAL = empleadoDAL;
+            _appSettings = appSettings.Value;
         }
-
+        // ************************************************************************
+        // * Métodos para el ejercicio hecho previamente al desarrollo de la aplicacion
+        // ************************************************************************
         public List<Empleado> ObtenerEmpleados()
         {
             return _empleadoDAL.ObtenerEmpleados();
@@ -32,9 +39,24 @@ namespace NorthwindTradersV9BLL
         {
             _empleadoDAL.EliminarEmpleado(id);
         }
+        // ************************************************************************
+        // * Métodos reales para la aplicación 
+        // ************************************************************************
         public List<Empleado> ObtenerTodosEmpleados()
         {
+            if (_appSettings.EjecutarTiempoDemora)
+            {
+                Thread.Sleep(_appSettings.TiempoDemora);
+            }
             return _empleadoDAL.ObtenerTodosEmpleados();
+        }
+        public EmpleadoPaginadoDto ObtenerEmpleadosPaginados(int pageIndex, int pageSize)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+            {
+                Thread.Sleep(_appSettings.TiempoDemora);
+            }
+            return _empleadoDAL.ObtenerEmpleadosPaginados(pageIndex, pageSize);
         }
     }
 }

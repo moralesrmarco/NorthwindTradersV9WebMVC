@@ -1,11 +1,15 @@
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9DAL;
 using NorthwindTradersV9DAL.Infrastructure;
+using NorthwindTradersV9Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.Configure<AppSettings>(
+    builder.Configuration.GetSection("AppSettings"));
 
 builder.Services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
 builder.Services.AddScoped<MensajeDAL>();

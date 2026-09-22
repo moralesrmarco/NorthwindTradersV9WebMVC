@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using NorthwindTradersV9DAL.Infrastructure;
 using NorthwindTradersV9Entities;
+using NorthwindTradersV9Entities.DTOs;
 using System.Data;
 
 namespace NorthwindTradersV9DAL
@@ -165,6 +166,50 @@ namespace NorthwindTradersV9DAL
                 }
             }
             return empleados;
+        }
+        public EmpleadoPaginadoDto ObtenerEmpleadosPaginados(int pageIndex, int pageSize)
+        {
+            EmpleadoPaginadoDto resultado = new();
+            try
+            {
+                using (SqlConnection cn = _connectionFactory.CreateConnection())
+                {
+                    cn.Open();
+                    using (SqlCommand cmd = new SqlCommand("SpEmpleadosObtenerPaginadosV2", cn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@PageIndex", SqlDbType.Int).Value = pageIndex;
+                        cmd.Parameters.Add("@PageSize", SqlDbType.Int).Value = pageSize;
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                resultado.TotalRegistros = Convert.ToInt32(reader["TotalRegistros"]);
+                            }
+                            if (reader.NextResult())
+                            {
+                                while (reader.Read())
+                                {
+                                    resultado.Empleados.Add(new Empleado
+                                    {
+                                        EmployeeID = Convert.ToInt32(reader["EmployeeID"]),
+                                        FirstName = reader["FirstName"].ToString(),
+                                        LastName = reader["LastName"].ToString(),
+                                        Country = reader["Country"].ToString(),
+                                        Photo = reader["Photo"] as byte[]
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar la excepción según sea necesario
+                throw new Exception("Error al obtener empleados paginados " + ex.Message);
+            }
+            return resultado;
         }
     }
 }

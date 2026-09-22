@@ -1,0 +1,77 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Common.PaginacionViewModel
+
+@{
+    int startPage = Math.Max(1, Model.PageIndex - 2);
+    int endPage = Math.Min(Model.TotalPages, Model.PageIndex + 2);
+}
+
+<nav aria-label="Page navigation">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+        <!-- Información de página --> 
+        <div class="text-muted small text-nowrap">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Página: @Model.PageIndex de @Model.TotalPages </div>
+
+        <ul class="pagination justify-content-center mb-0">
+            <!-- Primera página -->
+            <li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
+                <a class="page-link"
+                    asp-controller="Empleados"
+                    asp-action="Index"
+                    asp-route-pageIndex="1"
+                    data-show-overlay>
+                    ««
+                </a>
+            </li>
+            <!-- Página anterior -->
+            <li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
+                <a class="page-link"
+                    asp-controller="Empleados"
+                    asp-action="Index"
+                    asp-route-pageIndex="@(Model.PageIndex - 1)"
+                    data-show-overlay>
+                    «
+                </a>
+            </li>
+            <!-- Páginas -->
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+
+                    <a class="page-link"
+                        asp-controller="Empleados"
+                        asp-action="Index"
+                        asp-route-pageIndex="@i"
+                        data-show-overlay>
+                        @i
+                    </a>
+
+                </li>
+            }
+            <!-- Página siguiente -->
+            <li class="page-item @(Model.PageIndex == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                    asp-controller="Empleados"
+                    asp-action="Index"
+                    asp-route-pageIndex="@(Model.PageIndex + 1)"
+                    data-show-overlay>
+                    »
+                </a>
+            </li>
+            <!-- Última página -->
+            <li class="page-item @(Model.PageIndex == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                    asp-controller="Empleados"
+                    asp-action="Index"
+                    asp-route-pageIndex="@Model.TotalPages"
+                    data-show-overlay>
+                    »»
+                </a>
+            </li>
+        </ul>
+        <!-- Total de registros --> 
+        <div class="text-muted small text-nowrap"> Total de registros: @Model.TotalRegistros &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+
+    </div>
+
+</nav>
