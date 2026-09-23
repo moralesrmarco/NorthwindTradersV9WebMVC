@@ -7,7 +7,6 @@ namespace NorthwindTradersV9DAL
     {
         List<Empleado> ObtenerEmpleados();
         void InsertarEmpleado(Empleado empleado);
-        Empleado ObtenerEmpleadoPorId(int id);
         void ActualizarEmpleado(Empleado empleado);
         void EliminarEmpleado(int id);
         List<Empleado> ObtenerTodosEmpleados();
@@ -26,5 +25,6 @@ namespace NorthwindTradersV9DAL
             string? postalCode,
             string? country,
             string? phone);
+        Empleado ObtenerEmpleadoPorId(int id);
     }
 }

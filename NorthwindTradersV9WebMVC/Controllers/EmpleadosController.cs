@@ -96,5 +96,23 @@ namespace NorthwindTradersV9WebMVC.Controllers
 
             return View(model);
         }
+        public IActionResult Consultar(int id, string? returnUrl)
+        {
+            var empleado = _empleadoBLL.ObtenerEmpleadoPorId(id);
+
+            if (empleado == null)
+            {
+                TempData["Error"] = "No se encontró el empleado solicitado.";
+            }
+
+            var model = new EmpleadoConsultarViewModel
+            {
+                Empleado = empleado,
+                ReturnUrl = returnUrl
+            };
+
+            return View(model);
+        }
+
     }
 }

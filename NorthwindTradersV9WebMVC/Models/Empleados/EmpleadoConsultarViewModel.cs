@@ -1,0 +1,10 @@
+﻿using NorthwindTradersV9Entities;
+
+namespace NorthwindTradersV9WebMVC.Models.Empleados
+{
+    public class EmpleadoConsultarViewModel
+    {
+        public Empleado? Empleado { get; set; }
+        public string? ReturnUrl { get; set; }
+    }
+}

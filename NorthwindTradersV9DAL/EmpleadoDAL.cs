@@ -49,7 +49,6 @@ namespace NorthwindTradersV9DAL
 
             return empleados;
         }
-        
         public void InsertarEmpleado(Empleado empleado)
         {
             using (SqlConnection cn = _connectionFactory.CreateConnection())
@@ -69,38 +68,6 @@ namespace NorthwindTradersV9DAL
                     cmd.ExecuteNonQuery();
                 }
             }
-        }
-        public Empleado ObtenerEmpleadoPorId(int id)
-        {
-            using (SqlConnection cn = _connectionFactory.CreateConnection())
-            {
-                cn.Open();
-                string sql = """
-                    SELECT
-                        EmployeeID,
-                        FirstName,
-                        LastName
-                    FROM Employees
-                    WHERE EmployeeID = @EmployeeID
-                    """;
-                using (SqlCommand cmd = new SqlCommand(sql, cn))
-                {
-                    cmd.Parameters.AddWithValue("@EmployeeID", id);
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            return new Empleado
-                            {
-                                Id = Convert.ToInt32(reader["EmployeeID"]),
-                                Nombre = reader["FirstName"].ToString(),
-                                Apellido = reader["LastName"].ToString()
-                            };
-                        }
-                    }
-                }
-            }
-            return null;
         }
         public void ActualizarEmpleado(Empleado empleado)
         {
@@ -320,6 +287,54 @@ namespace NorthwindTradersV9DAL
                     "Error al obtener empleados paginados " + ex.Message);
             }
             return resultado;
+        }
+        public Empleado ObtenerEmpleadoPorId(int id)
+        {
+            try
+            {
+                using (SqlConnection cn = _connectionFactory.CreateConnection())
+                {
+                    cn.Open();
+                    using (SqlCommand cmd = new SqlCommand("SpEmpleadoObtenerPorIdV2", cn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@Id", id);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return new Empleado
+                                {
+                                    EmployeeID = Convert.ToInt32(reader["EmployeeID"]),
+                                    FirstName = reader["FirstName"].ToString(),
+                                    LastName = reader["LastName"].ToString(),
+                                    Title = reader["Title"].ToString(),
+                                    TitleOfCourtesy = reader["TitleOfCourtesy"].ToString(),
+                                    BirthDate = reader["BirthDate"] as DateTime?,
+                                    HireDate = reader["HireDate"] as DateTime?,
+                                    Address = reader["Address"].ToString(),
+                                    City = reader["City"].ToString(),
+                                    Region = reader["Region"].ToString(),
+                                    PostalCode = reader["PostalCode"].ToString(),
+                                    Country = reader["Country"].ToString(),
+                                    HomePhone = reader["HomePhone"].ToString(),
+                                    Extension = reader["Extension"].ToString(),
+                                    Notes = reader["Notes"].ToString(),
+                                    ReportsTo = reader["ReportsTo"] as int?,
+                                    RowVersion = reader["RowVersion"] as byte[],
+                                    ReportsToName = reader["ReportsToName"].ToString(),
+                                    Photo = reader["Photo"] as byte[]
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener empleado por ID: " + ex.Message);
+            }
+            return null;
         }
     }
 }

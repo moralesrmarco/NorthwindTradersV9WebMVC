@@ -27,10 +27,6 @@ namespace NorthwindTradersV9BLL
         {
             _empleadoDAL.InsertarEmpleado(empleado);
         }
-        public Empleado ObtenerEmpleadoPorId(int id)
-        {
-            return _empleadoDAL.ObtenerEmpleadoPorId(id);
-        }
         public void ActualizarEmpleado(Empleado empleado)
         {
             _empleadoDAL.ActualizarEmpleado(empleado);
@@ -93,5 +89,14 @@ namespace NorthwindTradersV9BLL
                 country,
                 phone);
         }
+        public Empleado ObtenerEmpleadoPorId(int id)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+            {
+                Thread.Sleep(_appSettings.TiempoDemora);
+            }
+            return _empleadoDAL.ObtenerEmpleadoPorId(id);
+        }
+
     }
 }
