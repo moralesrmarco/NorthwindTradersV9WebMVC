@@ -22,5 +22,6 @@ namespace NorthwindTradersV9DAL
             string? country,
             string? phone);
         Empleado ObtenerEmpleadoPorId(int id);
+        int Eliminar(Empleado empleado);
     }
 }

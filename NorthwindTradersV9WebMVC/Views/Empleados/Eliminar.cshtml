@@ -1,0 +1,155 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Empleados.EmpleadoEliminarViewModel
+@{
+    ViewData["Title"] = "Eliminar empleado";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="alert alert-danger">
+    ¿Está seguro de eliminar el empleado con ID: <strong>@Model.Empleado.EmployeeID</strong> - Nombre de empleado: <strong>@Model.Empleado.FirstName @Model.Empleado.LastName</strong>?
+</div>
+
+<form method="post"
+      class="form"
+      onsubmit="return configurarEliminar('btnEliminar');">
+
+    @if(TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.Raw(TempData["Error"])
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            @if (Model.Empleado?.Photo != null && Model.Empleado.Photo.Length > 0)
+            {
+                <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Empleado.Photo)"
+                     alt="Foto del empleado"
+                     class="img-thumbnail float-start"
+                     style="max-width:150px; max-height:150px;" />
+            }        
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 mb-3">
+            <label asp-for="Empleado.EmployeeID" class="form-label">ID</label>
+            <input asp-for="Empleado.EmployeeID" class="form-control" readonly />
+        </div>
+        <div class="col-md-5 mb-3">
+            <label asp-for="Empleado.FirstName" class="form-label">Nombres</label>
+            <input asp-for="Empleado.FirstName" class="form-control" readonly />
+        </div>
+        <div class="col-md-5 mb-3">
+            <label asp-for="Empleado.LastName" class="form-label">Apellidos</label>
+            <input asp-for="Empleado.LastName" class="form-control" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Empleado.Title" class="form-label">Título</label>
+            <input asp-for="Empleado.Title" class="form-control" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Empleado.TitleOfCourtesy" class="form-label">
+                Título de cortesía
+            </label>
+            <input asp-for="Empleado.TitleOfCourtesy" class="form-control" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <label asp-for="Empleado.Address" class="form-label">Dirección</label>
+            <input asp-for="Empleado.Address" class="form-control" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Empleado.City" class="form-label">Ciudad</label>
+            <input asp-for="Empleado.City" class="form-control" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Empleado.Region" class="form-label">Región</label>
+            <input asp-for="Empleado.Region" class="form-control" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Empleado.PostalCode" class="form-label">
+                Código postal
+            </label>
+            <input asp-for="Empleado.PostalCode" class="form-control" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Empleado.Country" class="form-label">País</label>
+            <input asp-for="Empleado.Country" class="form-control" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Empleado.HomePhone" class="form-label">Teléfono</label>
+            <input asp-for="Empleado.HomePhone" class="form-control" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Empleado.Extension" class="form-label">Extensión</label>
+            <input asp-for="Empleado.Extension" class="form-control" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Empleado.BirthDate" class="form-label">
+                Fecha de nacimiento
+            </label>
+            <input class="form-control"
+                   value="@Model.Empleado?.BirthDate?.ToString("dd 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("es-ES"))"
+                   readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Empleado.HireDate" class="form-label">
+                Fecha de contratación
+            </label>
+            <input class="form-control"
+                   value="@Model.Empleado?.HireDate?.ToString("dd 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("es-ES"))"
+                   readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Empleado.ReportsToName" class="form-label">Reporta a</label>
+            @if (!string.IsNullOrEmpty(Model.Empleado?.ReportsToName))
+            {
+                <input asp-for="Empleado.ReportsToName" class="form-control" readonly />
+            }
+            else
+            {
+                <input class="form-control"
+                   value="N/A"
+                   readonly />
+            }
+            </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <label asp-for="Empleado.Notes" class="form-label">Notas</label>
+            <textarea asp-for="Empleado.Notes"
+                      class="form-control"
+                      rows="5"
+                      readonly
+                      style="resize:none; overflow-y:auto; max-height:200px;"></textarea>
+        </div>
+    </div>
+    <button type="submit"
+            id="btnEliminar"
+            class="btn btn-sm btn-danger me-1"
+            disabled="@Model.BloquearEliminacion"
+            title="Eliminar">
+        <i class="bi bi-trash"></i>
+        <span class="d-none d-md-inline"> Eliminar</span>
+    </button>
+
+    <a href="@(Model.ReturnUrl ?? Url.Action("Index", "Empleados"))"
+       class="btn btn-sm btn-cancelar me-1"
+       title="Cancelar">
+        <i class="bi bi-x-circle"></i>
+        <span class="d-none d-md-inline"> Cancelar</span>
+    </a>
+
+    <input type="hidden" asp-for="Empleado.RowVersion" />
+    <input type="hidden" asp-for="ReturnUrl" />
+</form>
+@section Scripts {
+    <script src="~/js/form-delete.js"></script>
+}

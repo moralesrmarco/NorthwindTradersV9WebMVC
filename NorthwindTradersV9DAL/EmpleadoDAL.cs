@@ -244,5 +244,30 @@ namespace NorthwindTradersV9DAL
             }
             return null;
         }
+        public int Eliminar(Empleado empleado)
+        {
+            int numRegs = 0;
+            try
+            {
+                using (SqlConnection cn = _connectionFactory.CreateConnection())
+                {
+                    cn.Open();
+                    using (SqlCommand cmd = new SqlCommand("SpEmpleadoEliminar", cn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@Id", SqlDbType.Int).Value = empleado.EmployeeID;
+                        cmd.Parameters.Add("@RowVersion", SqlDbType.Binary, 8).Value = empleado.RowVersion ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@ReturnVal", SqlDbType.Int).Direction = ParameterDirection.ReturnValue;
+                        cmd.ExecuteNonQuery();
+                        numRegs = Convert.ToInt32(cmd.Parameters["@ReturnVal"].Value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar empleado: " + ex.Message);
+            }
+            return numRegs;
+        }
     }
 }

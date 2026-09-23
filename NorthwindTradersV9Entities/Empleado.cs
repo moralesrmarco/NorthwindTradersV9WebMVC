@@ -4,16 +4,6 @@ namespace NorthwindTradersV9Entities
 {
     public class Empleado
     {
-        // las siguientes 3 propiedades las dejo para que mi ejemplo de empleados funcione.
-        public int Id { get; set; }
-        [Required(ErrorMessage = "El nombre es obligatorio.")]
-        public string Nombre { get; set; }
-        [Required(ErrorMessage = "El apellido es obligatorio.")]
-        public string Apellido { get; set; }
-
-        //*******************************************************************************************************************************************
-        // las siguientes propiedades son las propiedades ya para mi version final de la clase Empleado, que es la que se usará en el proyecto final.
-        //*******************************************************************************************************************************************
         public int EmployeeID { get; set; }
 
         [Required(ErrorMessage = "Ingrese apellido")]

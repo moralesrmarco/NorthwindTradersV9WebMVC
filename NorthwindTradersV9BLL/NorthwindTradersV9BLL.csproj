@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NorthwindTradersV9Common\NorthwindTradersV9Common.csproj" />
     <ProjectReference Include="..\NorthwindTradersV9DAL\NorthwindTradersV9DAL.csproj" />
     <ProjectReference Include="..\NorthwindTradersV9Entities\NorthwindTradersV9Entities.csproj" />
   </ItemGroup>

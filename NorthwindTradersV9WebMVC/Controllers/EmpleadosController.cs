@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Entities;
+using NorthwindTradersV9WebMVC.Common;
 using NorthwindTradersV9WebMVC.Models.Common;
 using NorthwindTradersV9WebMVC.Models.Empleados;
 
@@ -113,6 +114,57 @@ namespace NorthwindTradersV9WebMVC.Controllers
 
             return View(model);
         }
+        public IActionResult Eliminar(int id, string? returnUrl)
+        {
+            var empleado = _empleadoBLL.ObtenerEmpleadoPorId(id);
 
+            var model = new EmpleadoEliminarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+
+            if (empleado == null)
+            {
+                TempData["Error"] = "<p>Empleado no encontrado</p>" + StringsCommons.Nefep;
+
+                model.BloquearEliminacion = true;
+            }
+            else
+            {
+                model.Empleado = empleado;
+            }
+
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Eliminar(EmpleadoEliminarViewModel model)
+        {
+            if (model.Empleado != null)
+            {
+                var resultado = _empleadoBLL.Eliminar(model.Empleado);
+
+                if (resultado.Exito)
+                {
+                    if (!string.IsNullOrEmpty(model.ReturnUrl))
+                        return LocalRedirect(model.ReturnUrl);
+
+                    return RedirectToAction("Index", "Empleados");
+                }
+                else
+                {
+                    TempData["Error"] =
+                        $"<p>El empleado con Id: <strong>{model.Empleado.EmployeeID}</strong> " +
+                        $"- Nombre de empleado: <strong>{model.Empleado.NameByFirstName}</strong>:</p>" +
+                        resultado.Mensaje;
+
+                    // Sólo bloquea para errores definitivos
+                    if (resultado.Codigo < 0)
+                        model.BloquearEliminacion = true;
+                }
+            }
+
+            return View(model);
+        }
     }
 }
