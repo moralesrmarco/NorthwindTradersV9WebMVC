@@ -5,10 +5,6 @@ namespace NorthwindTradersV9DAL
 {
     public interface IEmpleadoDAL
     {
-        List<Empleado> ObtenerEmpleados();
-        void InsertarEmpleado(Empleado empleado);
-        void ActualizarEmpleado(Empleado empleado);
-        void EliminarEmpleado(int id);
         List<Empleado> ObtenerTodosEmpleados();
         EmpleadoPaginadoDto ObtenerEmpleadosPaginados(int pageIndex, int pageSize);
         EmpleadoPaginadoDto ObtenerEmpleadosPaginadosConBusqueda(

@@ -13,15 +13,6 @@ namespace NorthwindTradersV9WebMVC.Controllers
             _mensajeBLL = mensajeBLL;
             _empleadoBLL = empleadoBLL;
         }
-        public IActionResult Index()
-        {
-
-            ViewData["Mensaje"] = _mensajeBLL.ObtenerMensaje();
-
-            var empleados = _empleadoBLL.ObtenerEmpleados();
-
-            return View(empleados);
-        }
         public IActionResult Privacy()
         {
             return View();

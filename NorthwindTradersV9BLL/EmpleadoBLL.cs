@@ -16,28 +16,6 @@ namespace NorthwindTradersV9BLL
             _empleadoDAL = empleadoDAL;
             _appSettings = appSettings.Value;
         }
-        // ************************************************************************
-        // * Métodos para el ejercicio hecho previamente al desarrollo de la aplicacion
-        // ************************************************************************
-        public List<Empleado> ObtenerEmpleados()
-        {
-            return _empleadoDAL.ObtenerEmpleados();
-        }
-        public void InsertarEmpleado(Empleado empleado)
-        {
-            _empleadoDAL.InsertarEmpleado(empleado);
-        }
-        public void ActualizarEmpleado(Empleado empleado)
-        {
-            _empleadoDAL.ActualizarEmpleado(empleado);
-        }
-        public void EliminarEmpleado(int id)
-        {
-            _empleadoDAL.EliminarEmpleado(id);
-        }
-        // ************************************************************************
-        // * Métodos reales para la aplicación 
-        // ************************************************************************
         public List<Empleado> ObtenerTodosEmpleados()
         {
             if (_appSettings.EjecutarTiempoDemora)
