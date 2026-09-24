@@ -23,5 +23,6 @@ namespace NorthwindTradersV9DAL
             string? phone);
         Empleado ObtenerEmpleadoPorId(int id);
         int Eliminar(Empleado empleado);
+        int Actualizar(Empleado empleado);
     }
 }

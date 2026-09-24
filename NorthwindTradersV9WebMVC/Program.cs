@@ -2,6 +2,7 @@ using NorthwindTradersV9BLL;
 using NorthwindTradersV9DAL;
 using NorthwindTradersV9DAL.Infrastructure;
 using NorthwindTradersV9Entities;
+using NorthwindTradersV9DAL.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,12 +13,11 @@ builder.Services.Configure<AppSettings>(
     builder.Configuration.GetSection("AppSettings"));
 
 builder.Services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
-builder.Services.AddScoped<MensajeDAL>();
-builder.Services.AddScoped<MensajeBLL>();
 
 builder.Services.AddScoped<IEmpleadoDAL, EmpleadoDAL>();
 builder.Services.AddScoped<EmpleadoBLL>();
 
+builder.Services.AddScoped<ComboDataHelper>();
 
 var app = builder.Build();
 

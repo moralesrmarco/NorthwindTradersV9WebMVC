@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using NorthwindTradersV9BLL;
+using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
-using NorthwindTradersV9WebMVC.Common;
 using NorthwindTradersV9WebMVC.Models.Common;
 using NorthwindTradersV9WebMVC.Models.Empleados;
 
@@ -165,6 +166,191 @@ namespace NorthwindTradersV9WebMVC.Controllers
             }
 
             return View(model);
+        }
+        public IActionResult Editar(int id, string? returnUrl)
+        {
+            var viewModel = new EmpleadoEditarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            viewModel.Empleado = _empleadoBLL.ObtenerEmpleadoPorId(id);
+            if (viewModel.Empleado == null)
+            {
+                TempData["Error"] = "<p>Empleado no encontrado.</p>" + StringsCommons.Nefep;
+                viewModel.BloquearEdicion = true;
+            }
+            else
+            {
+                viewModel.FotoTemporalBase64 = Convert.ToBase64String(viewModel.Empleado.Photo);
+                viewModel.FotoMime = "image/jpeg";
+            }
+            CargarCombos(viewModel);
+            return View(viewModel);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Editar(EmpleadoEditarViewModel model)
+        {
+            if (model.Empleado?.EmployeeID <= 9)
+            {
+                model.Foto = null;
+                model.FotoTemporalBase64 = null;
+            }
+
+            byte[]? fotoBytes = null;
+
+            // Guardar la imagen temporal primero
+            if (model.Foto != null && model.Foto.Length > 0)
+            {
+                using var ms = new MemoryStream();
+
+                model.Foto.CopyTo(ms);
+
+                fotoBytes = ms.ToArray();
+
+                model.FotoTemporalBase64 =
+                    Convert.ToBase64String(fotoBytes);
+
+                model.FotoMime = model.Foto.ContentType;
+            }
+
+            // Validación del país
+            if (string.IsNullOrWhiteSpace(model.Empleado?.Country))
+            {
+                ModelState.AddModelError(
+                    "Empleado.Country",
+                    "Seleccione o escriba un país");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                CargarCombos(model);
+                return View(model);
+            }
+            try
+            {
+                if (model.Empleado != null)
+                {
+                    if (model.Empleado.EmployeeID <= 9)
+                    {
+                        // Recuperar la foto original
+                        var empleadoOriginal =
+                            _empleadoBLL.ObtenerEmpleadoPorId(
+                                model.Empleado.EmployeeID);
+
+                        if (empleadoOriginal != null)
+                        {
+                            model.Empleado.Photo =
+                                empleadoOriginal.Photo;
+                        }
+                    }
+                    else
+                    {
+                        if (fotoBytes != null)
+                        {
+                            // Se seleccionó una foto nueva
+                            model.Empleado.Photo = fotoBytes;
+                        }
+                        else if (!string.IsNullOrEmpty(
+                            model.FotoTemporalBase64))
+                        {
+                            // Mantener la foto actual
+                            model.Empleado.Photo =
+                                Convert.FromBase64String(
+                                    model.FotoTemporalBase64);
+                        }
+                        else
+                        {
+                            // Recuperar la foto original
+                            var empleadoOriginal =
+                                _empleadoBLL.ObtenerEmpleadoPorId(
+                                    model.Empleado.EmployeeID);
+
+                            if (empleadoOriginal != null)
+                            {
+                                model.Empleado.Photo =
+                                    empleadoOriginal.Photo;
+                            }
+                        }
+                    }
+
+                    var resultado =
+                        _empleadoBLL.Actualizar(model.Empleado);
+
+                    if (resultado.Exito)
+                    {
+                        if (!string.IsNullOrEmpty(model.ReturnUrl))
+                        {
+                            return LocalRedirect(model.ReturnUrl);
+                        }
+
+                        return RedirectToAction("Index");
+                    }
+
+                    TempData["Error"] =
+                        $"<p>El empleado <strong>" +
+                        $"{model.Empleado.FirstName} " +
+                        $"{model.Empleado.LastName}" +
+                        $"</strong>:</p>{resultado.Mensaje}";
+
+                    if (resultado.Codigo < 0)
+                    {
+                        model.BloquearEdicion = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    $"<p>Error al actualizar el empleado " +
+                    $"<strong>{model.Empleado?.FirstName} " +
+                    $"{model.Empleado?.LastName}</strong>.</p>" +
+                    $"<p>Detalles: {ex.Message}</p>";
+            }
+
+            CargarCombos(model);
+
+            return View(model);
+        }
+
+        private void CargarCombos(EmpleadoEditarViewModel model)
+        {
+            model.Paises =
+                _empleadoBLL.ObtenerEmpleadosPaisesCbo()
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.Value,
+                        Text = p.Text
+                    })
+                    .ToList();
+
+            // Si el usuario escribió un país nuevo,
+            // agregarlo para conservarlo en el combo.
+            if (!string.IsNullOrEmpty(model.Empleado?.Country)
+                && !model.Paises.Any(
+                    p => p.Value == model.Empleado.Country))
+            {
+                model.Paises.Add(new SelectListItem
+                {
+                    Value = model.Empleado.Country,
+                    Text = model.Empleado.Country
+                });
+            }
+
+            model.ReportaA =
+                _empleadoBLL.ObtenerEmpleadoEmpleadosCbo()
+                    .Select(e => new SelectListItem
+                    {
+                        Value = e.Value,
+                        Text = e.Text
+                    })
+                    .ToList();
+
+            // Forzar N/A si no tiene jefe
+            if (model.Empleado?.ReportsTo == null)
+            {
+                model.Empleado.ReportsTo = -1;
+            }
         }
     }
 }

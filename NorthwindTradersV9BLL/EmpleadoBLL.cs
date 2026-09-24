@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
+using NorthwindTradersV9Common;
 using NorthwindTradersV9DAL;
+using NorthwindTradersV9DAL.Helpers;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
-using NorthwindTradersV9WebMVC.Common;
 
 namespace NorthwindTradersV9BLL
 {
@@ -11,11 +12,12 @@ namespace NorthwindTradersV9BLL
         private readonly IEmpleadoDAL _empleadoDAL;
 
         private readonly AppSettings _appSettings;
-
-        public EmpleadoBLL(IEmpleadoDAL empleadoDAL, IOptions<AppSettings> appSettings)
+        private readonly ComboDataHelper _comboDataHelper;
+        public EmpleadoBLL(IEmpleadoDAL empleadoDAL, IOptions<AppSettings> appSettings, ComboDataHelper comboDataHelper)
         {
             _empleadoDAL = empleadoDAL;
             _appSettings = appSettings.Value;
+            _comboDataHelper = comboDataHelper;
         }
         public List<Empleado> ObtenerTodosEmpleados()
         {
@@ -100,5 +102,39 @@ namespace NorthwindTradersV9BLL
 
             return resultado;
         }
+        public ResultadoOperacion Actualizar(Empleado empleado)
+        {
+            var resultado = new ResultadoOperacion();
+            // N/A (-1) significa que no tiene jefe.
+            // En la base de datos debe almacenarse como NULL.
+            if (empleado?.ReportsTo == -1)
+            {
+                empleado.ReportsTo = null;
+            }
+
+            int numRegs = _empleadoDAL.Actualizar(empleado);
+
+            resultado.Codigo = numRegs;
+            if (numRegs > 0)
+                resultado.Exito = true;
+            else if (numRegs == -1)
+                resultado.Mensaje = StringsCommons.Nfmfe;
+            else if (numRegs == -2)
+                resultado.Mensaje = StringsCommons.Nfmfm;
+            else
+                resultado.Mensaje = StringsCommons.Nfmmd;
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return resultado;
+        }
+        public List<ComboItemDto> ObtenerEmpleadosPaisesCbo()
+        {
+            return _comboDataHelper.LlenarCbo("SpEmpleadoObtenerPaisesCbo");
+        }
+        public List<ComboItemDto> ObtenerEmpleadoEmpleadosCbo()
+        {
+            return _comboDataHelper.LlenarCbo("SpEmpleadoObtenerEmpleadosCbo");
+        }
+
     }
 }

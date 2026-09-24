@@ -1,4 +1,4 @@
-﻿namespace NorthwindTradersV9WebMVC.Common
+﻿namespace NorthwindTradersV9Common
 {
     public class ResultadoOperacion
     {

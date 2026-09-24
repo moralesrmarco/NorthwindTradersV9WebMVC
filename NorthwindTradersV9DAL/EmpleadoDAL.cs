@@ -269,5 +269,46 @@ namespace NorthwindTradersV9DAL
             }
             return numRegs;
         }
+        public int Actualizar(Empleado empleado)
+        {
+            int numRegs = 0;
+            try
+            {
+                using (SqlConnection cn = _connectionFactory.CreateConnection())
+                {
+                    cn.Open();
+                    using (SqlCommand cmd = new SqlCommand("SpEmpleadoActualizar", cn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@Id", SqlDbType.Int).Value = empleado.EmployeeID;
+                        cmd.Parameters.Add("@Nombres", SqlDbType.NVarChar, 10).Value = empleado.FirstName ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@Apellidos", SqlDbType.NVarChar, 20).Value = empleado.LastName ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@Titulo", SqlDbType.NVarChar, 30).Value = empleado.Title ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@TitCortesia", SqlDbType.NVarChar, 25).Value = empleado.TitleOfCourtesy ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@FNacimiento", SqlDbType.DateTime).Value = empleado.BirthDate ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@FContratacion", SqlDbType.DateTime).Value = empleado.HireDate ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@Domicilio", SqlDbType.NVarChar, 60).Value = empleado.Address ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@Ciudad", SqlDbType.NVarChar, 15).Value = empleado.City ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@Region", SqlDbType.NVarChar, 15).Value = empleado.Region ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@CodigoP", SqlDbType.NVarChar, 10).Value = empleado.PostalCode ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@Pais", SqlDbType.NVarChar, 15).Value = empleado.Country ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@Telefono", SqlDbType.NVarChar, 24).Value = empleado.HomePhone ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@Extension", SqlDbType.NVarChar, 4).Value = empleado.Extension ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@Notas", SqlDbType.NVarChar).Value = empleado.Notes ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@Reportaa", SqlDbType.Int).Value = empleado.ReportsTo ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("Foto", SqlDbType.Image).Value = empleado.Photo ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@RowVersion", SqlDbType.Binary, 8).Value = empleado.RowVersion ?? (object)DBNull.Value;
+                        cmd.Parameters.Add("@ReturnVal", SqlDbType.Int).Direction = ParameterDirection.ReturnValue;
+                        cmd.ExecuteNonQuery();
+                        numRegs = Convert.ToInt32(cmd.Parameters["@ReturnVal"].Value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al actualizar empleado: " + ex.Message);
+            }
+            return numRegs;
+        }
     }
 }
