@@ -103,7 +103,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
 
             if (empleado == null)
             {
-                TempData["Error"] = "No se encontró el empleado solicitado.";
+                TempData["Error"] = "<p>Empleado no encontrado.</p>" + StringsCommons.Nefep;
             }
 
             var model = new EmpleadoConsultarViewModel
