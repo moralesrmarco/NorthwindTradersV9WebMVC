@@ -3,7 +3,7 @@
     public class EmpleadoPaginadoDto
     {
         public int TotalRegistros { get; set; }
-
+        public int PageIndex { get; set; }
         public List<Empleado> Empleados { get; set; } = new();
     }
 }

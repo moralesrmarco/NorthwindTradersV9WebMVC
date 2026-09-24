@@ -160,8 +160,10 @@ namespace NorthwindTradersV9DAL
                             {
                                 resultado.TotalRegistros =
                                     Convert.ToInt32(reader["TotalRegistros"]);
-                            }
 
+                                resultado.PageIndex =
+                                    Convert.ToInt32(reader["PageIndex"]);
+                            }
                             if (reader.NextResult())
                             {
                                 while (reader.Read())

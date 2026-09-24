@@ -68,7 +68,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
 
                 Paginacion = new PaginacionViewModel
                 {
-                    PageIndex = pageIndex,
+                    PageIndex = resultado.PageIndex,
                     PageSize = pageSize,
                     TotalRegistros = resultado.TotalRegistros
                 },
