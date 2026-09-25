@@ -1,0 +1,330 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Empleados.EmpleadoInsertarViewModel
+
+@{
+ViewData["Title"] = "Insertar empleado";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-controller="Empleados"
+      asp-action="Insertar"
+      method="post"
+      class="form"
+      enctype="multipart/form-data"
+      onsubmit="return disableSaveButton();">
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @Html.Raw(TempData["Error"])
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-12 mb-3 d-flex align-items-end">
+
+        <!-- Imagen por defecto o previa -->
+        <img id="previewFoto"
+             src="@(!string.IsNullOrEmpty(Model.FotoTemporalBase64)
+                 ? $"data:{Model.FotoMime};base64,{Model.FotoTemporalBase64}"
+                 : Url.Content("~/images/FotoPerfil.png"))"
+             alt="Foto del empleado"
+             class="img-thumbnail"
+             style="max-width:150px; max-height:150px;" />
+
+        <!-- Campo para seleccionar archivo -->
+        <input type="file"
+               asp-for="Foto"
+               id="fileFoto"
+               class="d-none"
+               accept="image/*" />
+
+        <!-- Botón que dispara el input file -->
+        <button type="button"
+                class="btn btn-primary ms-2"
+                style="padding:2px 6px; font-size:0.7rem;"
+                onclick="document.getElementById('fileFoto').click();">
+
+            <i class="bi bi-camera"></i>
+            Cargar imagen...
+        </button>
+
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="Empleado.FirstName" class="form-label">
+            Nombres
+        </label>
+
+        <input asp-for="Empleado.FirstName"
+               class="form-control" />
+
+        <span asp-validation-for="Empleado.FirstName"
+              class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="Empleado.LastName" class="form-label">
+            Apellidos
+        </label>
+
+        <input asp-for="Empleado.LastName"
+               class="form-control" />
+
+        <span asp-validation-for="Empleado.LastName"
+              class="text-danger"></span>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-4 mb-3">
+        <label asp-for="Empleado.Title" class="form-label">
+            Título
+        </label>
+
+        <input asp-for="Empleado.Title"
+               class="form-control" />
+
+        <span asp-validation-for="Empleado.Title"
+              class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <label asp-for="Empleado.TitleOfCourtesy" class="form-label">
+            Título de cortesía
+        </label>
+
+        <input asp-for="Empleado.TitleOfCourtesy"
+               class="form-control" />
+
+        <span asp-validation-for="Empleado.TitleOfCourtesy"
+              class="text-danger"></span>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-12 mb-3">
+        <label asp-for="Empleado.Address" class="form-label">
+            Dirección
+        </label>
+
+        <input asp-for="Empleado.Address"
+               class="form-control" />
+
+        <span asp-validation-for="Empleado.Address"
+              class="text-danger"></span>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-4 mb-3">
+        <label asp-for="Empleado.City" class="form-label">
+            Ciudad
+        </label>
+
+        <input asp-for="Empleado.City"
+               class="form-control" />
+
+        <span asp-validation-for="Empleado.City"
+              class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <label asp-for="Empleado.Region" class="form-label">
+            Región
+        </label>
+
+        <input asp-for="Empleado.Region"
+               class="form-control" />
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <label asp-for="Empleado.PostalCode" class="form-label">
+            Código postal
+        </label>
+
+        <input asp-for="Empleado.PostalCode"
+               class="form-control" />
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-4 mb-3">
+
+        <label asp-for="Empleado.Country" class="form-label">
+            País
+        </label>
+
+        <select id="cboPais"
+                asp-for="Empleado.Country"
+                asp-items="Model.Paises"
+                class="form-select">
+        </select>
+
+        <span asp-validation-for="Empleado.Country"
+              class="text-danger"></span>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <label asp-for="Empleado.HomePhone" class="form-label">
+            Teléfono
+        </label>
+
+        <input asp-for="Empleado.HomePhone"
+               class="form-control" />
+
+        <span asp-validation-for="Empleado.HomePhone"
+              class="text-danger"></span>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <label asp-for="Empleado.Extension" class="form-label">
+            Extensión
+        </label>
+
+        <input asp-for="Empleado.Extension"
+               class="form-control" />
+
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-4 mb-3">
+
+        <label asp-for="Empleado.BirthDate" class="form-label">
+            Fecha de nacimiento
+        </label>
+
+        <input asp-for="Empleado.BirthDate"
+               class="form-control"
+               type="date" />
+
+        <span asp-validation-for="Empleado.BirthDate"
+              class="text-danger"></span>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <label asp-for="Empleado.HireDate" class="form-label">
+            Fecha de contratación
+        </label>
+
+        <input asp-for="Empleado.HireDate"
+               class="form-control"
+               type="date" />
+
+        <span asp-validation-for="Empleado.HireDate"
+              class="text-danger"></span>
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <label asp-for="Empleado.ReportsTo" class="form-label">
+            Reporta a
+        </label>
+
+        <select asp-for="Empleado.ReportsTo"
+                class="form-select"
+                asp-items="Model.ReportaA">
+        </select>
+
+        <span asp-validation-for="Empleado.ReportsTo"
+              class="text-danger"></span>
+
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-12 mb-3">
+
+        <label asp-for="Empleado.Notes" class="form-label">
+            Notas
+        </label>
+
+        <textarea asp-for="Empleado.Notes"
+                  class="form-control"
+                  rows="5"
+                  style="resize:none; overflow-y:auto; max-height:200px;"></textarea>
+
+    </div>
+
+</div>
+
+<input type="hidden"
+       asp-for="FotoTemporalBase64" />
+
+<input type="hidden"
+       asp-for="FotoMime" />
+
+<input type="hidden"
+       asp-for="ReturnUrl" />
+
+<button id="btnGuardar"
+        type="submit"
+        class="btn btn-sm btn-success me-1"
+        title="Guardar"
+        disabled="@Model.BloquearEdicion">
+
+    <i class="bi bi-save"></i>
+    <span class="d-none d-md-inline"> Guardar</span>
+
+</button>
+
+<a href="@(Model.ReturnUrl ?? Url.Action("Index", "Empleados"))"
+   class="btn btn-sm btn-cancelar me-1"
+   title="Cancelar">
+
+    <i class="bi bi-x-circle"></i>
+    <span class="d-none d-md-inline"> Cancelar</span>
+
+</a>
+
+</form>
+
+@section Scripts {
+
+<script src="~/js/form-submit.js"></script>
+<script src="~/js/manejo-foto.js"></script>
+
+<script>
+
+    $(function () {
+
+        configurarPais('Empleado.Country');
+
+        configurarSubmitFormulario('Empleado.Country');
+
+        configurarPreviewImagen(
+            'fileFoto',
+            'previewFoto',
+            'FotoTemporalBase64',
+            'FotoMime',
+            2
+        );
+
+    });
+
+</script>
+
+}

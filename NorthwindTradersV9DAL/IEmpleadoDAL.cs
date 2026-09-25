@@ -24,5 +24,6 @@ namespace NorthwindTradersV9DAL
         Empleado ObtenerEmpleadoPorId(int id);
         int Eliminar(Empleado empleado);
         int Actualizar(Empleado empleado);
+        int Insertar(Empleado empleado);
     }
 }

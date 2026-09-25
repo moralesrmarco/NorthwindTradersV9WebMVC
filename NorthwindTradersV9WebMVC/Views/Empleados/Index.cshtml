@@ -193,7 +193,11 @@
 
 <br />
 
-<a asp-controller="Empleados" asp-action="Insertar" class="btn btn-sm btn-primary mb-3" title="Nuevo empleado">
+<a asp-controller="Empleados" 
+    asp-action="Insertar" 
+    asp-route-returnUrl="@returnUrl"
+    class="btn btn-sm btn-primary mb-3 action-btn" 
+    title="Nuevo empleado">
     <i class="bi bi-plus-circle"></i> 
     <span class="d-none d-md-inline"> Nuevo empleado</span>
 </a>

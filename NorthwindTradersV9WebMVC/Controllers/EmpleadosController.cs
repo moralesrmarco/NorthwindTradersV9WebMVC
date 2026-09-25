@@ -352,5 +352,149 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 model.Empleado.ReportsTo = -1;
             }
         }
+        private void CargarCombos(EmpleadoInsertarViewModel model)
+        {
+            model.Paises =
+            _empleadoBLL.ObtenerEmpleadosPaisesCbo()
+            .Select(p => new SelectListItem
+            {
+                Value = p.Value,
+                Text = p.Text
+            })
+            .ToList();
+        // Si el usuario escribió un país nuevo,
+        // agregarlo para conservarlo en el combo.
+        if (!string.IsNullOrEmpty(model.Empleado?.Country)
+            && !model.Paises.Any(
+                p => p.Value == model.Empleado.Country))
+            {
+                model.Paises.Add(new SelectListItem
+                {
+                    Value = model.Empleado.Country,
+                    Text = model.Empleado.Country
+                });
+            }
+
+            model.ReportaA =
+                _empleadoBLL.ObtenerEmpleadoEmpleadosCbo()
+                    .Select(e => new SelectListItem
+                    {
+                        Value = e.Value,
+                        Text = e.Text
+                    })
+                    .ToList();
+        }
+        [HttpGet]
+        public IActionResult Insertar(string? returnUrl = null)
+        {
+            var model = new EmpleadoInsertarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+
+            CargarCombos(model);
+
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Insertar(EmpleadoInsertarViewModel model)
+        {
+            byte[]? fotoBytes = null;
+
+            // Guardar la imagen temporal primero
+            if (model.Foto != null && model.Foto.Length > 0)
+            {
+                using var ms = new MemoryStream();
+
+                model.Foto.CopyTo(ms);
+
+                fotoBytes = ms.ToArray();
+
+                model.FotoTemporalBase64 = Convert.ToBase64String(fotoBytes);
+                model.FotoMime = model.Foto.ContentType;
+            }
+
+            // Validación adicional en el servidor
+            if (string.IsNullOrWhiteSpace(model.Empleado?.Country))
+            {
+                ModelState.AddModelError(
+                    "Empleado.Country",
+                    "Seleccione o escriba un país");
+            }
+
+            // Si hay errores, recargar combos y regresar a la vista
+            if (!ModelState.IsValid)
+            {
+                CargarCombos(model);
+                return View(model);
+            }
+
+            try
+            {
+                if (model.Empleado != null)
+                {
+                    // Foto seleccionada en esta petición
+                    if (fotoBytes != null)
+                    {
+                        model.Empleado.Photo = fotoBytes;
+                    }
+                    // Reutilizar foto temporal
+                    else if (!string.IsNullOrEmpty(model.FotoTemporalBase64))
+                    {
+                        model.Empleado.Photo =
+                            Convert.FromBase64String(model.FotoTemporalBase64);
+                    }
+                    // Foto por defecto
+                    else
+                    {
+                        var defaultImagePath = Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "wwwroot",
+                            "images",
+                            "FotoPerfil.png");
+
+                        if (System.IO.File.Exists(defaultImagePath))
+                        {
+                            model.Empleado.Photo =
+                                System.IO.File.ReadAllBytes(defaultImagePath);
+                        }
+                    }
+
+                    var resultado = _empleadoBLL.Insertar(model.Empleado);
+
+                    if (resultado.Exito)
+                    {
+                        if (!string.IsNullOrEmpty(model.ReturnUrl))
+                        {
+                            return LocalRedirect(model.ReturnUrl);
+                        }
+
+                        return RedirectToAction("Index", "Empleados");
+                    }
+
+                    TempData["Error"] =
+                        $"<p>El empleado <strong>{model.Empleado.FirstName} {model.Empleado.LastName}</strong>:</p>" +
+                        $"{resultado.Mensaje}";
+
+                    if (resultado.Codigo < 0)
+                    {
+                        model.BloquearEdicion = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    $"<p>Error al insertar el empleado " +
+                    $"<strong>{model.Empleado?.FirstName} {model.Empleado?.LastName}</strong>.</p>" +
+                    $"<p>Detalles: {ex.Message}</p>";
+            }
+
+            // Recargar combos antes de regresar a la vista
+            CargarCombos(model);
+
+            return View(model);
+        }
     }
 }

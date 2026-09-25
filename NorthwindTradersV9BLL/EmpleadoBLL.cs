@@ -135,6 +135,24 @@ namespace NorthwindTradersV9BLL
         {
             return _comboDataHelper.LlenarCbo("SpEmpleadoObtenerEmpleadosCbo");
         }
-
+        public ResultadoOperacion Insertar(Empleado empleado)
+        {
+            var resultado = new ResultadoOperacion();
+            // N/A (-1) significa que no tiene jefe.
+            // En la base de datos debe almacenarse como NULL.
+            if (empleado?.ReportsTo == -1)
+            {
+                empleado.ReportsTo = null;
+            }
+            int numRegs = _empleadoDAL.Insertar(empleado);
+            resultado.Codigo = numRegs;
+            if (numRegs > 0)
+                resultado.Exito = true;
+            else
+                resultado.Mensaje = StringsCommons.Nfrs;
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return resultado;
+        }
     }
 }
