@@ -154,5 +154,18 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return resultado;
         }
+        public EmpleadoRptDto? ObtenerEmpleadoPorIdRptDto(int id)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _empleadoDAL.ObtenerEmpleadoPorIdRptDto(id);
+        }
+        public List<Empleado> ObtenerTodosLosEmpleados()
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _empleadoDAL.ObtenerTodosLosEmpleados();
+        }
+
     }
 }

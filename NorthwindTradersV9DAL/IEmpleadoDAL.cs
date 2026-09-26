@@ -25,5 +25,7 @@ namespace NorthwindTradersV9DAL
         int Eliminar(Empleado empleado);
         int Actualizar(Empleado empleado);
         int Insertar(Empleado empleado);
+        EmpleadoRptDto? ObtenerEmpleadoPorIdRptDto(int id);
+        List<Empleado> ObtenerTodosLosEmpleados();
     }
 }

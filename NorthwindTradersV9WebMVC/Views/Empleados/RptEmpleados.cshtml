@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Reporte de empleados";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="mb-3">
+
+    <a asp-controller="Empleados"
+       asp-action="RptEmpleadosExcel"
+       class="btn btn-success">
+        Excel
+    </a>
+
+    <a asp-controller="Empleados"
+       asp-action="RptEmpleadosWord"
+       class="btn btn-primary">
+        Word
+    </a>
+
+</div>
+
+<iframe src="@Url.Action("RptEmpleadosPdf", "Empleados")"
+        width="100%"
+        height="700"
+        style="border:1px solid #ccc;">
+</iframe>

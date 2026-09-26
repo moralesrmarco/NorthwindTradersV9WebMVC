@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
+using Microsoft.Reporting.NETCore;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
+using NorthwindTradersV9Entities.DTOs;
 using NorthwindTradersV9WebMVC.Models.Common;
 using NorthwindTradersV9WebMVC.Models.Empleados;
 
@@ -495,6 +497,256 @@ namespace NorthwindTradersV9WebMVC.Controllers
             CargarCombos(model);
 
             return View(model);
+        }
+        public IActionResult RptEmpleado(int id)
+        {
+            var empleado = _empleadoBLL.ObtenerEmpleadoPorIdRptDto(id);
+            if (empleado == null)
+            {
+                return NotFound();
+            }
+            string reportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Empleados",
+                "RptEmpleado.rdlc");
+            var localReport = new LocalReport();
+            localReport.ReportPath = reportPath;
+
+            localReport.DataSources.Add(
+                new ReportDataSource("DataSet1", 
+                new List<EmpleadoRptDto> { empleado }));
+
+            string mimeType;
+            string encoding;
+            string fileNameExtension;
+            string[] streams;
+            Warning[] warnings;
+
+            byte[] pdfBytes = localReport.Render(
+                "PDF",
+                null,
+                out mimeType,
+                out encoding,
+                out fileNameExtension,
+                out streams,
+                out warnings);
+
+            return new FileStreamResult(
+                new MemoryStream(pdfBytes),
+                "application/pdf");
+        }
+        public IActionResult RptEmpleados()
+        {
+            return View();
+        }
+        public IActionResult RptEmpleadosPdf()
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Empleados",
+                "RptEmpleados.rdlc");
+            var empleados = _empleadoBLL.ObtenerTodosLosEmpleados();
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(
+                new ReportDataSource("DataSet1", empleados));
+            string mimeType;
+            string encoding;
+            string extension;
+            string[] streams;
+            Warning[] warnings;
+            byte[] pdfBytes = reporte.Render(
+                "PDF",
+                null,
+                out mimeType,
+                out encoding,
+                out extension,
+                out streams,
+                out warnings);
+            return new FileStreamResult(
+                new MemoryStream(pdfBytes),
+                "application/pdf");
+        }
+        public IActionResult RptEmpleadosExcel()
+        {
+            return GenerarReporteEmpleados(
+                "EXCELOPENXML",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Empleados.xlsx");
+        }
+
+        public IActionResult RptEmpleadosWord()
+        {
+            return GenerarReporteEmpleados(
+                "WORDOPENXML",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "Empleados.docx");
+        }
+        private FileContentResult GenerarReporteEmpleados(
+            string formato,
+            string contentType,
+            string nombreArchivo)
+        {
+            LocalReport reporte = new();
+
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Empleados",
+                "RptEmpleados.rdlc");
+
+            var empleados = _empleadoBLL.ObtenerTodosLosEmpleados();
+
+            reporte.DataSources.Clear();
+
+            reporte.DataSources.Add(
+                new ReportDataSource(
+                    "DataSet1",
+                    empleados));
+
+            byte[] bytes = reporte.Render(formato);
+
+            return File(bytes, contentType, nombreArchivo);
+        }
+        public IActionResult RptEmpleadosConFoto()
+        {
+            return View();
+        }
+        public IActionResult RptEmpleadosConFotoPdf()
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Empleados",
+                "RptEmpleadosConFoto.rdlc");
+            var empleados = _empleadoBLL.ObtenerTodosLosEmpleados();
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(
+                new ReportDataSource(
+                    "DataSet1",
+                    empleados));
+            string mimeType;
+            string encoding;
+            string extension;
+            string[] streams;
+            Warning[] warnings;
+            byte[] pdfBytes = reporte.Render(
+                "PDF",
+                null,
+                out mimeType,
+                out encoding,
+                out extension,
+                out streams,
+                out warnings);
+            return new FileStreamResult(
+                new MemoryStream(pdfBytes),
+                "application/pdf");
+        }
+        public IActionResult RptEmpleadosConFotoExcel()
+        {
+            return GenerarReporteEmpleadosConFoto(
+                "EXCELOPENXML",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "EmpleadosConFoto.xlsx");
+        }
+        public IActionResult RptEmpleadosConFotoWord()
+        {
+            return GenerarReporteEmpleadosConFoto(
+                "WORDOPENXML",
+                "application/vnd.openxmlformats-officedocument.wordprocssingml.document",
+                "EmpleadosConFoto.docx");
+        }
+        private FileContentResult GenerarReporteEmpleadosConFoto(
+            string formato,
+            string contentType,
+            string nombreArchivo)
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Empleados",
+                "RptEmpleadosConFoto.rdlc");
+            var empleados = _empleadoBLL.ObtenerTodosLosEmpleados();
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(
+                new ReportDataSource(
+                    "DataSet1",
+                    empleados));
+            byte[] bytes = reporte.Render(formato);
+            return File(bytes, contentType, nombreArchivo);
+        }
+        public IActionResult RptEmpleadosConFoto2()
+        {
+            return View();
+        }
+        public IActionResult RptEmpleadosConFoto2Pdf()
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Empleados",
+                "RptEmpleado.rdlc");
+            var empleados = _empleadoBLL.ObtenerTodosLosEmpleados();
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(
+                new ReportDataSource(
+                    "DataSet1",
+                    empleados));
+            string mimeType;
+            string encoding;
+            string extension;
+            string[] streams;
+            Warning[] warnings;
+            byte[] pdfBytes = reporte.Render(
+                "PDF",
+                null,
+                out mimeType,
+                out encoding,
+                out extension,
+                out streams,
+                out warnings);
+            return new FileStreamResult(
+                new MemoryStream(pdfBytes),
+                "application/pdf");
+        }
+        public IActionResult RptEmpleadosConFoto2Excel()
+        {
+            return GenerarReporteEmpleadosConFoto2(
+                "EXCELOPENXML",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Empleados.xlsx");
+        }
+        public IActionResult RptEmpleadosConFoto2Word()
+        {
+            return GenerarReporteEmpleadosConFoto2(
+                "WORDOPENXML",
+                "application/vnd.openxmlformats-officedocument.wordprocssingml.document",
+                "Empleados.docx");
+        }
+        private FileContentResult GenerarReporteEmpleadosConFoto2(
+            string formato,
+            string contentType,
+            string nombreArchivo)
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Empleados",
+                "RptEmpleado.rdlc");
+            var empleados = _empleadoBLL.ObtenerTodosLosEmpleados();
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(
+                new ReportDataSource(
+                    "DataSet1",
+                    empleados));
+            byte[] bytes = reporte.Render(formato);
+            return File(bytes, contentType, nombreArchivo);
         }
     }
 }

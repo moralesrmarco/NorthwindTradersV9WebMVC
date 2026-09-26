@@ -12,4 +12,15 @@
     <ProjectReference Include="..\NorthwindTradersV9Entities\NorthwindTradersV9Entities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Reportes\**\*.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.33" />
+  </ItemGroup>
+  
 </Project>

@@ -350,5 +350,101 @@ namespace NorthwindTradersV9DAL
             }
             return numRegs;
         }
+        public EmpleadoRptDto? ObtenerEmpleadoPorIdRptDto(int id)
+        {
+            EmpleadoRptDto? empleado = null;
+            try
+            {
+                using (SqlConnection cn = _connectionFactory.CreateConnection())
+                {
+                    cn.Open();
+                    using (SqlCommand cmd = new SqlCommand("SpEmpleadoObtenerPorIdRpt", cn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@Id", id);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                empleado = new EmpleadoRptDto
+                                {
+                                    EmployeeID = Convert.ToInt32(reader["EmployeeID"]),
+                                    FirstName = reader["FirstName"].ToString(),
+                                    LastName = reader["LastName"].ToString(),
+                                    Title = reader["Title"].ToString(),
+                                    TitleOfCourtesy = reader["TitleOfCourtesy"].ToString(),
+                                    BirthDate = reader["BirthDate"] as DateTime?,
+                                    HireDate = reader["HireDate"] as DateTime?,
+                                    Address = reader["Address"].ToString(),
+                                    City = reader["City"].ToString(),
+                                    Region = reader["Region"].ToString(),
+                                    PostalCode = reader["PostalCode"].ToString(),
+                                    Country = reader["Country"].ToString(),
+                                    HomePhone = reader["HomePhone"].ToString(),
+                                    Extension = reader["Extension"].ToString(),
+                                    Notes = reader["Notes"].ToString(),
+                                    ReportsTo = reader["ReportsTo"] as int?,
+                                    ReportsToName = reader["ReportsToName"].ToString(),
+                                    Photo = reader["Photo"] as byte[]
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener empleado por ID RptDto: " + ex.Message);
+            }
+            return empleado;
+        }
+        public List<Empleado> ObtenerTodosLosEmpleados()
+        {
+            List<Empleado> empleados = new();
+            try
+            {
+                using (SqlConnection cn = _connectionFactory.CreateConnection())
+                {
+                    cn.Open();
+                    using (SqlCommand cmd = new SqlCommand("SpEmpleadoObtenerTodos", cn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                empleados.Add(new Empleado
+                                {
+                                    EmployeeID = Convert.ToInt32(reader["EmployeeID"]),
+                                    RowVersion = reader["RowVersion"] as byte[],
+                                    FirstName = reader["FirstName"].ToString(),
+                                    LastName = reader["LastName"].ToString(),
+                                    Title = reader["Title"].ToString(),
+                                    TitleOfCourtesy = reader["TitleOfCourtesy"].ToString(),
+                                    BirthDate = reader["BirthDate"] as DateTime?,
+                                    HireDate = reader["HireDate"] as DateTime?,
+                                    Address = reader["Address"].ToString(),
+                                    City = reader["City"].ToString(),
+                                    Region = reader["Region"].ToString(),
+                                    PostalCode = reader["PostalCode"].ToString(),
+                                    Country = reader["Country"].ToString(),
+                                    HomePhone = reader["HomePhone"].ToString(),
+                                    Extension = reader["Extension"].ToString(),
+                                    Notes = reader["Notes"].ToString(),
+                                    ReportsTo = reader["ReportsTo"] as int?,
+                                    ReportsToName = reader["ReportsToName"].ToString(),
+                                    Photo = reader["Photo"] as byte[]
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener todos los empleados: " + ex.Message);
+            }
+            return empleados;
+        }
     }
 }
