@@ -1,0 +1,191 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Account.LoginViewModel
+
+@{
+    ViewData["Title"] = "Iniciar sesión";
+    Layout = "_LoginLayout";
+}
+
+@section Styles
+{
+    <link rel="stylesheet"
+          href="~/css/login.css"
+          asp-append-version="true" />
+}
+
+<div class="login-page">
+
+    <div class="login-card">
+
+        <!-- LOGO -->
+        <div class="login-header">
+
+            <div class="login-logo">
+
+                <img src="~/images/LogoNorthwind.png"
+                     alt="Logo Northwind Traders"
+                     class="img-fluid" />
+
+            </div>
+
+            <h1>Northwind Traders</h1>
+
+            <p>
+                Inicia sesión para acceder al sistema
+            </p>
+
+        </div>
+
+
+        <form asp-controller="Account"
+              asp-action="Login"
+              method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3">
+            </div>
+
+
+            <!-- USUARIO -->
+            <div class="mb-3">
+
+                <label asp-for="Usuario"
+                       class="form-label">
+                    Usuario
+                </label>
+
+                <div class="input-group">
+
+                    <span class="input-group-text">
+                        <i class="bi bi-person"></i>
+                    </span>
+
+                    <input asp-for="Usuario"
+                           class="form-control"
+                           placeholder="Ingresa tu usuario"
+                           autocomplete="username" />
+
+                </div>
+
+                <span asp-validation-for="Usuario"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <!-- CONTRASEÑA -->
+            <div class="mb-3">
+
+                <label asp-for="Password"
+                       class="form-label">
+                    Contraseña
+                </label>
+
+                <div class="input-group">
+
+                    <span class="input-group-text">
+                        <i class="bi bi-lock"></i>
+                    </span>
+
+                    <input asp-for="Password"
+                           id="Password"
+                           type="password"
+                           class="form-control"
+                           placeholder="Ingresa tu contraseña"
+                           autocomplete="current-password" />
+
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            id="btnMostrarPassword">
+
+                        <i class="bi bi-eye-slash"
+                           id="iconPassword">
+                        </i>
+
+                    </button>
+
+                </div>
+
+                <span asp-validation-for="Password"
+                      class="text-danger">
+                </span>
+
+            </div>
+
+
+            <!-- RECORDAR / RECUPERAR -->
+            <div class="login-options">
+
+                <div class="form-check">
+
+                    <input asp-for="Recordarme"
+                           class="form-check-input" />
+
+                    <label asp-for="Recordarme"
+                           class="form-check-label">
+                        Recordarme
+                    </label>
+
+                </div>
+
+                <a href="#">
+                    ¿Olvidaste tu contraseña?
+                </a>
+
+            </div>
+
+
+            <!-- BOTÓN -->
+            <button type="submit"
+                    class="btn btn-primary w-100 login-button">
+
+                <i class="bi bi-box-arrow-in-right"></i>
+
+                Iniciar sesión
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const password = document.getElementById("Password");
+            const boton = document.getElementById("btnMostrarPassword");
+            const icono = document.getElementById("iconPassword");
+
+            boton.addEventListener("click", function () {
+
+                if (password.type === "password") {
+
+                    password.type = "text";
+
+                    icono.classList.remove("bi-eye-slash");
+                    icono.classList.add("bi-eye");
+
+                }
+                else {
+
+                    password.type = "password";
+
+                    icono.classList.remove("bi-eye");
+                    icono.classList.add("bi-eye-slash");
+
+                }
+
+            });
+
+        });
+
+    </script>
+}

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using Microsoft.Reporting.NETCore;
@@ -11,6 +12,7 @@ using NorthwindTradersV9WebMVC.Models.Empleados;
 
 namespace NorthwindTradersV9WebMVC.Controllers
 {
+    [Authorize(Policy = "PermisoEmpleados")]
     public class EmpleadosController : Controller
     {
         private readonly EmpleadoBLL _empleadoBLL;

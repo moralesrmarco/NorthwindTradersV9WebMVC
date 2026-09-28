@@ -7,6 +7,6 @@
     <img src="~/images/NorthwindTradersBienvenido.png" alt="Bienvenido a Northwind Traders" class="img-fluid" />
     <p class="mt-3 fs-5">
         <i class="bi bi-person-circle"></i>
-        Marco Antonio Morales Rodríguez (mmorales)
+        @User.Identity?.Name (@User.FindFirst("Usuario")?.Value)
     </p>
 </div>

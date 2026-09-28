@@ -24,27 +24,78 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <!-- Menú  empleados con submenús -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="empleadosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Empleados
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="empleadosDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="Index">Gestión de Empleados</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <!-- Submenú Reportes -->
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">
-                                        Reportes
+                        @if (User.HasClaim("Permiso", Permisos.Empleados.ToString()))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="empleadosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Empleados
                                     </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="RptEmpleados">Reporte de empleados</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="RptEmpleadosConFoto">Reporte de empleados con foto</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="RptEmpleadosConFoto2">Reporte de empleados con foto 2</a></li>
+                                    <ul class="dropdown-menu" aria-labelledby="empleadosDropdown">
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="Index">Gestión de Empleados</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <!-- Submenú Reportes -->
+                                        <li class="dropdown-submenu">
+                                            <a class="dropdown-item dropdown-toggle" href="#">
+                                                Reportes
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="RptEmpleados">Reporte de empleados</a></li>
+                                                <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="RptEmpleadosConFoto">Reporte de empleados con foto</a></li>
+                                                <li><a class="dropdown-item" asp-area="" asp-controller="Empleados" asp-action="RptEmpleadosConFoto2">Reporte de empleados con foto 2</a></li>
+                                            </ul>
+                                        </li>
                                     </ul>
                                 </li>
-                            </ul>
-                        </li>
-                    </ul>
+                            }
+                            else
+                            {
+                                <!-- Empleados sin permiso: visible pero deshabilitado -->
+                                <li class="nav-item">
+                                    <span class="nav-link text-dark menu-deshabilitado">
+                                        Empleados
+                                    </span>
+                                </li>
+                            }
+
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle"
+                                       href="#"
+                                       role="button"
+                                       data-bs-toggle="dropdown"
+                                       aria-expanded="false">
+
+                                        <i class="bi bi-person-circle"></i>
+                                        @User.FindFirst("Usuario")?.Value
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <button type="button"
+                                                    class="dropdown-item"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modalCambiarContrasena">
+                                                <i class="bi bi-key"></i>
+                                                Cambiar contraseña
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider" />
+                                        </li>
+                                        <li>
+                                            <form method="post" 
+                                                asp-controller="Account"
+                                                asp-action="Logout">
+                                                <button type="submit" class="dropdown-item">
+                                                    <i class="bi bi-box-arrow-right"></i>
+                                                    Cerrar sesión
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
                 </div>
             </div>
         </nav>
@@ -53,6 +104,179 @@
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- Modal Cambiar contraseña                                  -->
+    <!-- ========================================================= -->
+    <div class="modal fade"
+         id="modalCambiarContrasena"
+         tabindex="-1"
+         aria-labelledby="modalCambiarContrasenaLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <!-- Encabezado -->
+                <div class="modal-header">
+
+                    <h5 class="modal-title" id="modalCambiarContrasenaLabel">
+                        <i class="bi bi-key"></i>
+                        Cambiar contraseña
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Cerrar">
+                    </button>
+
+                </div>
+
+
+                <!-- Cuerpo -->
+                <div class="modal-body">
+
+                    @Html.AntiForgeryToken()
+
+                    <!-- Usuario -->
+                    <div class="mb-3">
+
+                        <label class="form-label fw-bold">
+                            Usuario
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               value="@User.FindFirst("Usuario")?.Value"
+                               readonly />
+
+                    </div>
+
+
+                    <!-- Contraseña actual -->
+                    <div class="mb-3">
+
+                        <label for="txtContrasenaActual"
+                               class="form-label fw-bold">
+                            Contraseña actual
+                        </label>
+
+                        <div class="input-group">
+
+                            <input type="password"
+                                   id="txtContrasenaActual"
+                                   class="form-control"
+                                   autocomplete="off"
+                                   value="" />
+
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    id="btnMostrarContrasenaActual"
+                                    title="Mostrar contraseña">
+
+                                <i class="bi bi-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Nueva contraseña -->
+                    <div class="mb-3">
+
+                        <label for="txtNuevaContrasena"
+                               class="form-label fw-bold">
+                            Nueva contraseña
+                        </label>
+
+                        <div class="input-group">
+
+                            <input type="password"
+                                   id="txtNuevaContrasena"
+                                   class="form-control"
+                                   autocomplete="new-password" />
+
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    id="btnMostrarNuevaContrasena"
+                                    title="Mostrar contraseña">
+
+                                <i class="bi bi-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Confirmar contraseña -->
+                    <div class="mb-3">
+
+                        <label for="txtConfirmarContrasena"
+                               class="form-label fw-bold">
+                            Confirmar contraseña
+                        </label>
+
+                        <div class="input-group">
+
+                            <input type="password"
+                                   id="txtConfirmarContrasena"
+                                   class="form-control"
+                                   autocomplete="new-password" />
+
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    id="btnMostrarConfirmarContrasena"
+                                    title="Mostrar contraseña">
+
+                                <i class="bi bi-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Área de mensajes -->
+                    <div id="mensajeCambiarContrasena"
+                         class="alert d-none"
+                         role="alert">
+                    </div>
+
+                </div>
+
+
+                <!-- Pie -->
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-primary"
+                            id="btnCambiarContrasena">
+
+                        <i class="bi bi-key"></i>
+                        Cambiar contraseña
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
     <footer class="border-top footer text-muted">

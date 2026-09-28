@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace NorthwindTradersV9WebMVC.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         public HomeController()
