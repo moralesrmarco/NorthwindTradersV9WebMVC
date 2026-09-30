@@ -7,7 +7,8 @@ namespace NorthwindTradersV9WebMVC.Models.Administracion
     {
         public List<Usuario> Usuarios { get; set; } = new();
         public Usuario? UsuarioSeleccionado { get; set; }
-        public AdministracionUsuarioEdicionViewModel UsuarioEdicion { get; set; } = new(); 
+        public AdministracionUsuarioEdicionViewModel UsuarioEdicion { get; set; } = new();
+        public AdministracionUsuarioEliminarViewModel UsuarioEliminar { get; set; } = new();
         public string Modo { get; set; } = "crear";
         public string? ConfirmarPassword { get; set; }
         // Filtros de búsqueda

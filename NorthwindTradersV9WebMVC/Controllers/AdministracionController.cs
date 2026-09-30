@@ -33,7 +33,8 @@ namespace NorthwindTradersV9WebMVC.Controllers
             string? Materno = null,
             string? Nombres = null,
             string? NombreUsuario = null,
-            int? idUsuario = null)
+            int? idUsuario = null,
+            string? modo = null)
         {
             int pageSize = _appSettings.RowsPerPage;
 
@@ -47,10 +48,12 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 pageIndex,
                 pageSize);
 
+
             Usuario? usuarioSeleccionado = null;
-            string modo = "crear";
+            modo ??= "crear";
 
             var usuarioEdicion = new AdministracionUsuarioEdicionViewModel();
+            var usuarioEliminar = new AdministracionUsuarioEliminarViewModel();
 
             if (idUsuario.HasValue)
             {
@@ -58,25 +61,43 @@ namespace NorthwindTradersV9WebMVC.Controllers
 
                 if (usuarioSeleccionado != null)
                 {
-                    modo = "editar";
-
-                    usuarioEdicion = new AdministracionUsuarioEdicionViewModel
+                    if (modo == "eliminar")
                     {
-                        Id = usuarioSeleccionado.Id,
-                        Paterno = usuarioSeleccionado.Paterno,
-                        Materno = usuarioSeleccionado.Materno,
-                        Nombres = usuarioSeleccionado.Nombres,
-                        NombreUsuario = usuarioSeleccionado.NombreUsuario,
-                        Estatus = usuarioSeleccionado.Estatus,
-                        RowVersion = usuarioSeleccionado.RowVersion
-                    };
+                        usuarioEliminar = new AdministracionUsuarioEliminarViewModel
+                        {
+                            Id = usuarioSeleccionado.Id,
+                            Paterno = usuarioSeleccionado.Paterno,
+                            Materno = usuarioSeleccionado.Materno,
+                            Nombres = usuarioSeleccionado.Nombres,
+                            NombreUsuario = usuarioSeleccionado.NombreUsuario,
+                            Estatus = usuarioSeleccionado.Estatus,
+                            RowVersion = usuarioSeleccionado.RowVersion
+                        };
+                    }
+                    else
+                    {
+                        modo = "editar";
+
+                        usuarioEdicion = new AdministracionUsuarioEdicionViewModel
+                        {
+                            Id = usuarioSeleccionado.Id,
+                            Paterno = usuarioSeleccionado.Paterno,
+                            Materno = usuarioSeleccionado.Materno,
+                            Nombres = usuarioSeleccionado.Nombres,
+                            NombreUsuario = usuarioSeleccionado.NombreUsuario,
+                            Estatus = usuarioSeleccionado.Estatus,
+                            RowVersion = usuarioSeleccionado.RowVersion
+                        };
+                    }
                 }
             }
+
             var modelo = new AdministracionUsuariosViewModel
             {
                 Usuarios = resultado.Usuarios,
                 UsuarioSeleccionado = usuarioSeleccionado,
                 UsuarioEdicion = usuarioEdicion,
+                UsuarioEliminar = usuarioEliminar,
                 Modo = modo,
 
                 IdIni = IdIni,
@@ -354,6 +375,99 @@ namespace NorthwindTradersV9WebMVC.Controllers
                         Nombres,
                         NombreUsuario,
                         idUsuario = usuarioEdicion.Id
+                    });
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EliminarUsuario(
+            AdministracionUsuarioEliminarViewModel usuarioEliminar,
+            int pageIndex = 1,
+            int? IdIni = null,
+            int? IdFin = null,
+            string? Paterno = null,
+            string? Materno = null,
+            string? Nombres = null,
+            string? NombreUsuario = null)
+        {
+            try
+            {
+                var usuario = new Usuario
+                {
+                    Id = usuarioEliminar.Id,
+                    RowVersion = usuarioEliminar.RowVersion
+                };
+
+                var registros = _usuarioBLL.Eliminar(usuario);
+
+                if (registros > 0)
+                {
+                    TempData["Exito"] = "El usuario se eliminó correctamente.";
+
+                    // Verificar cuál es la última página válida después de eliminar.
+                    var resultado = _usuarioBLL.BuscarConPaginacion(
+                        IdIni ?? 0,
+                        IdFin ?? 0,
+                        Paterno ?? string.Empty,
+                        Materno ?? string.Empty,
+                        Nombres ?? string.Empty,
+                        NombreUsuario ?? string.Empty,
+                        pageIndex,
+                        _appSettings.RowsPerPage);
+
+                    pageIndex = resultado.TotalRegistros == 0
+                        ? 1
+                        : Math.Min(
+                            pageIndex,
+                            (int)Math.Ceiling(
+                                (double)resultado.TotalRegistros / _appSettings.RowsPerPage));
+                }
+                else if (registros == -1)
+                {
+                    TempData["Error"] =
+                        "El usuario fue eliminado previamente por otro usuario de la red.";
+                }
+                else if (registros == -2)
+                {
+                    TempData["Error"] =
+                        "El usuario fue modificado previamente por otro usuario de la red.";
+                }
+                else
+                {
+                    TempData["Error"] =
+                        "No fue posible eliminar el usuario.";
+                }
+
+                return RedirectToAction(
+                    nameof(AdministracionUsuarios),
+                    new
+                    {
+                        pageIndex,
+                        IdIni,
+                        IdFin,
+                        Paterno,
+                        Materno,
+                        Nombres,
+                        NombreUsuario
+                    });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+
+                return RedirectToAction(
+                    nameof(AdministracionUsuarios),
+                    new
+                    {
+                        pageIndex,
+                        IdIni,
+                        IdFin,
+                        Paterno,
+                        Materno,
+                        Nombres,
+                        NombreUsuario,
+                        idUsuario = usuarioEliminar.Id,
+                        modo = "eliminar"
                     });
             }
         }

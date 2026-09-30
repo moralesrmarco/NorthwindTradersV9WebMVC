@@ -6,6 +6,17 @@
 
 <h2>@ViewData["Title"]</h2>
 
+@if (TempData["Exito"] is string exito)
+{
+    <div class="alert alert-success"><h4>@exito</h4></div>
+}
+
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger"><h4>@error</h4></div>
+}
+
+
 <!-- ========================================================= -->
 <!-- BÚSQUEDA DE USUARIOS                                     -->
 <!-- ========================================================= -->
@@ -142,7 +153,7 @@
 
     <table class="table table-bordered table-striped">
 
-        <thead>
+        <thead class="encabezado-tabla">
             <tr>
                 <th class="text-center">ID</th>
                 <th>Nombre</th>
@@ -197,6 +208,21 @@
                            title="Modificar">
                             <i class="bi bi-pencil"></i>
                         </a>
+                        <a asp-controller="Administracion"
+                            asp-action="AdministracionUsuarios"
+                            asp-route-idUsuario="@usuario.Id"
+                            asp-route-modo="eliminar"
+                            asp-route-pageIndex="@Model.Paginacion.PageIndex"
+                            asp-route-IdIni="@Model.IdIni"
+                            asp-route-IdFin="@Model.IdFin"
+                            asp-route-Paterno="@Model.Paterno"
+                            asp-route-Materno="@Model.Materno"
+                            asp-route-Nombres="@Model.Nombres"
+                            asp-route-NombreUsuario="@Model.NombreUsuario"
+                            class="btn btn-sm btn-outline-danger"
+                            title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </a>
                     </td>
                 </tr>
             }
@@ -228,247 +254,377 @@
 
     <div class="card">
 
-        <div class="card-header">
+        <div class="card-header encabezado-usuario">
             <h4>
-                @(Model.Modo == "crear"
-                    ? "Registrar usuario"
-                    : "Modificar usuario")
+                @(Model.Modo == "eliminar"
+                    ? "Eliminar usuario"
+                    : Model.Modo == "editar"
+                        ? "Modificar usuario"
+                        : "Registrar usuario")
             </h4>
         </div>
 
         <div class="card-body">
 
-            <form id="frmGuardarUsuario"
-                  asp-controller="Administracion"
-                  asp-action="GuardarUsuario"
-                  method="post">
+            @if (Model.Modo == "eliminar")
+            {
+                <form id="frmEliminarUsuario"
+                      asp-controller="Administracion"
+                      asp-action="EliminarUsuario"
+                      method="post">
 
-                <input asp-for="UsuarioEdicion.Id" type="hidden" />
-                <input asp-for="UsuarioEdicion.RowVersion" type="hidden" />
+                    <input asp-for="UsuarioEliminar.Id" type="hidden" />
+                    <input asp-for="UsuarioEliminar.RowVersion" type="hidden" />
 
-                <input type="hidden" name="modo" value="@Model.Modo" />
-                <input type="hidden" name="pageIndex" value="@Model.Paginacion.PageIndex" />
+                    <input type="hidden"
+                           name="pageIndex"
+                           value="@Model.Paginacion.PageIndex" />
 
-                <input type="hidden" name="IdIni" value="@Model.IdIni" />
-                <input type="hidden" name="IdFin" value="@Model.IdFin" />
-                <input type="hidden" name="Paterno" value="@Model.Paterno" />
-                <input type="hidden" name="Materno" value="@Model.Materno" />
-                <input type="hidden" name="Nombres" value="@Model.Nombres" />
-                <input type="hidden" name="NombreUsuario" value="@Model.NombreUsuario" />
+                    <input type="hidden"
+                           name="IdIni"
+                           value="@Model.IdIni" />
 
-                <div asp-validation-summary="ModelOnly"
-                    class="text-danger">
-                </div>
+                    <input type="hidden"
+                           name="IdFin"
+                           value="@Model.IdFin" />
 
-                @if (Model.Modo == "crear")
-                {
+                    <input type="hidden"
+                           name="Paterno"
+                           value="@Model.Paterno" />
+
+                    <input type="hidden"
+                           name="Materno"
+                           value="@Model.Materno" />
+
+                    <input type="hidden"
+                           name="Nombres"
+                           value="@Model.Nombres" />
+
+                    <input type="hidden"
+                           name="NombreUsuario"
+                           value="@Model.NombreUsuario" />
+
                     <div class="row g-2">
 
                         <div class="col-md-6">
-                            <label asp-for="UsuarioEdicion.Paterno" class="form-label">
+                            <label asp-for="UsuarioEliminar.Paterno"
+                                   class="form-label">
                                 Apellido paterno
                             </label>
-                            <input asp-for="UsuarioEdicion.Paterno"
-                                   class="form-control" />
-                            <span asp-validation-for="UsuarioEdicion.Paterno"
-                                  class="text-danger"></span>
+                            <input asp-for="UsuarioEliminar.Paterno"
+                                   class="form-control"
+                                   readonly />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="UsuarioEdicion.Materno" class="form-label">
+                            <label asp-for="UsuarioEliminar.Materno"
+                                   class="form-label">
                                 Apellido materno
                             </label>
-                            <input asp-for="UsuarioEdicion.Materno"
-                                   class="form-control" />
-                            <span asp-validation-for="UsuarioEdicion.Materno"
-                                  class="text-danger"></span>
+                            <input asp-for="UsuarioEliminar.Materno"
+                                   class="form-control"
+                                   readonly />
                         </div>
 
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="UsuarioEdicion.Nombres" class="form-label">
+                        <label asp-for="UsuarioEliminar.Nombres"
+                               class="form-label">
                             Nombres
                         </label>
-                        <input asp-for="UsuarioEdicion.Nombres"
-                               class="form-control" />
-                        <span asp-validation-for="UsuarioEdicion.Nombres"
-                              class="text-danger"></span>
+                        <input asp-for="UsuarioEliminar.Nombres"
+                               class="form-control"
+                               readonly />
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="UsuarioEdicion.NombreUsuario" class="form-label">
+                        <label asp-for="UsuarioEliminar.NombreUsuario"
+                               class="form-label">
                             Usuario
                         </label>
-                        <input asp-for="UsuarioEdicion.NombreUsuario"
-                               class="form-control" />
-                        <span asp-validation-for="UsuarioEdicion.NombreUsuario"
-                              class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="UsuarioEdicion.Password" class="form-label">
-                            Contraseña
-                        </label>
-                        <input asp-for="UsuarioEdicion.Password"
-                               type="password"
+                        <input asp-for="UsuarioEliminar.NombreUsuario"
                                class="form-control"
-                               placeholder="Proporcione la contraseña"
-                               autocomplete="new-password" />
-                        <span asp-validation-for="UsuarioEdicion.Password"
-                              class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="UsuarioEdicion.ConfirmarPassword"
-                               class="form-label">
-                            Confirmar contraseña
-                        </label>
-                        <input asp-for="UsuarioEdicion.ConfirmarPassword"
-                               type="password"
-                               class="form-control"
-                               placeholder="Proporcione la confirmacion de la contraseña"
-                               autocomplete="new-password" />
-                        <span asp-validation-for="UsuarioEdicion.ConfirmarPassword"
-                              class="text-danger"></span>
-
+                               readonly />
                     </div>
 
                     <div class="form-check mb-3">
-                        <input asp-for="UsuarioEdicion.Estatus"
-                               class="form-check-input" />
-                        <label asp-for="UsuarioEdicion.Estatus"
+                        <input asp-for="UsuarioEliminar.Estatus"
+                               class="form-check-input"
+                               disabled />
+
+                        <label asp-for="UsuarioEliminar.Estatus"
                                class="form-check-label">
                             Activo
                         </label>
                     </div>
-                }
-                else
-                {
-                    <div class="row g-2">
 
-                        <div class="col-md-6">
-                            <label asp-for="UsuarioEdicion.Paterno"
-                                   class="form-label">
-                                Apellido paterno
-                            </label>
-                            <input asp-for="UsuarioEdicion.Paterno"
-                                   class="form-control" />
-                            <span asp-validation-for="UsuarioEdicion.Paterno"
-                                  class="text-danger"></span>
-                        </div>
+                    <p class="text-danger">
+                        También se eliminarán los permisos asignados a este usuario.
+                    </p>
 
-                        <div class="col-md-6">
-                            <label asp-for="UsuarioEdicion.Materno"
-                                   class="form-label">
-                                Apellido materno
-                            </label>
-                            <input asp-for="UsuarioEdicion.Materno"
-                                   class="form-control" />
-                            <span asp-validation-for="UsuarioEdicion.Materno"
-                                  class="text-danger"></span>
-                        </div>
+                    <div class="mt-3">
+
+                        <button type="submit"
+                                class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i>
+                            Eliminar
+                        </button>
+
+                        <a asp-controller="Administracion"
+                           asp-action="AdministracionUsuarios"
+                           asp-route-pageIndex="@Model.Paginacion.PageIndex"
+                           asp-route-IdIni="@Model.IdIni"
+                           asp-route-IdFin="@Model.IdFin"
+                           asp-route-Paterno="@Model.Paterno"
+                           asp-route-Materno="@Model.Materno"
+                           asp-route-Nombres="@Model.Nombres"
+                           asp-route-NombreUsuario="@Model.NombreUsuario"
+                           class="btn btn-sm btn-cancelar">
+                            <i class="bi bi-x-circle"></i>
+                            Cancelar
+                        </a>
 
                     </div>
 
-                    <div class="mb-3">
-                        <label asp-for="UsuarioEdicion.Nombres"
-                               class="form-label">
-                            Nombres
-                        </label>
-                        <input asp-for="UsuarioEdicion.Nombres"
-                               class="form-control" />
-                        <span asp-validation-for="UsuarioEdicion.Nombres"
-                              class="text-danger"></span>
+                </form>
+            }
+            else
+            {
+
+                <form id="frmGuardarUsuario"
+                      asp-controller="Administracion"
+                      asp-action="GuardarUsuario"
+                      method="post">
+
+                    <input asp-for="UsuarioEdicion.Id" type="hidden" />
+                    <input asp-for="UsuarioEdicion.RowVersion" type="hidden" />
+
+                    <input type="hidden" name="modo" value="@Model.Modo" />
+                    <input type="hidden" name="pageIndex" value="@Model.Paginacion.PageIndex" />
+
+                    <input type="hidden" name="IdIni" value="@Model.IdIni" />
+                    <input type="hidden" name="IdFin" value="@Model.IdFin" />
+                    <input type="hidden" name="Paterno" value="@Model.Paterno" />
+                    <input type="hidden" name="Materno" value="@Model.Materno" />
+                    <input type="hidden" name="Nombres" value="@Model.Nombres" />
+                    <input type="hidden" name="NombreUsuario" value="@Model.NombreUsuario" />
+
+                    <div asp-validation-summary="ModelOnly"
+                        class="text-danger">
                     </div>
-
-                    <div class="mb-3">
-                        <label asp-for="UsuarioEdicion.NombreUsuario"
-                               class="form-label">
-                            Usuario
-                        </label>
-                        <input asp-for="UsuarioEdicion.NombreUsuario"
-                               class="form-control" />
-                        <span asp-validation-for="UsuarioEdicion.NombreUsuario"
-                              class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="UsuarioEdicion.Password"
-                               class="form-label">
-                            Nueva contraseña (opcional)
-                        </label>
-                        <input asp-for="UsuarioEdicion.Password"
-                               type="password"
-                               class="form-control"
-                               placeholder="Dejar en blanco para conservar la contraseña actual"
-                               autocomplete="new-password" />
-                        <span asp-validation-for="UsuarioEdicion.Password"
-                              class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="UsuarioEdicion.ConfirmarPassword"
-                               class="form-label">
-                            Confirmar contraseña
-                        </label>
-                        <input asp-for="UsuarioEdicion.ConfirmarPassword"
-                               type="password"
-                               class="form-control"
-                               placeholder="Dejar en blanco para conservar la contraseña actual"
-                               autocomplete="new-password" />
-                        <span asp-validation-for="UsuarioEdicion.ConfirmarPassword"
-                              class="text-danger"></span>
-                    </div>
-
-                    <div class="form-check mb-3">
-                        <input asp-for="UsuarioEdicion.Estatus"
-                               class="form-check-input" />
-
-                        <label asp-for="UsuarioEdicion.Estatus"
-                               class="form-check-label">
-                            Activo
-                        </label>
-                    </div>
-                }
-
-
-                <div class="mt-3">
 
                     @if (Model.Modo == "crear")
                     {
-                        <button type="submit"
-                                class="btn btn-sm btn-primary">
-                            <i class="bi bi-person-plus"></i>
-                            Registrar usuario
-                        </button>
+                        <div class="row g-2">
+
+                            <div class="col-md-6">
+                                <label asp-for="UsuarioEdicion.Paterno" class="form-label">
+                                    Apellido paterno
+                                </label>
+                                <input asp-for="UsuarioEdicion.Paterno"
+                                class="form-control" />
+                                <span asp-validation-for="UsuarioEdicion.Paterno"
+                                class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="UsuarioEdicion.Materno" class="form-label">
+                                    Apellido materno
+                                </label>
+                                <input asp-for="UsuarioEdicion.Materno"
+                                class="form-control" />
+                                <span asp-validation-for="UsuarioEdicion.Materno"
+                                class="text-danger"></span>
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UsuarioEdicion.Nombres" class="form-label">
+                                Nombres
+                            </label>
+                            <input asp-for="UsuarioEdicion.Nombres"
+                            class="form-control" />
+                            <span asp-validation-for="UsuarioEdicion.Nombres"
+                            class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UsuarioEdicion.NombreUsuario" class="form-label">
+                                Usuario
+                            </label>
+                            <input asp-for="UsuarioEdicion.NombreUsuario"
+                            class="form-control" />
+                            <span asp-validation-for="UsuarioEdicion.NombreUsuario"
+                            class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UsuarioEdicion.Password" class="form-label">
+                                Contraseña
+                            </label>
+                            <input asp-for="UsuarioEdicion.Password"
+                            type="password"
+                            class="form-control"
+                            placeholder="Proporcione la contraseña"
+                            autocomplete="new-password" />
+                            <span asp-validation-for="UsuarioEdicion.Password"
+                            class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UsuarioEdicion.ConfirmarPassword"
+                            class="form-label">
+                                Confirmar contraseña
+                            </label>
+                            <input asp-for="UsuarioEdicion.ConfirmarPassword"
+                            type="password"
+                            class="form-control"
+                            placeholder="Proporcione la confirmacion de la contraseña"
+                            autocomplete="new-password" />
+                            <span asp-validation-for="UsuarioEdicion.ConfirmarPassword"
+                            class="text-danger"></span>
+
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input asp-for="UsuarioEdicion.Estatus"
+                            class="form-check-input" />
+                            <label asp-for="UsuarioEdicion.Estatus"
+                            class="form-check-label">
+                                Activo
+                            </label>
+                        </div>
                     }
                     else
                     {
-                        <button type="submit"
-                                class="btn btn-sm btn-primary">
-                            <i class="bi bi-save"></i>
-                            Guardar cambios
-                        </button>
+                        <div class="row g-2">
+
+                            <div class="col-md-6">
+                                <label asp-for="UsuarioEdicion.Paterno"
+                                class="form-label">
+                                    Apellido paterno
+                                </label>
+                                <input asp-for="UsuarioEdicion.Paterno"
+                                class="form-control" />
+                                <span asp-validation-for="UsuarioEdicion.Paterno"
+                                class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="UsuarioEdicion.Materno"
+                                class="form-label">
+                                    Apellido materno
+                                </label>
+                                <input asp-for="UsuarioEdicion.Materno"
+                                class="form-control" />
+                                <span asp-validation-for="UsuarioEdicion.Materno"
+                                class="text-danger"></span>
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UsuarioEdicion.Nombres"
+                            class="form-label">
+                                Nombres
+                            </label>
+                            <input asp-for="UsuarioEdicion.Nombres"
+                            class="form-control" />
+                            <span asp-validation-for="UsuarioEdicion.Nombres"
+                            class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UsuarioEdicion.NombreUsuario"
+                            class="form-label">
+                                Usuario
+                            </label>
+                            <input asp-for="UsuarioEdicion.NombreUsuario"
+                            class="form-control" />
+                            <span asp-validation-for="UsuarioEdicion.NombreUsuario"
+                            class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UsuarioEdicion.Password"
+                            class="form-label">
+                                Nueva contraseña (opcional)
+                            </label>
+                            <input asp-for="UsuarioEdicion.Password"
+                            type="password"
+                            class="form-control"
+                            placeholder="Dejar en blanco para conservar la contraseña actual"
+                            autocomplete="new-password" />
+                            <span asp-validation-for="UsuarioEdicion.Password"
+                            class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UsuarioEdicion.ConfirmarPassword"
+                            class="form-label">
+                                Confirmar contraseña
+                            </label>
+                            <input asp-for="UsuarioEdicion.ConfirmarPassword"
+                            type="password"
+                            class="form-control"
+                            placeholder="Dejar en blanco para conservar la contraseña actual"
+                            autocomplete="new-password" />
+                            <span asp-validation-for="UsuarioEdicion.ConfirmarPassword"
+                            class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input asp-for="UsuarioEdicion.Estatus"
+                            class="form-check-input" />
+
+                            <label asp-for="UsuarioEdicion.Estatus"
+                            class="form-check-label">
+                                Activo
+                            </label>
+                        </div>
                     }
 
-                    <a asp-controller="Administracion"
-                       asp-action="AdministracionUsuarios"
-                       asp-route-pageIndex="@Model.Paginacion.PageIndex"
-                       asp-route-IdIni="@Model.IdIni"
-                       asp-route-IdFin="@Model.IdFin"
-                       asp-route-Paterno="@Model.Paterno"
-                       asp-route-Materno="@Model.Materno"
-                       asp-route-Nombres="@Model.Nombres"
-                       asp-route-NombreUsuario="@Model.NombreUsuario"
-                       class="btn btn-sm btn-cancelar">
-                        <i class="bi bi-x-circle"></i>
-                        Cancelar
-                    </a>
 
-                </div>
+                    <div class="mt-3">
 
-            </form>
+                        @if (Model.Modo == "crear")
+                        {
+                            <button type="submit"
+                                    class="btn btn-sm btn-primary">
+                                <i class="bi bi-person-plus"></i>
+                                Registrar usuario
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit"
+                                    class="btn btn-sm btn-primary">
+                                <i class="bi bi-save"></i>
+                                Guardar cambios
+                            </button>
+                        }
+
+                        <a asp-controller="Administracion"
+                           asp-action="AdministracionUsuarios"
+                           asp-route-pageIndex="@Model.Paginacion.PageIndex"
+                           asp-route-IdIni="@Model.IdIni"
+                           asp-route-IdFin="@Model.IdFin"
+                           asp-route-Paterno="@Model.Paterno"
+                           asp-route-Materno="@Model.Materno"
+                           asp-route-Nombres="@Model.Nombres"
+                           asp-route-NombreUsuario="@Model.NombreUsuario"
+                           class="btn btn-sm btn-cancelar">
+                            <i class="bi bi-x-circle"></i>
+                            Cancelar
+                        </a>
+
+                    </div>
+
+                </form>
+
+            }
 
         </div>
 

@@ -119,3 +119,19 @@ body {
     font-weight: bold;
     border-color: rgb(0, 0, 180);
 }
+
+.encabezado-usuario {
+    background-color: #3BB8DB;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.encabezado-usuario h4 {
+    margin-bottom: 0;
+}
+
+thead.encabezado-tabla th {
+    background-color: #1C69A8;
+    color: white;
+}

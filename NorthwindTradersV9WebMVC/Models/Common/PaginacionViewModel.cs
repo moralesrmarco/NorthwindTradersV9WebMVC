@@ -9,6 +9,8 @@
         public int TotalRegistros { get; set; }
 
         public int TotalPages =>
-            (int)Math.Ceiling((double)TotalRegistros / PageSize);
+            TotalRegistros == 0
+                ? 1
+                : (int)Math.Ceiling((double)TotalRegistros / PageSize);
     }
 }
