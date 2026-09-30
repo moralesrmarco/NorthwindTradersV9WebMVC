@@ -25,7 +25,7 @@ builder.Services.AddAuthentication(
     CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.Cookie.Name = "NorthwindTraders.Auth";
+        options.Cookie.Name = "NorthwindTradersV9.Auth";
         options.ExpireTimeSpan = TimeSpan.FromDays(30);
         options.SlidingExpiration = true;
         options.LoginPath = "/Account/Login";
