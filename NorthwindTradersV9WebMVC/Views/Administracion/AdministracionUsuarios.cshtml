@@ -126,24 +126,41 @@
 </a>
 *@
 
+<!-- ========================================================= -->
+<!-- FILA 1                                                     -->
+<!-- PAGINACIÓN SUPERIOR                                       -->
+<!-- ========================================================= -->
+
 <div class="row">
 
     <div class="col-md-7">
 
+        <partial name="_Paginacion"
+                 model="Model.ParametrosPaginacion"
+                 view-data='new ViewDataDictionary(ViewData)
+                 {
+                     ["PageIndex"] = Model.Paginacion.PageIndex,
+                     ["TotalPages"] = Model.Paginacion.TotalPages,
+                     ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+                 }' />
+        <br />
+    </div>
+
+    <div class="col-md-5">
+        <!-- Vacío intencionalmente -->
+    </div>
+
+</div>
+
+
 <!-- ========================================================= -->
-<!-- PAGINACIÓN SUPERIOR                                       -->
+<!-- FILA 2                                                     -->
+<!-- TABLA + CARD                                               -->
 <!-- ========================================================= -->
 
-<partial name="_Paginacion"
-         model="Model.ParametrosPaginacion"
-         view-data='new ViewDataDictionary(ViewData)
-         {
-             ["PageIndex"] = Model.Paginacion.PageIndex,
-             ["TotalPages"] = Model.Paginacion.TotalPages,
-             ["TotalRegistros"] = Model.Paginacion.TotalRegistros
-         }' />
+<div class="row">
 
-<br />
+    <div class="col-md-7">
 
 <!-- ========================================================= -->
 <!-- LISTADO DE USUARIOS                                       -->
@@ -233,8 +250,6 @@
 
 </div>
 
-<br />
-
 <!-- ========================================================= -->
 <!-- PAGINACIÓN INFERIOR                                       -->
 <!-- ========================================================= -->
@@ -247,6 +262,8 @@
              ["TotalPages"] = Model.Paginacion.TotalPages,
              ["TotalRegistros"] = Model.Paginacion.TotalRegistros
          }' />
+
+
 
     </div>
 
