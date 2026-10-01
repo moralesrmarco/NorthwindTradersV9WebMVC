@@ -20,10 +20,6 @@ namespace NorthwindTradersV9WebMVC.Controllers
             _usuarioBLL = usuarioBLL;
             _appSettings = appSettings.Value;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         public IActionResult AdministracionUsuarios(
             int pageIndex = 1,
@@ -37,7 +33,6 @@ namespace NorthwindTradersV9WebMVC.Controllers
             string? modo = null)
         {
             int pageSize = _appSettings.RowsPerPage;
-
             var resultado = _usuarioBLL.BuscarConPaginacion(
                 IdIni ?? 0,
                 IdFin ?? 0,
@@ -47,7 +42,6 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 NombreUsuario ?? string.Empty,
                 pageIndex,
                 pageSize);
-
 
             Usuario? usuarioSeleccionado = null;
             modo ??= "crear";
@@ -77,7 +71,6 @@ namespace NorthwindTradersV9WebMVC.Controllers
                     else
                     {
                         modo = "editar";
-
                         usuarioEdicion = new AdministracionUsuarioEdicionViewModel
                         {
                             Id = usuarioSeleccionado.Id,

@@ -51,15 +51,15 @@ body {
 
 
 .btn-buscar {
-    background-color: #099BC8;
+    background-color: #5F9EA0;
     border-color: #099BC8;
     color: white;
 }
 
-.btn-buscar:hover {
-    background-color: #27C5F5;
-    border-color: #27C5F5;
-}
+    .btn-buscar:hover {
+        background-color: #40E0D0;
+        border-color: #27C5F5;
+    }
 
 .btn-cancelar {
     background-color: #701705;
@@ -134,4 +134,10 @@ body {
 thead.encabezado-tabla th {
     background-color: #1C69A8;
     color: white;
+}
+
+label {
+    background-color: #AFEEEE;
+    padding: 2px 6px;
+    border-radius: 5px;
 }
