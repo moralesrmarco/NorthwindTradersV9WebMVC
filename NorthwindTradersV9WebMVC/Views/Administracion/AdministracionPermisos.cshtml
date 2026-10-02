@@ -1,0 +1,820 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Administracion.AdministracionPermisosViewModel
+@{
+    ViewData["Title"] = "Gestión de permisos de usuarios";
+}
+<h2>@ViewData["Title"]</h2>
+<!-- ========================================================= -->
+<!-- BÚSQUEDA DE USUARIOS                                     -->
+<!-- ========================================================= -->
+<ul class="nav nav-tabs mb-0">
+    <li class="nav-item small">
+        <span class="nav-link active pestaña-buscar">
+            <i class="bi bi-search"></i>
+            Buscar un usuario
+        </span>
+    </li>
+</ul>
+<div class="border border-top-0 p-3 mb-4">
+    <form asp-controller="Administracion"
+          asp-action="AdministracionPermisos"
+          method="get">
+        <div class="row align-items-end">
+            <div class="col-md-1">
+                <label for="txtIdIni" class="form-label">Id inicial</label>
+                <input type="number"
+                       class="form-control"
+                       id="txtIdIni"
+                       name="IdIni"
+                       value="@Model.IdIni" />
+            </div>
+            <div class="col-md-1">
+                <label for="txtIdFin" class="form-label">Id final</label>
+                <input type="number"
+                       class="form-control"
+                       id="txtIdFin"
+                       name="IdFin"
+                       value="@Model.IdFin" />
+            </div>
+            <div class="col-md-2">
+                <label for="Paterno" class="form-label">Apellido paterno</label>
+                <input type="text"
+                       class="form-control"
+                       id="Paterno"
+                       name="Paterno"
+                       value="@Model.Paterno" />
+            </div>
+            <div class="col-md-2">
+                <label for="Materno" class="form-label">Apellido materno</label>
+                <input type="text"
+                       class="form-control"
+                       id="Materno"
+                       name="Materno"
+                       value="@Model.Materno" />
+            </div>
+            <div class="col-md-2">
+                <label for="Nombres" class="form-label">Nombres</label>
+                <input type="text"
+                       class="form-control"
+                       id="Nombres"
+                       name="Nombres"
+                       value="@Model.Nombres" />
+            </div>
+            <div class="col-md-2">
+                <label for="NombreUsuario" class="form-label">Usuario</label>
+                <input type="text"
+                       class="form-control"
+                       id="NombreUsuario"
+                       name="NombreUsuario"
+                       value="@Model.NombreUsuario" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit"
+                        class="btn btn-sm btn-buscar">
+                    <i class="bi bi-search"></i>
+                    Buscar
+                </button>
+
+                <a asp-controller="Administracion"
+                   asp-action="AdministracionPermisos"
+                   class="btn btn-sm btn-primary">
+                    <i class="bi bi-eraser"></i>
+                    Limpiar
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- ========================================================= -->
+<!-- FILA 1                                                     -->
+<!-- PAGINACIÓN SUPERIOR                                       -->
+<!-- ========================================================= -->
+<div class="row">
+    <div class="col-md-6">
+        <partial name="_Paginacion"
+                 model="Model.ParametrosPaginacion"
+                 view-data='new ViewDataDictionary(ViewData)
+                 {
+                     ["PageIndex"] = Model.Paginacion.PageIndex,
+                     ["TotalPages"] = Model.Paginacion.TotalPages,
+                     ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+                 }' />
+        <br />
+    </div>
+    <div class="col-md-6">
+        <!-- Vacío intencionalmente -->
+    </div>
+</div>
+<!-- ========================================================= -->
+<!-- FILA 2                                                     -->
+<!-- TABLA + CARD                                               -->
+<!-- ========================================================= -->
+<form id="formAntiforgery">
+    @Html.AntiForgeryToken()
+</form>
+<div class="row">
+    <div class="col-md-6">
+        <!-- ========================================================= -->
+        <!-- LISTADO DE USUARIOS                                       -->
+        <!-- ========================================================= -->
+        <h4 class="mb-0 encabezado-tablas">
+            Usuarios
+        </h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="encabezado-tabla">
+                    <tr>
+                        <th class="text-center">ID</th>
+                        <th>Nombre</th>
+                        <th>Usuario</th>
+                        <th class="text-center">Estatus</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var usuario in Model.Usuarios)
+                    {
+                        <tr class="align-middle">
+                            <td class="text-center">
+                                @usuario.Id
+                            </td>
+                            <td>
+                                @($"{usuario.Nombres} {usuario.Paterno} {usuario.Materno}".Trim())
+                            </td>
+                            <td>
+                                @usuario.NombreUsuario
+                            </td>
+                            <td class="text-center">
+                                <span class="badge @(usuario.Estatus
+                                    ? "bg-success"
+                                    : "bg-danger")">
+
+                                    @(usuario.Estatus
+                                        ? "Activo"
+                                        : "Inactivo")
+                                </span>
+                            </td>
+                            <td class="text-center text-nowrap">
+                                <button type="button"
+                                        class="btn btn-sm @(usuario.Estatus ? "btn-primary" : "btn-danger") btn-seleccionar-usuario"
+                                        data-id="@usuario.Id"
+                                        title="@(usuario.Estatus ? "Seleccionar" : "Usuario inactivo")"
+                                        @(usuario.Estatus ? "" : "disabled")>
+
+                                    @if (usuario.Estatus)
+                                    {
+                                        <i class="bi bi-check-circle"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-x-circle"></i>
+                                    }
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- PAGINACIÓN INFERIOR                                       -->
+        <!-- ========================================================= -->
+        <partial name="_Paginacion"
+                 model="Model.ParametrosPaginacion"
+                 view-data='new ViewDataDictionary(ViewData)
+                 {
+                     ["PageIndex"] = Model.Paginacion.PageIndex,
+                     ["TotalPages"] = Model.Paginacion.TotalPages,
+                     ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+                 }' />
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header encabezado-usuario">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h4 class="mb-0">
+                            Permisos
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="panelUsuarioSeleccionado">
+                    <div class="alert alert-success">
+                        Seleccione un usuario para administrar sus permisos.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/js/navigation-actions.js"></script>
+    <script src="~/js/form-buscar.js"></script>
+
+    <script>
+
+        let usuarioSeleccionadoId = null;
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const botonesSeleccionar =
+                document.querySelectorAll(".btn-seleccionar-usuario");
+
+            botonesSeleccionar.forEach(function (boton) {
+
+                boton.addEventListener("click", function () {
+
+                    const idUsuario = this.dataset.id;
+
+                    seleccionarUsuario(idUsuario);
+
+                });
+
+            });
+
+        });
+
+
+        async function seleccionarUsuario(idUsuario) {
+
+            try {
+
+                mostrarLoadingOverlay();
+
+                const respuesta = await fetch(
+                    '@Url.Action("SeleccionarUsuario", "Administracion")?id=' + idUsuario,
+                    {
+                        method: "GET",
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    }
+                );
+
+                if (!respuesta.ok) {
+
+                    throw new Error(
+                        "No fue posible obtener la información del usuario."
+                    );
+
+                }
+
+                const resultado = await respuesta.json();
+
+                if (!resultado.exito) {
+                    alert(resultado.mensaje);
+                    return;
+                }
+
+                usuarioSeleccionadoId = resultado.usuario.id;
+
+                mostrarUsuarioSeleccionado(resultado);
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Ocurrió un error al seleccionar el usuario."
+                );
+
+            }
+            finally {
+
+                ocultarLoadingOverlay();
+
+            }
+
+        }
+
+
+function mostrarUsuarioSeleccionado(resultado) {
+
+    const panel =
+        document.getElementById("panelUsuarioSeleccionado");
+
+    panel.innerHTML = `
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Usuario seleccionado
+            </label>
+
+            <div class="alert alert-success">
+
+                <strong>
+                    ${resultado.usuario.nombre}
+                </strong>
+
+                (${resultado.usuario.nombreUsuario})
+
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col flex-grow-1">
+
+                <label class="form-label">
+                    Catálogo de permisos
+                </label>
+
+                <select class="form-select"
+                        id="lstCatalogoPermisos"
+                        size="15">
+
+                </select>
+
+            </div>
+
+            <div class="col-auto d-flex flex-column justify-content-center align-items-center gap-2">
+
+                <button type="button"
+                        class="btn btn-sm btn-success"
+                        id="btnConcederPermiso"
+                        title="Conceder permiso">
+
+                    <i class="bi bi-chevron-right"></i>
+
+                </button>
+
+                <button type="button"
+                        class="btn btn-sm btn-warning"
+                        id="btnQuitarPermiso"
+                        title="Quitar permiso">
+
+                    <i class="bi bi-chevron-left"></i>
+
+                </button>
+
+                <button type="button"
+                            class="btn btn-sm btn-primary"
+                            id="btnConcederTodos"
+                            title="Conceder todos los permisos">
+
+                        <i class="bi bi-chevron-double-right"></i>
+
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-sm btn-danger"
+                            id="btnQuitarTodos"
+                            title="Quitar todos los permisos">
+
+                        <i class="bi bi-chevron-double-left"></i>
+
+                    </button>
+
+
+            </div>
+
+            <div class="col flex-grow-1">
+
+                <label class="form-label">
+                    Permisos concedidos
+                </label>
+
+                <select class="form-select"
+                        id="lstPermisosConcedidos"
+                        size="15">
+
+                </select>
+
+            </div>
+
+        </div>
+
+    `;
+
+    // ==========================================
+    // Catálogo de permisos
+    // ==========================================
+
+    const listaCatalogo =
+        document.getElementById("lstCatalogoPermisos");
+
+    resultado.catalogoPermisos.forEach(function (permiso) {
+
+        const option =
+            document.createElement("option");
+
+        option.value = permiso.permisoId;
+        option.textContent = permiso.descripcion;
+
+        listaCatalogo.appendChild(option);
+
+    });
+
+
+    // ==========================================
+    // Permisos concedidos
+    // ==========================================
+
+    const listaConcedidos =
+        document.getElementById("lstPermisosConcedidos");
+
+    resultado.permisos.forEach(function (permiso) {
+
+        const option =
+            document.createElement("option");
+
+        option.value = permiso.permisoId;
+        option.textContent = permiso.descripcion;
+
+        listaConcedidos.appendChild(option);
+
+    });
+
+    document.getElementById("btnConcederPermiso")
+    .addEventListener("click", concederPermiso);
+
+    document.getElementById("btnQuitarPermiso")
+        .addEventListener("click", quitarPermiso);
+
+    document.getElementById("btnConcederTodos")
+        .addEventListener("click", concederTodos);
+
+    document.getElementById("btnQuitarTodos")
+        .addEventListener("click", quitarTodos);
+
+}
+
+async function concederPermiso() {
+
+    const listaCatalogo =
+        document.getElementById("lstCatalogoPermisos");
+
+    if (!listaCatalogo) {
+        return;
+    }
+
+    if (listaCatalogo.selectedIndex === -1) {
+
+        alert("Seleccione un permiso del catálogo.");
+
+        return;
+    }
+
+    const opcionSeleccionada =
+        listaCatalogo.options[listaCatalogo.selectedIndex];
+
+    const permisoId =
+        opcionSeleccionada.value;
+
+    try {
+
+        mostrarLoadingOverlay();
+
+        const token =
+            document.querySelector(
+                '#formAntiforgery input[name="__RequestVerificationToken"]'
+            ).value;
+
+        const respuesta = await fetch(
+            '@Url.Action("ConcederPermiso", "Administracion")' +
+            `?idUsuario=${usuarioSeleccionadoId}&permisoId=${permisoId}`,
+            {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "RequestVerificationToken": token
+                }
+            }
+        );
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                "No fue posible conceder el permiso."
+            );
+
+        }
+
+        const resultado =
+            await respuesta.json();
+
+        if (!resultado.exito) {
+
+            alert(resultado.mensaje);
+
+            return;
+        }
+
+        await cargarPermisosConcedidos();
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Ocurrió un error al conceder el permiso."
+        );
+
+    }
+    finally {
+
+        ocultarLoadingOverlay();
+
+    }
+
+}
+
+async function cargarPermisosConcedidos() {
+
+    try {
+
+            const respuesta = await fetch(
+                '@Url.Action("PermisosConcedidos", "Administracion")' +
+                `?idUsuario=${usuarioSeleccionadoId}`,
+            {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            }
+        );
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                "No fue posible consultar los permisos concedidos."
+            );
+
+        }
+
+        const resultado =
+            await respuesta.json();
+
+        if (!resultado.exito) {
+
+            alert(resultado.mensaje);
+
+            return;
+
+        }
+
+        const listaConcedidos =
+            document.getElementById("lstPermisosConcedidos");
+
+        listaConcedidos.innerHTML = "";
+
+        resultado.permisos.forEach(function (permiso) {
+
+            const option =
+                document.createElement("option");
+
+            option.value =
+                permiso.permisoId;
+
+            option.textContent =
+                permiso.descripcion;
+
+            listaConcedidos.appendChild(option);
+
+        });
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Ocurrió un error al consultar los permisos concedidos."
+        );
+
+    }
+
+}
+
+async function quitarPermiso() {
+
+    const listaConcedidos =
+        document.getElementById("lstPermisosConcedidos");
+
+    if (!listaConcedidos) {
+        return;
+    }
+
+    if (listaConcedidos.selectedIndex === -1) {
+
+        alert("Seleccione un permiso concedido.");
+
+        return;
+    }
+
+    const opcionSeleccionada =
+        listaConcedidos.options[listaConcedidos.selectedIndex];
+
+    const permisoId =
+        opcionSeleccionada.value;
+
+    try {
+
+        mostrarLoadingOverlay();
+
+        const token =
+            document.querySelector(
+                '#formAntiforgery input[name="__RequestVerificationToken"]'
+            ).value;
+
+        const respuesta = await fetch(
+            '@Url.Action("QuitarPermiso", "Administracion")' +
+            `?idUsuario=${usuarioSeleccionadoId}&permisoId=${permisoId}`,
+            {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "RequestVerificationToken": token
+                }
+            }
+        );
+
+        if (!respuesta.ok) {
+
+            const textoError =
+                await respuesta.text();
+
+            console.error(
+                "Error HTTP:",
+                respuesta.status,
+                textoError
+            );
+
+            throw new Error(
+                `No fue posible eliminar el permiso. Código HTTP: ${respuesta.status}`
+            );
+        }
+
+        const resultado =
+            await respuesta.json();
+
+        if (!resultado.exito) {
+
+            alert(resultado.mensaje);
+
+            return;
+        }
+
+        await cargarPermisosConcedidos();
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+
+    }
+    finally {
+
+        ocultarLoadingOverlay();
+
+    }
+
+}
+
+async function quitarTodos() {
+
+    try {
+
+        mostrarLoadingOverlay();
+
+        const token =
+            document.querySelector(
+                '#formAntiforgery input[name="__RequestVerificationToken"]'
+            ).value;
+
+        const respuesta = await fetch(
+            '@Url.Action("QuitarTodosPermisos", "Administracion")' +
+            `?idUsuario=${usuarioSeleccionadoId}`,
+            {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "RequestVerificationToken": token
+                }
+            }
+        );
+
+        if (!respuesta.ok) {
+
+            const textoError = await respuesta.text();
+
+            console.error(
+                "Error HTTP:",
+                respuesta.status,
+                textoError
+            );
+
+            throw new Error(
+                `No fue posible quitar todos los permisos. Código HTTP: ${respuesta.status}`
+            );
+        }
+
+        const resultado =
+            await respuesta.json();
+
+        if (!resultado.exito) {
+
+            alert(resultado.mensaje);
+
+            return;
+        }
+
+        await cargarPermisosConcedidos();
+
+        alert(resultado.mensaje);
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+
+    }
+    finally {
+
+        ocultarLoadingOverlay();
+
+    }
+
+}
+
+async function concederTodos() {
+
+    try {
+
+        mostrarLoadingOverlay();
+
+        const token =
+            document.querySelector(
+                '#formAntiforgery input[name="__RequestVerificationToken"]'
+            ).value;
+
+        const respuesta = await fetch(
+            '@Url.Action("ConcederTodosPermisos", "Administracion")' +
+            `?idUsuario=${usuarioSeleccionadoId}`,
+            {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "RequestVerificationToken": token
+                }
+            }
+        );
+
+        if (!respuesta.ok) {
+
+            const textoError = await respuesta.text();
+
+            console.error(
+                "Error HTTP:",
+                respuesta.status,
+                textoError
+            );
+
+            throw new Error(
+                `No fue posible conceder todos los permisos. Código HTTP: ${respuesta.status}`
+            );
+        }
+
+        const resultado =
+            await respuesta.json();
+
+        if (!resultado.exito) {
+
+            alert(resultado.mensaje);
+
+            return;
+        }
+
+        await cargarPermisosConcedidos();
+
+        alert(resultado.mensaje);
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+
+    }
+    finally {
+
+        ocultarLoadingOverlay();
+
+    }
+
+}
+
+    </script>
+}

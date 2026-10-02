@@ -1,23 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9WebMVC.Models.Administracion;
 using NorthwindTradersV9WebMVC.Models.Common;
+using System.Data;
 
 namespace NorthwindTradersV9WebMVC.Controllers
 {
+    [Authorize(Policy = "PermisoAdministracion")]
     public class AdministracionController : Controller
     {
         private readonly UsuarioBLL _usuarioBLL;
+        private readonly PermisoBLL _permisoBLL;
         private readonly AppSettings _appSettings;
 
         public AdministracionController(
             UsuarioBLL usuarioBLL,
+            PermisoBLL permisoBLL,
             IOptions<AppSettings> appSettings)
         {
             _usuarioBLL = usuarioBLL;
+            _permisoBLL = permisoBLL;
             _appSettings = appSettings.Value;
         }
 
@@ -464,5 +470,257 @@ namespace NorthwindTradersV9WebMVC.Controllers
                     });
             }
         }
+        public IActionResult AdministracionPermisos(
+            int pageIndex = 1,
+            int? IdIni = null,
+            int? IdFin = null,
+            string? Paterno = null,
+            string? Materno = null,
+            string? Nombres = null,
+            string? NombreUsuario = null)
+        {
+            int pageSize = _appSettings.RowsPerPage;
+            var resultado = _usuarioBLL.BuscarConPaginacion(
+                IdIni ?? 0,
+                IdFin ?? 0,
+                Paterno ?? string.Empty,
+                Materno ?? string.Empty,
+                Nombres ?? string.Empty,
+                NombreUsuario ?? string.Empty,
+                pageIndex,
+                pageSize);
+            var modelo = new AdministracionPermisosViewModel
+            {
+                Usuarios = resultado.Usuarios,
+
+                IdIni = IdIni,
+                IdFin = IdFin,
+                Paterno = Paterno,
+                Materno = Materno,
+                Nombres = Nombres,
+                NombreUsuario = NombreUsuario,
+
+                Paginacion = new Models.Common.PaginacionViewModel
+                {
+                    PageIndex = resultado.PageIndex,
+                    PageSize = pageSize,
+                    TotalRegistros = resultado.TotalRegistros
+                },
+
+                ParametrosPaginacion = new ParametrosPaginacionViewModel
+                {
+                    Controller = "Administracion",
+                    Action = "AdministracionPermisos",
+                    Parametros = new Dictionary<string, string?>
+                    {
+                        ["IdIni"] = IdIni?.ToString(),
+                        ["IdFin"] = IdFin?.ToString(),
+                        ["Paterno"] = Paterno,
+                        ["Materno"] = Materno,
+                        ["Nombres"] = Nombres,
+                        ["NombreUsuario"] = NombreUsuario
+                    }
+                }
+            };
+            return View(modelo);
+        }
+        [HttpGet]
+        public IActionResult SeleccionarUsuario(int id)
+        {
+            Usuario? usuario = _usuarioBLL.ObtenerPorId(id);
+
+            if (usuario == null)
+            {
+                return Json(new
+                {
+                    exito = false,
+                    mensaje = "El usuario no existe o fue eliminado previamente."
+                });
+            }
+
+            DataTable permisos =
+                _permisoBLL.ObtenerPermisosConcedidos(id);
+
+            var permisosConcedidos = new List<object>();
+
+            foreach (DataRow row in permisos.Rows)
+            {
+                permisosConcedidos.Add(new
+                {
+                    permisoId = Convert.ToInt32(row["PermisoId"]),
+                    descripcion = row["Descripción"]?.ToString() ?? string.Empty
+                });
+            }
+
+            DataTable catalogo =
+                _permisoBLL.ObtenerPermisosDeCatalogo();
+
+            var catalogoPermisos = new List<object>();
+
+            foreach (DataRow row in catalogo.Rows)
+            {
+                catalogoPermisos.Add(new
+                {
+                    permisoId = Convert.ToInt32(row["PermisoId"]),
+                    descripcion = row["Descripción"]?.ToString() ?? string.Empty
+                });
+            }
+
+            return Json(new
+            {
+                exito = true,
+
+                usuario = new
+                {
+                    id = usuario.Id,
+                    nombreUsuario = usuario.NombreUsuario,
+                    nombre = $"{usuario.Nombres} {usuario.Paterno} {usuario.Materno}".Trim()
+                },
+
+                catalogoPermisos = catalogoPermisos,
+
+                permisos = permisosConcedidos
+            });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ConcederPermiso(int idUsuario, int permisoId)
+        {
+            try
+            {
+                _permisoBLL.InsertarPermiso(idUsuario, permisoId);
+
+                return Json(new
+                {
+                    exito = true,
+                    mensaje = "El permiso fue concedido correctamente."
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    exito = false,
+                    mensaje = "Ocurrió un error al conceder el permiso: " + ex.Message
+                });
+            }
+        }
+        [HttpGet]
+        public IActionResult PermisosConcedidos(int idUsuario)
+        {
+            try
+            {
+                DataTable permisos =
+                    _permisoBLL.ObtenerPermisosConcedidos(idUsuario);
+
+                var permisosConcedidos = new List<object>();
+
+                foreach (DataRow row in permisos.Rows)
+                {
+                    permisosConcedidos.Add(new
+                    {
+                        permisoId = Convert.ToInt32(row["PermisoId"]),
+                        descripcion = row["Descripción"]?.ToString() ?? string.Empty
+                    });
+                }
+
+                return Json(new
+                {
+                    exito = true,
+                    permisos = permisosConcedidos
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    exito = false,
+                    mensaje = "Ocurrió un error al consultar los permisos concedidos: " + ex.Message
+                });
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult QuitarPermiso(int idUsuario, int permisoId)
+        {
+            try
+            {
+                _permisoBLL.EliminarPermiso(idUsuario, permisoId);
+
+                return Json(new
+                {
+                    exito = true,
+                    mensaje = "El permiso fue eliminado correctamente."
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    exito = false,
+                    mensaje = "Ocurrió un error al eliminar el permiso: " + ex.Message
+                });
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ConcederTodosPermisos(int idUsuario)
+        {
+            try
+            {
+                DataTable catalogo =
+                    _permisoBLL.ObtenerPermisosDeCatalogo();
+
+                var permisosIds = new List<int>();
+
+                foreach (DataRow row in catalogo.Rows)
+                {
+                    permisosIds.Add(
+                        Convert.ToInt32(row["PermisoId"])
+                    );
+                }
+
+                _permisoBLL.InsertarPermisos(idUsuario, permisosIds);
+
+                return Json(new
+                {
+                    exito = true,
+                    mensaje = "Todos los permisos fueron concedidos correctamente."
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    exito = false,
+                    mensaje = "Ocurrió un error al conceder todos los permisos: " + ex.Message
+                });
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult QuitarTodosPermisos(int idUsuario)
+        {
+            try
+            {
+                int registrosEliminados =
+                    _permisoBLL.EliminarPermisos(idUsuario);
+
+                return Json(new
+                {
+                    exito = true,
+                    mensaje = $"Se eliminaron {registrosEliminados} permisos correctamente."
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    exito = false,
+                    mensaje = "Ocurrió un error al quitar todos los permisos: " + ex.Message
+                });
+            }
+        }
     }
 }
+

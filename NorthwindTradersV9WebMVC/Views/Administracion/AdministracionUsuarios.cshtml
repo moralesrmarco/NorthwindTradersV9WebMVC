@@ -30,7 +30,6 @@
     <form asp-controller="Administracion"
           asp-action="AdministracionUsuarios"
           method="get">
-
         <div class="row align-items-end">
             <div class="col-md-1">
                 <label for="txtIdIni" class="form-label">Id inicial</label>
@@ -95,7 +94,6 @@
                 </a>
             </div>
         </div>
-
     </form>
 </div>
 
@@ -129,6 +127,9 @@
         <!-- ========================================================= -->
         <!-- LISTADO DE USUARIOS                                       -->
         <!-- ========================================================= -->
+        <h4 class="mb-0 encabezado-tablas">
+            Usuarios
+        </h4>
         <div class="table-responsive">
             <table class="table table-bordered table-striped">
                 <thead class="encabezado-tabla">
@@ -546,6 +547,7 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/navigation-actions.js"></script>
     <script src="~/js/form-buscar.js"></script>
 
     <script>
