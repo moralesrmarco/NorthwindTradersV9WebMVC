@@ -61,107 +61,107 @@
 
     <div class="row">
         <div class="col-md-2 mb-3">
-            <label asp-for="Empleado.EmployeeID" class="form-label">ID</label>
-            <input asp-for="Empleado.EmployeeID" class="form-control" readonly />
+            <label asp-for="Empleado.EmployeeID" class="form-label small">ID</label>
+            <input asp-for="Empleado.EmployeeID" class="form-control form-control-sm" readonly />
         </div>
 
         <div class="col-md-5 mb-3">
-            <label asp-for="Empleado.FirstName" class="form-label">Nombres</label>
-            <input asp-for="Empleado.FirstName" class="form-control" />
+            <label asp-for="Empleado.FirstName" class="form-label small">Nombres</label>
+            <input asp-for="Empleado.FirstName" class="form-control form-control-sm" />
             <span asp-validation-for="Empleado.FirstName" class="text-danger"></span>
         </div>
 
         <div class="col-md-5 mb-3">
-            <label asp-for="Empleado.LastName" class="form-label">Apellidos</label>
-            <input asp-for="Empleado.LastName" class="form-control" />
+            <label asp-for="Empleado.LastName" class="form-label small">Apellidos</label>
+            <input asp-for="Empleado.LastName" class="form-control form-control-sm" />
             <span asp-validation-for="Empleado.LastName" class="text-danger"></span>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.Title" class="form-label">Título</label>
-            <input asp-for="Empleado.Title" class="form-control" />
+            <label asp-for="Empleado.Title" class="form-label small">Título</label>
+            <input asp-for="Empleado.Title" class="form-control form-control-sm" />
             <span asp-validation-for="Empleado.Title" class="text-danger"></span>
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.TitleOfCourtesy" class="form-label">
+            <label asp-for="Empleado.TitleOfCourtesy" class="form-label small">
                 Título de cortesía
             </label>
-            <input asp-for="Empleado.TitleOfCourtesy" class="form-control" />
+            <input asp-for="Empleado.TitleOfCourtesy" class="form-control form-control-sm" />
             <span asp-validation-for="Empleado.TitleOfCourtesy" class="text-danger"></span>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12 mb-3">
-            <label asp-for="Empleado.Address" class="form-label">Dirección</label>
-            <input asp-for="Empleado.Address" class="form-control" />
+            <label asp-for="Empleado.Address" class="form-label small">Dirección</label>
+            <input asp-for="Empleado.Address" class="form-control form-control-sm" />
             <span asp-validation-for="Empleado.Address" class="text-danger"></span>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.City" class="form-label">Ciudad</label>
-            <input asp-for="Empleado.City" class="form-control" />
+            <label asp-for="Empleado.City" class="form-label small">Ciudad</label>
+            <input asp-for="Empleado.City" class="form-control form-control-sm" />
             <span asp-validation-for="Empleado.City" class="text-danger"></span>
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.Region" class="form-label">Región</label>
-            <input asp-for="Empleado.Region" class="form-control" />
+            <label asp-for="Empleado.Region" class="form-label small">Región</label>
+            <input asp-for="Empleado.Region" class="form-control form-control-sm" />
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.PostalCode" class="form-label">
+            <label asp-for="Empleado.PostalCode" class="form-label small">
                 Código postal
             </label>
-            <input asp-for="Empleado.PostalCode" class="form-control" />
+            <input asp-for="Empleado.PostalCode" class="form-control form-control-sm" />
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.Country" class="form-label">País</label>
-            <select id="cboPais" asp-for="Empleado.Country" asp-items="Model.Paises" class="form-select"> 
+            <label asp-for="Empleado.Country" class="form-label small">País</label>
+            <select id="cboPais" asp-for="Empleado.Country" asp-items="Model.Paises" class="form-select form-select-sm"> 
             </select> 
             <span asp-validation-for="Empleado.Country" class="text-danger"></span>        
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.HomePhone" class="form-label">Teléfono</label>
-            <input asp-for="Empleado.HomePhone" class="form-control" />
+            <label asp-for="Empleado.HomePhone" class="form-label small">Teléfono</label>
+            <input asp-for="Empleado.HomePhone" class="form-control form-control-sm" />
             <span asp-validation-for="Empleado.HomePhone" class="text-danger"></span>
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.Extension" class="form-label">Extensión</label>
-            <input asp-for="Empleado.Extension" class="form-control" />
+            <label asp-for="Empleado.Extension" class="form-label small">Extensión</label>
+            <input asp-for="Empleado.Extension" class="form-control form-control-sm" />
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.BirthDate" class="form-label">
+            <label asp-for="Empleado.BirthDate" class="form-label small">
                 Fecha de nacimiento
             </label>
-            <input asp-for="Empleado.BirthDate" class="form-control" type="date" /> 
+            <input asp-for="Empleado.BirthDate" class="form-control form-control-sm" type="date" /> 
             <span asp-validation-for="Empleado.BirthDate" class="text-danger"></span>        
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.HireDate" class="form-label">
+            <label asp-for="Empleado.HireDate" class="form-label small">
                 Fecha de contratación
             </label>
-            <input asp-for="Empleado.HireDate" class="form-control" type="date" /> 
+            <input asp-for="Empleado.HireDate" class="form-control form-control-sm" type="date" /> 
             <span asp-validation-for="Empleado.HireDate" class="text-danger"></span>
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.ReportsTo" class="form-label"> Reporta a </label>
-            <select asp-for="Empleado.ReportsTo" class="form-select" asp-items="Model.ReportaA">   
+            <label asp-for="Empleado.ReportsTo" class="form-label small"> Reporta a </label>
+            <select asp-for="Empleado.ReportsTo" class="form-select form-select-sm" asp-items="Model.ReportaA">   
             </select> 
             <span asp-validation-for="Empleado.ReportsTo" class="text-danger"></span>
         </div>
@@ -169,10 +169,10 @@
 
     <div class="row">
         <div class="col-md-12 mb-3">
-            <label asp-for="Empleado.Notes" class="form-label">Notas</label>
+            <label asp-for="Empleado.Notes" class="form-label small">Notas</label>
 
             <textarea asp-for="Empleado.Notes"
-                      class="form-control"
+                      class="form-control form-control-sm"
                       rows="5"
                       style="resize:none; overflow-y:auto; max-height:200px;"></textarea>
         </div>

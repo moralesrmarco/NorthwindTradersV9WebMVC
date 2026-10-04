@@ -29,101 +29,101 @@
 
     <div class="row">
         <div class="col-md-2 mb-3">
-            <label asp-for="Empleado.EmployeeID" class="form-label">ID</label>
-            <input asp-for="Empleado.EmployeeID" class="form-control" readonly />
+            <label asp-for="Empleado.EmployeeID" class="form-label small">ID</label>
+            <input asp-for="Empleado.EmployeeID" class="form-control form-control-sm" readonly />
         </div>
 
         <div class="col-md-5 mb-3">
-            <label asp-for="Empleado.FirstName" class="form-label">Nombres</label>
-            <input asp-for="Empleado.FirstName" class="form-control" readonly />
+            <label asp-for="Empleado.FirstName" class="form-label small">Nombres</label>
+            <input asp-for="Empleado.FirstName" class="form-control form-control-sm" readonly />
         </div>
 
         <div class="col-md-5 mb-3">
-            <label asp-for="Empleado.LastName" class="form-label">Apellidos</label>
-            <input asp-for="Empleado.LastName" class="form-control" readonly />
+            <label asp-for="Empleado.LastName" class="form-label small">Apellidos</label>
+            <input asp-for="Empleado.LastName" class="form-control form-control-sm" readonly />
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.Title" class="form-label">Título</label>
-            <input asp-for="Empleado.Title" class="form-control" readonly />
+            <label asp-for="Empleado.Title" class="form-label small">Título</label>
+            <input asp-for="Empleado.Title" class="form-control form-control-sm" readonly />
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.TitleOfCourtesy" class="form-label">
+            <label asp-for="Empleado.TitleOfCourtesy" class="form-label small">
                 Título de cortesía
             </label>
-            <input asp-for="Empleado.TitleOfCourtesy" class="form-control" readonly />
+            <input asp-for="Empleado.TitleOfCourtesy" class="form-control form-control-sm" readonly />
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12 mb-3">
-            <label asp-for="Empleado.Address" class="form-label">Dirección</label>
-            <input asp-for="Empleado.Address" class="form-control" readonly />
+            <label asp-for="Empleado.Address" class="form-label small">Dirección</label>
+            <input asp-for="Empleado.Address" class="form-control form-control-sm" readonly />
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.City" class="form-label">Ciudad</label>
-            <input asp-for="Empleado.City" class="form-control" readonly />
+            <label asp-for="Empleado.City" class="form-label small">Ciudad</label>
+            <input asp-for="Empleado.City" class="form-control form-control-sm" readonly />
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.Region" class="form-label">Región</label>
-            <input asp-for="Empleado.Region" class="form-control" readonly />
+            <label asp-for="Empleado.Region" class="form-label small">Región</label>
+            <input asp-for="Empleado.Region" class="form-control form-control-sm" readonly />
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.PostalCode" class="form-label">
+            <label asp-for="Empleado.PostalCode" class="form-label small">
                 Código postal
             </label>
-            <input asp-for="Empleado.PostalCode" class="form-control" readonly />
+            <input asp-for="Empleado.PostalCode" class="form-control form-control-sm" readonly />
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.Country" class="form-label">País</label>
-            <input asp-for="Empleado.Country" class="form-control" readonly />
+            <label asp-for="Empleado.Country" class="form-label small">País</label>
+            <input asp-for="Empleado.Country" class="form-control form-control-sm" readonly />
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.HomePhone" class="form-label">Teléfono</label>
-            <input asp-for="Empleado.HomePhone" class="form-control" readonly />
+            <label asp-for="Empleado.HomePhone" class="form-label small">Teléfono</label>
+            <input asp-for="Empleado.HomePhone" class="form-control form-control-sm" readonly />
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.Extension" class="form-label">Extensión</label>
-            <input asp-for="Empleado.Extension" class="form-control" readonly />
+            <label asp-for="Empleado.Extension" class="form-label small">Extensión</label>
+            <input asp-for="Empleado.Extension" class="form-control form-control-sm" readonly />
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.BirthDate" class="form-label">
+            <label asp-for="Empleado.BirthDate" class="form-label small">
                 Fecha de nacimiento
             </label>
 
-            <input class="form-control"
+            <input class="form-control form-control-sm"
                    value="@Model.Empleado?.BirthDate?.ToString("dd 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("es-ES"))"
                    readonly />
         </div>
 
         <div class="col-md-4 mb-3">
-            <label asp-for="Empleado.HireDate" class="form-label">
+            <label asp-for="Empleado.HireDate" class="form-label small">
                 Fecha de contratación
             </label>
 
-            <input class="form-control"
+            <input class="form-control form-control-sm"
                    value="@Model.Empleado?.HireDate?.ToString("dd 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("es-ES"))"
                    readonly />
         </div>
 
         <div class="col-md-4 mb-3">
-            <label class="form-label">Reporta a</label>
+            <label class="form-label small">Reporta a</label>
 
             @if (Model.Empleado?.ReportsTo != null)
             {
@@ -131,22 +131,22 @@
                    asp-action="Consultar"
                    asp-route-id="@Model.Empleado.ReportsTo"
                    asp-route-returnUrl="@Model.ReturnUrl"
-                   class="form-control">
+                   class="form-control form-control-sm">
                     @Model.Empleado.ReportsToName
                 </a>
             }
             else
             {
-                <input class="form-control" value="N/A" readonly />
+                <input class="form-control form-control-sm" value="N/A" readonly />
             }
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12 mb-3">
-            <label asp-for="Empleado.Notes" class="form-label">Notas</label>
+            <label asp-for="Empleado.Notes" class="form-label small">Notas</label>
             <textarea asp-for="Empleado.Notes"
-                      class="form-control"
+                      class="form-control form-control-sm"
                       rows="5"
                       readonly
                       style="resize:none; overflow-y:auto; max-height:200px;"></textarea>
