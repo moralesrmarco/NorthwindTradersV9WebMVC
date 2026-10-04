@@ -141,6 +141,9 @@ builder.Services.AddScoped<PermisoBLL>();
 builder.Services.AddScoped<IEmpleadoDAL, EmpleadoDAL>();
 builder.Services.AddScoped<EmpleadoBLL>();
 
+builder.Services.AddScoped<IClienteDAL, ClienteDAL>();
+builder.Services.AddScoped<ClienteBLL>();
+
 builder.Services.AddScoped<ComboDataHelper>();
 
 var app = builder.Build();

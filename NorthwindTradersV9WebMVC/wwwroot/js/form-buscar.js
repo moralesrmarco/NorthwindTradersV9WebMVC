@@ -156,6 +156,12 @@ function validarIdFin() {
 
 function disableSearchButton() {
 
+    const form = document.querySelector('#btnBuscar')?.closest('form');
+
+    if (form && window.jQuery && !$(form).valid()) {
+        return false;
+    }
+
     const btnBuscar = document.getElementById('btnBuscar');
 
     if (btnBuscar) {

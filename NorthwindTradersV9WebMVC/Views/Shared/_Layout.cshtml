@@ -56,6 +56,78 @@
                                 </span>
                             </li>
                         }
+                        <!-- Menú  clientes con submenús -->
+                        @if (User.HasClaim("Permiso", Permisos.Clientes.ToString()))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="clientesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Clientes
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="clientesDropdown">
+                                    <!-- Gestión de clientes -->
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Clientes" asp-action="Index">Gestión de clientes</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <!-- Submenú Consultas -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item dropdown-toggle" href="#">Consultas</a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item">
+                                                    Directorio de clientes y proveedores
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item">
+                                                    Directorio de clientes y proveedores por ciudad
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item">
+                                                    Directorio de clientes y proveedores por país
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <!-- Submenú Reportes -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item dropdown-toggle" href="#">Reportes</a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item">
+                                                    Directorio de clientes
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item">
+                                                    Directorio de clientes y proveedores
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item">
+                                                    Directorio de clientes y proveedores por ciudad
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item">
+                                                    Directorio de clientes y proveedores por país
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-dark menu-deshabilitado">
+                                    Clientes
+                                </span>
+                            </li>
+                        }
+
+                        <!-- Menú Administración con submenús -->
                         @if (User.HasClaim("Permiso", Permisos.Administracion.ToString()))
                         {
                             <li class="nav-item dropdown">

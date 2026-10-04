@@ -1,0 +1,300 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Clientes.ClientesIndexViewModel
+
+@{
+    ViewData["Title"] = "Gestión de clientes";
+
+    var returnUrl = Url.Action(
+        "Index",
+        "Clientes",
+        new
+        {
+            pageIndex = Model.Paginacion.PageIndex,
+            CustomerID = Model.Filtro.CustomerID,
+            CompanyName = Model.Filtro.CompanyName,
+            ContactName = Model.Filtro.ContactName,
+            Address = Model.Filtro.Address,
+            City = Model.Filtro.City,
+            Region = Model.Filtro.Region,
+            PostalCode = Model.Filtro.PostalCode,
+            Country = Model.Filtro.Country,
+            Phone = Model.Filtro.Phone,
+            Fax = Model.Filtro.Fax,
+            BuscarAbierto = Model.ParametrosPaginacion.BuscarAbierto
+        });
+}
+<h2>@ViewData["Title"]</h2>
+
+<ul class="nav nav-tabs mb-0">
+    <li class="nav-item small">
+        <button type="button"
+                id="btnPestañaBuscar"
+                class="nav-link active pestaña-buscar"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelBusqueda"
+                aria-expanded="@(Model.ParametrosPaginacion.BuscarAbierto.ToString().ToLower())"
+                aria-controls="panelBusqueda">
+            <i class="bi bi-search"></i>
+            Buscar cliente
+        </button>
+    </li>
+</ul>
+
+<div id="mensajeBusqueda"
+     class="border border-top-0 p-3 small text-muted @(Model.ParametrosPaginacion.BuscarAbierto ? "d-none" : "")">
+    Seleccione buscar cliente para proporcionar los criterios de búsqueda
+</div>
+
+<div id="panelBusqueda"
+     class="collapse border border-top-0 @(Model.ParametrosPaginacion.BuscarAbierto ? "show" : "")">
+
+    <div class="p-3 small">
+
+        <form asp-controller="Clientes"
+              asp-action="Index"
+              method="get"
+              id="formBuscar">
+
+            <input type="hidden"
+                   name="BuscarAbierto"
+                   value="true" />
+
+            <div class="row mb-3">
+
+                <div class="col-md-3">
+                    <label for="CustomerID" class="form-label">ID</label>
+                    <input asp-for="Filtro.CustomerID"
+                       id="CustomerID"
+                       class="form-control form-control-sm" />
+                    <span asp-validation-for="Filtro.CustomerID" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="CompanyName" class="form-label">Compañía</label>
+                    <input asp-for="Filtro.CompanyName"
+                           id="CompanyName"
+                           class="form-control form-control-sm" />
+                    <span asp-validation-for="Filtro.CompanyName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="ContactName" class="form-label">Contacto</label>
+                    <input asp-for="Filtro.ContactName"
+                       id="ContactName"
+                       class="form-control form-control-sm" />
+                    <span asp-validation-for="Filtro.ContactName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="Address" class="form-label">Domicilio</label>
+                    <input asp-for="Filtro.Address"
+                       id="Address"
+                       class="form-control form-control-sm" />
+                    <span asp-validation-for="Filtro.Address" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="row mb-3">
+
+                <div class="col-md-3">
+                    <label for="City" class="form-label">Ciudad</label>
+                    <input asp-for="Filtro.City"
+                           id="City"
+                           class="form-control form-control-sm" />
+                    <span asp-validation-for="Filtro.City" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="Region" class="form-label">Región</label>
+                    <input asp-for="Filtro.Region"
+                           id="Region"
+                           class="form-control form-control-sm" />
+                    <span asp-validation-for="Filtro.Region" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="PostalCode" class="form-label">Código Postal</label>
+                    <input asp-for="Filtro.PostalCode"
+                           id="PostalCode"
+                           class="form-control form-control-sm" />
+                    <span asp-validation-for="Filtro.PostalCode" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="Country" class="form-label">País</label>
+                    <select asp-for="Filtro.Country"
+                            asp-items="Model.Paises"
+                            id="Country"
+                            class="form-select form-select-sm">
+                    </select>
+                    <span asp-validation-for="Filtro.Country" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="row mb-3">
+
+                <div class="col-md-3">
+                    <label for="Phone" class="form-label">Teléfono</label>
+                    <input asp-for="Filtro.Phone"
+                           id="Phone"
+                           class="form-control form-control-sm" />
+                    <span asp-validation-for="Filtro.Phone" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="Fax" class="form-label">Fax</label>
+                    <input asp-for="Filtro.Fax"
+                           id="Fax"
+                           class="form-control form-control-sm" />
+                    <span asp-validation-for="Filtro.Fax" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-3 d-flex align-items-end gap-2">
+
+                    <button type="submit"
+                            id="btnBuscar"
+                            class="btn btn-sm btn-buscar"
+                            onclick="return disableSearchButton();">
+                        <i class="bi bi-search"></i>
+                        <span class="d-none d-md-inline"> Buscar</span>
+                    </button>
+
+                    <a asp-controller="Clientes"
+                       asp-action="Index"
+                       class="btn btn-sm btn-primary navigation-btn">
+                        <i class="bi bi-eraser"></i>
+                        <span class="d-none d-md-inline"> Limpiar</span>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<br />
+
+<a asp-controller="Clientes"
+   asp-action="Insertar"
+   asp-route-returnUrl="@returnUrl"
+   class="btn btn-sm btn-primary mb-3 action-btn"
+   title="Nuevo cliente">
+    <i class="bi bi-plus-circle"></i>
+    <span class="d-none d-md-inline"> Nuevo cliente</span>
+</a>
+
+<partial name="_Paginacion"
+         model="Model.ParametrosPaginacion"
+         view-data='new ViewDataDictionary(ViewData)
+         {
+             ["PageIndex"] = Model.Paginacion.PageIndex,
+             ["TotalPages"] = Model.Paginacion.TotalPages,
+             ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+         }' />
+
+<br />
+
+<div class="table-responsive">
+
+    <table class="table table-bordered table-striped">
+
+        <thead class="encabezado-tabla">
+
+            <tr>
+                <th class="text-center">ID</th>
+                <th>Nombre de compañía</th>
+                <th class="text-center">País</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @foreach (var cliente in Model.Clientes)
+            {
+                <tr class="align-middle">
+
+                    <td class="text-center">
+                        @cliente.CustomerId
+                    </td>
+
+                    <td>
+                        @cliente.CompanyName
+                    </td>
+
+                    <td class="text-center">
+                        @cliente.Country
+                    </td>
+
+                    <td class="text-center text-nowrap">
+
+                        <a asp-controller="Clientes"
+                           asp-action="Consultar"
+                           asp-route-id="@cliente.CustomerId"
+                           asp-route-returnUrl="@returnUrl"
+                           class="btn btn-sm btn-success me-1 action-btn"
+                           title="Consultar">
+                            <i class="bi bi-eye"></i>
+                            <span class="d-none d-md-inline"> Consultar</span>
+                        </a>
+
+                        <a asp-controller="Clientes"
+                           asp-action="Editar"
+                           asp-route-id="@cliente.CustomerId"
+                           asp-route-returnUrl="@returnUrl"
+                           class="btn btn-sm btn-warning me-1 action-btn"
+                           title="Editar">
+                            <i class="bi bi-pencil"></i>
+                            <span class="d-none d-md-inline"> Editar</span>
+                        </a>
+
+                        <a asp-controller="Clientes"
+                           asp-action="Eliminar"
+                           asp-route-id="@cliente.CustomerId"
+                           asp-route-returnUrl="@returnUrl"
+                           class="btn btn-sm btn-danger me-1 action-btn"
+                           title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                            <span class="d-none d-md-inline"> Eliminar</span>
+                        </a>
+
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<br />
+
+<partial name="_Paginacion"
+         model="Model.ParametrosPaginacion"
+         view-data='new ViewDataDictionary(ViewData)
+         {
+             ["PageIndex"] = Model.Paginacion.PageIndex,
+             ["TotalPages"] = Model.Paginacion.TotalPages,
+             ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+         }' />
+
+@section Scripts {
+
+    <script src="~/js/list-actions.js"></script>
+    <script src="~/js/navigation-actions.js"></script>
+    <script src="~/js/form-buscar.js"></script>
+
+    <script>
+        $(function () {
+            configurarAccionesListado();
+        });
+    </script>
+}
