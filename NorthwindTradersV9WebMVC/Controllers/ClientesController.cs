@@ -158,5 +158,88 @@ namespace NorthwindTradersV9WebMVC.Controllers
             }
             return View(model);
         }
+        public IActionResult Insertar(string? returnUrl = null)
+        {
+            var model = new ClienteInsertarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            CargarCombo(model);
+            return View(model);
+        }
+        private void CargarCombo(ClienteInsertarViewModel model)
+        {
+            model.Paises = _clienteBLL.ObtenerClientesPaisesCbo()
+            .Select(p => new SelectListItem
+            {
+                Value = p.Value,
+                Text = p.Text
+            })
+            .ToList();
+            // Si el usuario escribió un país nuevo,
+            // agregarlo para conservarlo en el combo.
+            if (!string.IsNullOrEmpty(model.Cliente?.Country)
+                && !model.Paises.Any(
+                    p => p.Value == model.Cliente.Country))
+            {
+                model.Paises.Add(new SelectListItem
+                {
+                    Value = model.Cliente.Country,
+                    Text = model.Cliente.Country
+                });
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Insertar(ClienteInsertarViewModel model)
+        {
+            // Validaciones en el servidor
+            if (string.IsNullOrEmpty(model.Cliente?.Country))
+                ModelState.AddModelError(
+                    "Cliente.Country",
+                    "Seleccione o escriba un país");
+            if (!ModelState.IsValid)
+            {
+                CargarCombo(model);
+                return View(model);
+            }
+            // Validar ID duplicado
+            if (model.Cliente != null && _clienteBLL.ExisteCliente(model.Cliente.CustomerId))
+            {
+                ModelState.AddModelError(
+                    "Cliente.CustomerId",
+                    $"El ID del cliente {model.Cliente.CustomerId} ya existe. Proporcione un nuevo ID");
+                CargarCombo(model);
+                return View(model);
+            }
+            try
+            {
+                if (model.Cliente != null)
+                {
+                    var resultado = _clienteBLL.Insertar(model.Cliente);
+                    if (resultado.Exito)
+                    {
+                        if (!string.IsNullOrEmpty(model.ReturnUrl))
+                            return LocalRedirect(model.ReturnUrl);
+                        return RedirectToAction("Index", "Clientes");
+                    }
+                    TempData["Error"] =
+                        $"<p>El cliente <strong>{model.Cliente.CompanyName}</strong>:</p>" +
+                        resultado.Mensaje;
+                    // Sólo bloquea para errores definitivos
+                    if (resultado.Codigo < 0)
+                        model.BloquearEdicion = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    $"<p>Error al insertar el cliente " +
+                    $"<strong>{model.Cliente?.CompanyName}</strong>.</p>" +
+                    $"<p>Detalles: {ex.Message}</p>";
+            }
+            CargarCombo(model);
+            return View(model);
+        }
     }
 }

@@ -1,0 +1,109 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Clientes.ClienteInsertarViewModel
+@{
+    ViewData["Title"] = "Insertar cliente";
+}
+<h2>@ViewData["Title"]</h2>
+<form asp-controller="Clientes" 
+    asp-action="Insertar" 
+    method="post"
+    class="form"
+    onsubmit="return disableSaveButton();">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.Raw(TempData["Error"])
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-2 mb-3">
+            <label asp-for="Cliente.CustomerId" class="form-label small">ID</label>
+            <input asp-for="Cliente.CustomerId" class="form-control form-control-sm" />
+            <span asp-validation-for="Cliente.CustomerId" class="text-danger"></span>
+        </div>
+        <div class="col-md-5 mb-3">
+            <label asp-for="Cliente.CompanyName" class="form-label small">Nombre de compañía</label>
+            <input asp-for="Cliente.CompanyName" class="form-control form-control-sm" />
+            <span asp-validation-for="Cliente.CompanyName" class="text-danger"></span>
+        </div>
+        <div class="col-md-5 mb-3">
+            <label asp-for="Cliente.ContactName" class="form-label small">Nombre del contacto</label>
+            <input asp-for="Cliente.ContactName" class="form-control form-control-sm" />
+            <span asp-validation-for="Cliente.ContactName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <label asp-for="Cliente.ContactTitle" class="form-label small">Título del contacto</label>
+            <input asp-for="Cliente.ContactTitle" class="form-control form-control-sm" />
+            <span asp-validation-for="Cliente.ContactTitle" class="text-danger"></span>
+        </div>
+        <div class="col-md-9 mb-3">
+            <label asp-for="Cliente.Address" class="form-label small">Domicilio</label>
+            <input asp-for="Cliente.Address" class="form-control form-control-sm" />
+            <span asp-validation-for="Cliente.Address" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Cliente.City" class="form-label small">Ciudad</label>
+            <input asp-for="Cliente.City" class="form-control form-control-sm" />
+            <span asp-validation-for="Cliente.City" class="text-danger"></span>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Cliente.Region" class="form-label small">Región</label>
+            <input asp-for="Cliente.Region" class="form-control form-control-sm" />
+            <span asp-validation-for="Cliente.Region" class="text-danger"></span>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Cliente.PostalCode" class="form-label small">Código postal</label>
+            <input asp-for="Cliente.PostalCode" class="form-control form-control-sm" />
+            <span asp-validation-for="Cliente.PostalCode" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Cliente.Country" class="form-label small">País</label>
+            <select id="cboPais" 
+                    asp-for="Cliente.Country"
+                    asp-items="Model.Paises"
+                    class="form-select form-select-sm">
+            </select>
+            <span asp-validation-for="Cliente.Country" class="text-danger"></span>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Cliente.Phone" class="form-label small">Teléfono</label>
+            <input asp-for="Cliente.Phone" class="form-control form-control-sm" />
+            <span asp-validation-for="Cliente.Phone" class="text-danger"></span>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Cliente.Fax" class="form-label small">Fax</label>
+            <input asp-for="Cliente.Fax" class="form-control form-control-sm" />
+            <span asp-validation-for="Cliente.Fax" class="text-danger"></span>
+        </div>
+    </div>
+    <input type="hidden"
+       asp-for="ReturnUrl" />
+    <button type="submit"
+            id="btnGuardar"
+            class="btn btn-sm btn-success me-1"
+            title="Guardar"
+            disabled="@Model.BloquearEdicion">
+        <i class="bi bi-save"></i>
+        <span class="d-none d-md-inline"> Guardar</span>
+    </button>
+    <a href="@(Model.ReturnUrl ?? Url.Action("Index", "Clientes"))"
+       class="btn btn-sm btn-cancelar me-1"
+       title="Cancelar">
+        <i class="bi bi-x-circle"></i>
+        <span class="d-none d-md-inline"> Cancelar</span>
+    </a>
+</form>
+@section Scripts{
+    <script src="~/js/form-submit.js"></script>
+    <script>
+        $(function () {
+            configurarPais('Cliente.Country');
+            configurarSubmitFormulario('Cliente.Country');
+        });
+    </script>
+}

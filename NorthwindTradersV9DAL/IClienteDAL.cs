@@ -12,5 +12,7 @@ namespace NorthwindTradersV9DAL
             ClientesBuscarDto filtro);
         Cliente? ObtenerClientePorId(string id);
         int Eliminar(Cliente cliente);
+        bool ExisteCliente(string customerID);
+        int Insertar(Cliente cliente);
     }
 }

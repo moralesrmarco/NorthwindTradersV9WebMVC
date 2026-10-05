@@ -60,6 +60,25 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return resultado;
         }
+        public bool ExisteCliente(string customerID)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _clienteDAL.ExisteCliente(customerID);
+        }
+        public ResultadoOperacion Insertar(Cliente cliente)
+        {
+            var resultado = new ResultadoOperacion();
+            int numRegs = _clienteDAL.Insertar(cliente);
+            resultado.Codigo = numRegs;
+            if (numRegs > 0)
+                resultado.Exito = true;
+            else
+                resultado.Mensaje = StringsCommons.Nfrs;
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return resultado;
+        }
 
     }
 }

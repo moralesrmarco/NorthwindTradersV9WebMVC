@@ -168,5 +168,62 @@ namespace NorthwindTradersV9DAL
             }
             return numRegs;
         }
+        public bool ExisteCliente(string customerID)
+        {
+            using (var con = _connectionFactory.CreateConnection())
+            using (var cmd = new SqlCommand("SpClienteExiste", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@CustomerID", customerID);
+
+                var pExiste = new SqlParameter("@Existe", SqlDbType.Bit)
+                {
+                    Direction = ParameterDirection.Output
+                };
+
+                cmd.Parameters.Add(pExiste);
+
+                con.Open();
+                cmd.ExecuteNonQuery();
+
+                return Convert.ToBoolean(pExiste.Value);
+            }
+        }
+        public int Insertar(Cliente cliente)
+        {
+            int numRegs = 0;
+            try
+            {
+                using (var con = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpClienteInsertar", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Id", cliente.CustomerId);
+                    cmd.Parameters.AddWithValue("@Compañia", cliente.CompanyName);
+                    cmd.Parameters.AddWithValue("@Contacto", cliente.ContactName);
+                    cmd.Parameters.AddWithValue("@Titulo", cliente.ContactTitle);
+                    cmd.Parameters.AddWithValue("@Domicilio", cliente.Address);
+                    cmd.Parameters.AddWithValue("@Ciudad", cliente.City);
+                    cmd.Parameters.AddWithValue("@Region", string.IsNullOrWhiteSpace(cliente.Region) ? (object)DBNull.Value : cliente.Region);
+                    cmd.Parameters.AddWithValue("@CodigoP", string.IsNullOrWhiteSpace(cliente.PostalCode) ? (object)DBNull.Value : cliente.PostalCode);
+                    cmd.Parameters.AddWithValue("@Pais", cliente.Country);
+                    cmd.Parameters.AddWithValue("@Telefono", cliente.Phone);
+                    cmd.Parameters.AddWithValue("@Fax", string.IsNullOrWhiteSpace(cliente.Fax) ? (object)DBNull.Value : cliente.Fax);
+                    con.Open();
+                    numRegs = cmd.ExecuteNonQuery();
+                }
+            }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+            {
+                throw new Exception(
+                    $"El identificador de cliente <strong>'{cliente.CustomerId}'</strong> ya fue asignado previamente. <p>Proporcione un nuevo ID.</p>");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al insertar el cliente." + ex.Message);
+            }
+            return numRegs;
+        }
     }
 }
