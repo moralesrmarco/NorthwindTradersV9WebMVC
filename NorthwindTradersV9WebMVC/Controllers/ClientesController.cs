@@ -103,5 +103,60 @@ namespace NorthwindTradersV9WebMVC.Controllers
 
             return View(model);
         }
+        public IActionResult Consultar(string id, string? returnUrl = null)
+        {
+            var cliente = _clienteBLL.ObtenerClientePorId(id);
+            if (cliente == null)
+                TempData["Error"] = "<p>Cliente no encontrado</p>" + StringsCommons.Nefep;
+            var model = new ClienteConsultarViewModel
+            {
+                Cliente = cliente,
+                ReturnUrl = returnUrl
+            };
+            return View(model);
+        }
+        public IActionResult Eliminar(string id, string? returnUrl = null)
+        {
+            var cliente = _clienteBLL.ObtenerClientePorId(id);
+            var model = new ClienteEliminarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            if (cliente == null)
+            {
+                TempData["Error"] = "<p>Cliente no encontrado</p>" + StringsCommons.Nefep;
+                model.BloquearEliminacion = true;
+            }
+            else
+                model.Cliente = cliente;
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Eliminar(ClienteEliminarViewModel model)
+        {
+            if (model.Cliente != null)
+            {
+                var resultado = _clienteBLL.Eliminar(model.Cliente);
+                if (resultado.Exito)
+                {
+                    if (!string.IsNullOrEmpty(model.ReturnUrl))
+                        return LocalRedirect(model.ReturnUrl);
+                    return RedirectToAction("Index", "Clientes");
+                }
+                else
+                {
+                    TempData["Error"] =
+                        $"<p>El cliente con Id: <strong>{model.Cliente.CustomerId}</strong> " +
+                        $"- Nombre de compañía: <strong>{model.Cliente.CompanyName}</strong>:</p>" +
+                        resultado.Mensaje;
+
+                    // Sólo bloquea para errores definitivos
+                    if (resultado.Codigo < 0)
+                        model.BloquearEliminacion = true;
+                }
+            }
+            return View(model);
+        }
     }
 }

@@ -1,0 +1,89 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Clientes.ClienteEliminarViewModel
+@{
+    ViewData["Title"] = "Eliminar cliente";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="alert alert-success fs-5">
+    ¿Está seguro de eliminar el cliente con ID: <strong>@Model.Cliente.CustomerId</strong> - Nombre de compañía: <strong>@Model.Cliente.CompanyName</strong>?
+</div>
+<form method="post"
+      class="form"
+      onsubmit="return configurarEliminar('btnEliminar');">
+    @if(TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.Raw(TempData["Error"])
+        </div>
+    }
+    <input type="hidden" asp-for="Cliente.RowVersion" />
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="row">
+        <div class="col-md-2 mb-3">
+            <label asp-for="Cliente.CustomerId" class="form-label small">ID</label>
+            <input asp-for="Cliente.CustomerId" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-5 mb-3">
+            <label asp-for="Cliente.CompanyName" class="form-label small">Nombre de compañía</label>
+            <input asp-for="Cliente.CompanyName" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-5 mb-3">
+            <label asp-for="Cliente.ContactName" class="form-label small">Nombre del contacto</label>
+            <input asp-for="Cliente.ContactName" class="form-control form-control-sm" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <label asp-for="Cliente.ContactTitle" class="form-label small">Título del contacto</label>
+            <input asp-for="Cliente.ContactTitle" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-9 mb-3">
+            <label asp-for="Cliente.Address" class="form-label small">Domicilio</label>
+            <input asp-for="Cliente.Address" class="form-control form-control-sm" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Cliente.City" class="form-label small">Ciudad</label>
+            <input asp-for="Cliente.City" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Cliente.Region" class="form-label small">Región</label>
+            <input asp-for="Cliente.Region" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Cliente.PostalCode" class="form-label small">Código postal</label>
+            <input asp-for="Cliente.PostalCode" class="form-control form-control-sm" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Cliente.Country" class="form-label small">País</label>
+            <input asp-for="Cliente.Country" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Cliente.Phone" class="form-label small">Teléfono</label>
+            <input asp-for="Cliente.Phone" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Cliente.Fax" class="form-label small">Fax</label>
+            <input asp-for="Cliente.Fax" class="form-control form-control-sm" readonly />
+        </div>
+    </div>
+    <button type="submit"
+        id="btnEliminar"
+        class="btn btn-sm btn-danger me-1"
+        disabled="@Model.BloquearEliminacion"
+        title="Eliminar">
+        <i class="bi bi-trash"></i>
+        <span class="d-none d-md-inline"> Eliminar</span>
+    </button>
+    <a href="@(Model.ReturnUrl ?? Url.Action("Index", "Clientes"))"
+       class="btn btn-sm btn-cancelar me-1"
+       title="Cancelar">
+        <i class="bi bi-x-circle"></i>
+        <span class="d-none d-md-inline"> Cancelar</span>
+    </a>
+</form>
+@section Scripts {
+    <script src="~/js/form-delete.js"></script>
+}

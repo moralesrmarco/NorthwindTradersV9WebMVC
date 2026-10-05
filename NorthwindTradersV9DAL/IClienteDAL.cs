@@ -1,4 +1,6 @@
-﻿using NorthwindTradersV9Entities.DTOs;
+﻿using NorthwindTradersV9Common;
+using NorthwindTradersV9Entities;
+using NorthwindTradersV9Entities.DTOs;
 
 namespace NorthwindTradersV9DAL
 {
@@ -8,5 +10,7 @@ namespace NorthwindTradersV9DAL
             int pageIndex,
             int pageSize,
             ClientesBuscarDto filtro);
+        Cliente? ObtenerClientePorId(string id);
+        int Eliminar(Cliente cliente);
     }
 }

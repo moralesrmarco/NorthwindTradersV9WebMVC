@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using NorthwindTradersV9Common;
 using NorthwindTradersV9DAL;
 using NorthwindTradersV9DAL.Helpers;
 using NorthwindTradersV9Entities;
@@ -34,5 +35,31 @@ namespace NorthwindTradersV9BLL
         {
             return _comboDataHelper.LlenarCbo("SpClienteObtenerPaisesCbo");
         }
+        public Cliente? ObtenerClientePorId(string id)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _clienteDAL.ObtenerClientePorId(id);
+        }
+        public ResultadoOperacion Eliminar(Cliente cliente)
+        {
+            var resultado = new ResultadoOperacion();
+            int numRegs = _clienteDAL.Eliminar(cliente);
+            resultado.Codigo = numRegs;
+            if (numRegs > 0)
+                resultado.Exito = true;
+            else if (numRegs == -1)
+                resultado.Mensaje = StringsCommons.Nfefe;
+            else if (numRegs == -2)
+                resultado.Mensaje = StringsCommons.Nfefm;
+            else if (numRegs == -3)
+                resultado.Mensaje = StringsCommons.Nferr;
+            else
+                resultado.Mensaje = StringsCommons.Nfemd;
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return resultado;
+        }
+
     }
 }
