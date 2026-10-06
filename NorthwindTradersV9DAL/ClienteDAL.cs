@@ -225,5 +225,41 @@ namespace NorthwindTradersV9DAL
             }
             return numRegs;
         }
+        public int Actualizar(Cliente cliente)
+        {
+            int numRegs = 0;
+            try
+            {
+                using (var con = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpClienteActualizar", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Id", cliente.CustomerId);
+                    cmd.Parameters.AddWithValue("@Compañia", cliente.CompanyName);
+                    cmd.Parameters.AddWithValue("@Contacto", cliente.ContactName);
+                    cmd.Parameters.AddWithValue("@Titulo", cliente.ContactTitle);
+                    cmd.Parameters.AddWithValue("@Domicilio", cliente.Address);
+                    cmd.Parameters.AddWithValue("@Ciudad", cliente.City);
+                    cmd.Parameters.AddWithValue("@Region", string.IsNullOrWhiteSpace(cliente.Region) ? (object)DBNull.Value : cliente.Region);
+                    cmd.Parameters.AddWithValue("@CodigoP", string.IsNullOrWhiteSpace(cliente.PostalCode) ? (object)DBNull.Value : cliente.PostalCode);
+                    cmd.Parameters.AddWithValue("@Pais", cliente.Country);
+                    cmd.Parameters.AddWithValue("@Telefono", cliente.Phone);
+                    cmd.Parameters.AddWithValue("@Fax", string.IsNullOrWhiteSpace(cliente.Fax) ? (object)DBNull.Value : cliente.Fax);
+                    var rowVersion = cmd.Parameters.Add("@RowVersion", SqlDbType.Binary, 8);
+                    rowVersion.Value = cliente.RowVersion ?? (object)DBNull.Value;
+                    // Parámetro de retorno
+                    var returnParameter = cmd.Parameters.Add("@ReturnVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    numRegs = (int)returnParameter.Value;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return numRegs;
+        }
     }
 }

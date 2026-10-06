@@ -14,5 +14,6 @@ namespace NorthwindTradersV9DAL
         int Eliminar(Cliente cliente);
         bool ExisteCliente(string customerID);
         int Insertar(Cliente cliente);
+        int Actualizar(Cliente cliente);
     }
 }
