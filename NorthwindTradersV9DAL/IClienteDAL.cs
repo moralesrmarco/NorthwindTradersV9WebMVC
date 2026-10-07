@@ -15,5 +15,6 @@ namespace NorthwindTradersV9DAL
         bool ExisteCliente(string customerID);
         int Insertar(Cliente cliente);
         int Actualizar(Cliente cliente);
+        List<ClienteProveedorDto> ObtenerClientesProveedoresPaginados(string tipo, int pageIndex, int rowsPerPage, out int totalRegistros, out int totalClientes, out int totalProveedores);
     }
 }

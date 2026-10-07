@@ -150,3 +150,8 @@ label {
     border-radius: 10px 10px 0px 0px;
     align-items: center;
 }
+label.label-sin-estilo {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+}

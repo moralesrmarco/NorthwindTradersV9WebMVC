@@ -96,5 +96,11 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return resultado;
         }
+        public List<ClienteProveedorDto> ObtenerClientesProveedoresPaginados(string tipo, int pageIndex, int rowsPerPage, out int totalRegistros, out int totalClientes, out int totalProveedores)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _clienteDAL.ObtenerClientesProveedoresPaginados(tipo, pageIndex, rowsPerPage, out totalRegistros, out totalClientes, out totalProveedores);
+        }
     }
 }
