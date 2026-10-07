@@ -1,11 +1,14 @@
-﻿using NorthwindTradersV9Entities.DTOs;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using NorthwindTradersV9Entities.DTOs;
 using NorthwindTradersV9WebMVC.Models.Common;
 
 namespace NorthwindTradersV9WebMVC.Models.ClientesProveedores
 {
-    public class DirectorioClientesProveedoresViewModel
+    public class DirectorioClientesProveedoresPorCiudadViewModel
     {
         public List<ClienteProveedorDto> ClientesProveedores { get; set; } = new();
+        public string? CiudadPaisSeleccionado { get; set; }
+        public List<SelectListItem> CiudadesPaises { get; set; } = [];
         public bool MostrarClientes { get; set; } = true;
         public bool MostrarProveedores { get; set; } = true;
         public bool ConsultaSolicitada { get; set; }
@@ -18,12 +21,12 @@ namespace NorthwindTradersV9WebMVC.Models.ClientesProveedores
             get
             {
                 if (MostrarClientes && MostrarProveedores)
-                    return "DirectorioClientesProveedores";
+                    return "DirectorioClientesProveedoresPorCiudad";
                 if (MostrarClientes)
-                    return "DirectorioClientes";
+                    return "DirectorioClientesPorCiudad";
                 if (MostrarProveedores)
-                    return "DirectorioProveedores";
-                return "DirectorioClientesProveedores";
+                    return "DirectorioProveedoresPorCiudad";
+                return "DirectorioClientesProveedoresPorCiudad";
             }
         }
         public string TituloDirectorio
@@ -31,21 +34,21 @@ namespace NorthwindTradersV9WebMVC.Models.ClientesProveedores
             get
             {
                 if (MostrarClientes && MostrarProveedores)
-                    return "Directorio de clientes y proveedores";
+                    return "Directorio de clientes y proveedores por ciudad";
                 if (MostrarClientes)
-                    return "Directorio de clientes";
+                    return "Directorio de clientes por ciudad";
                 if (MostrarProveedores)
-                    return "Directorio de proveedores";
-                return "Directorio de clientes y proveedores";
+                    return "Directorio de proveedores por ciudad";
+                return "Directorio de clientes y proveedores por ciudad";
             }
         }
         public string MensajeResultados
         {
             get
             {
-                if (Tipo == "DirectorioClientes")
+                if (Tipo == "DirectorioClientesPorCiudad")
                     return $"Se encontraron {TotalClientes} cliente(s).";
-                if (Tipo == "DirectorioProveedores")
+                if (Tipo == "DirectorioProveedoresPorCiudad")
                     return $"Se encontraron {TotalProveedores} proveedor(es).";
                 return $"Se encontraron {TotalClientes} cliente(s) y {TotalProveedores} proveedor(es), Total: {Paginacion.TotalRegistros} registro(s)";
             }

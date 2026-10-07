@@ -1,0 +1,120 @@
+﻿@model NorthwindTradersV9WebMVC.Models.ClientesProveedores.DirectorioClientesProveedoresPorCiudadViewModel
+@{
+    ViewData["Title"] = "Directorio de clientes y proveedores por ciudad";
+}
+<h2 class="mb-4">
+    @Model.TituloDirectorio
+</h2>
+<form method="get" class="mb-3">
+    <input type="hidden"
+           name="ConsultaSolicitada"
+           value="true" />
+    <div class="row align-items-end mb-3">
+        <div class="col-md-5">
+            <label asp-for="CiudadPaisSeleccionado" class="form-label">
+                Buscar por ciudad
+            </label>
+            <select asp-for="CiudadPaisSeleccionado"
+                    asp-items="Model.CiudadesPaises"
+                    class="form-select form-select-sm">
+            </select>
+        </div>
+        <div class="col-md-7">
+            <div class="form-check form-check-inline">
+                <input asp-for="MostrarClientes"
+                       class="form-check-input" />
+                <label asp-for="MostrarClientes"
+                       class="form-check-label label-sin-estilo">
+                    Clientes
+                </label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input asp-for="MostrarProveedores"
+                       class="form-check-input" />
+                <label asp-for="MostrarProveedores"
+                       class="form-check-label label-sin-estilo">
+                    Proveedores
+                </label>
+            </div>
+            <button type="submit"
+                    class="btn btn-primary btn-sm ms-2">
+                Aplicar
+            </button>
+        </div>
+    </div>  
+</form>
+@if (Model.ConsultaSolicitada)
+{
+    <div class="container mt-4">
+        <p class="text-muted">
+            @Model.MensajeResultados
+        </p>
+
+        @{
+            ViewData["PageIndex"] = Model.Paginacion.PageIndex;
+            ViewData["TotalPages"] = Model.Paginacion.TotalPages;
+            ViewData["TotalRegistros"] = Model.Paginacion.TotalRegistros;
+        }
+        <partial name="_Paginacion"
+                 model="Model.ParametrosPaginacion" />
+        <br />
+        <div class="row">
+            @foreach (var clienteProveedor in Model.ClientesProveedores)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header encabezado-usuario">
+                            <h5 class="card-title">Ciudad: @clienteProveedor.City, @clienteProveedor.Country</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong class="fs-6">Compañía: @clienteProveedor.CompanyName</strong> <br />
+                                <strong>Contacto:</strong> @clienteProveedor.Contact (@clienteProveedor.Relation)<br />
+                                <strong>Domicilio</strong>
+                                @clienteProveedor.Address
+                                <br />
+                                <strong>Region:</strong>
+                                @clienteProveedor.Region
+                                <br />
+                                <strong>Código postal:</strong>
+                                @clienteProveedor.PostalCode
+                                <br />
+                                <strong>Teléfono:</strong>
+                                @clienteProveedor.Phone
+                                <br />
+                                <strong>Fax:</strong>
+                                @clienteProveedor.Fax
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @{
+            ViewData["PageIndex"] = Model.Paginacion.PageIndex;
+            ViewData["TotalPages"] = Model.Paginacion.TotalPages;
+            ViewData["TotalRegistros"] = Model.Paginacion.TotalRegistros;
+        }
+        <partial name="_Paginacion"
+                 model="Model.ParametrosPaginacion" />
+
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        Seleccione la ciudad, clientes y/o proveedores, haga clic en aplicar.
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @Html.Raw(TempData["Error"])
+    </div>
+}
+
+@section Scripts
+{
+    <script src="~/js/loading-overlay.js"></script>
+}

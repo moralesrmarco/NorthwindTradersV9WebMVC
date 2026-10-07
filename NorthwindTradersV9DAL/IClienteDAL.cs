@@ -16,5 +16,7 @@ namespace NorthwindTradersV9DAL
         int Insertar(Cliente cliente);
         int Actualizar(Cliente cliente);
         List<ClienteProveedorDto> ObtenerClientesProveedoresPaginados(string tipo, int pageIndex, int rowsPerPage, out int totalRegistros, out int totalClientes, out int totalProveedores);
+        List<ClienteProveedorDto> ObtenerClientesProveedoresPorCiudadPaginados(string tipo, string ciudadPais, int pageIndex, int rowsPerPage, out int totalRegistros, out int totalClientes, out int totalProveedores);
+        List<CiudadPaisVwClientesProveedoresDto> ObtenerCiudadesPaisesVwCliProvCbo();
     }
 }

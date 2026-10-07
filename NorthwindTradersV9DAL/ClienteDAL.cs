@@ -324,5 +324,92 @@ namespace NorthwindTradersV9DAL
             }
             return clientesProveedores;
         }
+        public List<ClienteProveedorDto> ObtenerClientesProveedoresPorCiudadPaginados(string tipo, string ciudadPais, int pageIndex, int rowsPerPage, out int totalRegistros, out int totalClientes, out int totalProveedores)
+        {
+            List<ClienteProveedorDto> clientesProveedores = new List<ClienteProveedorDto>();
+            try
+            {
+                using var conn = _connectionFactory.CreateConnection();
+                using var cmd = new SqlCommand("SpClientesProveedoresPorCiudadPaginados", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Tipo", tipo);
+                cmd.Parameters.AddWithValue("@CiudadPais", ciudadPais);
+                cmd.Parameters.AddWithValue("@PageIndex", pageIndex);
+                cmd.Parameters.AddWithValue("@RowsPerPage", rowsPerPage);
+                using var dap = new SqlDataAdapter(cmd);
+                var ds = new DataSet();
+                dap.Fill(ds);
+                totalRegistros = 0;
+                totalClientes = 0;
+                totalProveedores = 0;
+                if (ds.Tables.Count > 0 &&
+                    ds.Tables[0].Rows.Count > 0)
+                {
+                    totalClientes =
+                        ds.Tables[0].Rows[0]["TotalClientes"] == DBNull.Value
+                            ? 0
+                            : Convert.ToInt32(ds.Tables[0].Rows[0]["TotalClientes"]);
+
+                    totalProveedores =
+                        ds.Tables[0].Rows[0]["TotalProveedores"] == DBNull.Value
+                            ? 0
+                            : Convert.ToInt32(ds.Tables[0].Rows[0]["TotalProveedores"]);
+
+                    totalRegistros =
+                        ds.Tables[0].Rows[0]["TotalRegistros"] == DBNull.Value
+                            ? 0
+                            : Convert.ToInt32(ds.Tables[0].Rows[0]["TotalRegistros"]);
+                }
+
+                if (ds.Tables.Count > 1)
+                {
+                    foreach (DataRow row in ds.Tables[1].Rows)
+                    {
+                        clientesProveedores.Add(new ClienteProveedorDto
+                        {
+                            CompanyName = row["CompanyName"].ToString() ?? string.Empty,
+                            Contact = row["Contact"].ToString() ?? string.Empty,
+                            Relation = row["Relation"].ToString() ?? string.Empty,
+                            Address = row["Address"].ToString() ?? string.Empty,
+                            City = row["City"].ToString() ?? string.Empty,
+                            Region = row["Region"] as string,
+                            PostalCode = row["PostalCode"] as string,
+                            Country = row["Country"].ToString() ?? string.Empty,
+                            Phone = row["Phone"] as string,
+                            Fax = row["Fax"] as string
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los clientes y proveedores " + ex.Message);
+            }
+            return clientesProveedores;
+        }
+        public List<CiudadPaisVwClientesProveedoresDto> ObtenerCiudadesPaisesVwCliProvCbo()
+        {
+            List<CiudadPaisVwClientesProveedoresDto> ciudadesPaises = new List<CiudadPaisVwClientesProveedoresDto>();
+            try
+            {
+                using var conn = _connectionFactory.CreateConnection();
+                using var cmd = new SqlCommand("SpClientesProveedoresCiudadPaisVwCliProvCbo", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                conn.Open();
+                using var rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    ciudadesPaises.Add(new CiudadPaisVwClientesProveedoresDto
+                    {
+                        CiudadPais = rdr["CiudadPais"]?.ToString() ?? string.Empty,
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener las ciudades " + ex.Message);
+            }
+            return ciudadesPaises;
+        }
     }
 }
