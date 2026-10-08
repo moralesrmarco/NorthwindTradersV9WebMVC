@@ -19,5 +19,6 @@ namespace NorthwindTradersV9DAL
         List<CiudadPaisVwClientesProveedoresDto> ObtenerCiudadesPaisesVwCliProvCbo();
         List<PaisVwClientesProveedoresDto> ObtenerPaisesVwCliProvCbo();
         List<ClienteProveedorDto> ObtenerClientesProveedoresPorPaisPaginados(string tipo, string pais, int pageIndex, int rowsPerPage, out int totalRegistros, out int totalClientes, out int totalProveedores);
+        List<Cliente> ObtenerClientesRpt();
     }
 }

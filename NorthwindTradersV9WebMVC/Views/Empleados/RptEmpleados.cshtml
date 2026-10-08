@@ -8,14 +8,18 @@
 
     <a asp-controller="Empleados"
        asp-action="RptEmpleadosExcel"
-       class="btn btn-success">
-        Excel
+       class="btn btn-sm btn-success"
+        title="Exportar a Excel">
+        <i class="bi bi-file-earmark-excel"></i> 
+        <span class="d-none d-md-inline"> Excel</span>
     </a>
 
     <a asp-controller="Empleados"
        asp-action="RptEmpleadosWord"
-       class="btn btn-primary">
-        Word
+       class="btn btn-sm btn-primary"
+        title="Exportar a Word">
+        <i class="bi bi-file-earmark-word"></i>
+        <span class="d-none d-md-inline"> Word</span>
     </a>
 
 </div>

@@ -13,6 +13,7 @@ namespace NorthwindTradersV9Entities
             get => _customerId;
             set => _customerId = value?.ToUpper();
         }
+        public string? CustomerID => CustomerId; // es necesaria para compatibilidad con los reportes que usan la propiedad CustomerID en lugar de CustomerId
         [Required(ErrorMessage = "Ingrese el nombre de compañia")]
         [StringLength(40, ErrorMessage = "El nombre de compañía no puede exceder de 40 caracteres")]
         public string? CompanyName { get; set; }

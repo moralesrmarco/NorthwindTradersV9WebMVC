@@ -498,5 +498,42 @@ namespace NorthwindTradersV9DAL
             }
             return clientesProveedores;
         }
+        public List<Cliente> ObtenerClientesRpt()
+        {
+            List<Cliente> clientes = new List<Cliente>();
+            try
+            {
+                using var conn = _connectionFactory.CreateConnection();
+                using var cmd = new SqlCommand("SpClienteObtener", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@top100", true);
+                conn.Open();
+                using var rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    var cliente = new Cliente
+                    {
+                        CustomerId = rdr.IsDBNull(rdr.GetOrdinal("CustomerID")) ? null : rdr["CustomerID"].ToString(),
+                        CompanyName = rdr.IsDBNull(rdr.GetOrdinal("CompanyName")) ? null : rdr["CompanyName"].ToString(),
+                        ContactName = rdr.IsDBNull(rdr.GetOrdinal("ContactName")) ? null : rdr["ContactName"].ToString(),
+                        ContactTitle = rdr.IsDBNull(rdr.GetOrdinal("ContactTitle")) ? null : rdr["ContactTitle"].ToString(),
+                        Address = rdr.IsDBNull(rdr.GetOrdinal("Address")) ? null : rdr["Address"].ToString(),
+                        City = rdr.IsDBNull(rdr.GetOrdinal("City")) ? null : rdr["City"].ToString(),
+                        Region = rdr.IsDBNull(rdr.GetOrdinal("Region")) ? null : rdr["Region"].ToString(),
+                        PostalCode = rdr.IsDBNull(rdr.GetOrdinal("PostalCode")) ? null : rdr["PostalCode"].ToString(),
+                        Country = rdr.IsDBNull(rdr.GetOrdinal("Country")) ? null : rdr["Country"].ToString(),
+                        Phone = rdr.IsDBNull(rdr.GetOrdinal("Phone")) ? null : rdr["Phone"].ToString(),
+                        Fax = rdr.IsDBNull(rdr.GetOrdinal("Fax")) ? null : rdr["Fax"].ToString()
+                    };
+                    clientes.Add(cliente);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los clientes " + ex.Message);
+            }
+            return clientes;
+        }
+
     }
 }

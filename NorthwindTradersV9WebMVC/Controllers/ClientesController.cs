@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
+using Microsoft.Reporting.NETCore;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
 using NorthwindTradersV9WebMVC.Models.Clientes;
 using NorthwindTradersV9WebMVC.Models.Common;
-using NorthwindTradersV9WebMVC.Models.Empleados;
 
 namespace NorthwindTradersV9WebMVC.Controllers
 {
@@ -301,6 +301,67 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 });
             }
             return paises;
+        }
+        public IActionResult RptDirectorioClientes()
+        {
+            return View();
+        }
+        public IActionResult RptDirectorioClientesPdf()
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Clientes",
+                "RptClientes.rdlc");
+            var clientes = _clienteBLL.ObtenerClientesRpt();
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(new ReportDataSource("DataSet1", clientes));
+            string mimeType;
+            string encoding;
+            string extension;
+            string[] streams;
+            Warning[] warnings;
+            byte[] pdfBytes = reporte.Render(
+                "PDF",
+                null,
+                out mimeType,
+                out encoding,
+                out extension,
+                out streams,
+                out warnings);
+            return new FileStreamResult(new MemoryStream(pdfBytes), "application/pdf");
+        }
+        public IActionResult RptDirectorioClientesExcel()
+        {
+            return GenerarReporteDirectorioClientes(
+                "EXCELOPENXML",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "DirectorioClientes.xlsx");
+        }
+        public IActionResult RptDirectorioClientesWord()
+        {
+            return GenerarReporteDirectorioClientes(
+                "WORDOPENXML",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "DirectorioClientes.docx");
+        }
+        private FileContentResult GenerarReporteDirectorioClientes(
+            string formato,
+            string tipoContenido,
+            string nombreArchivo)
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Clientes",
+                "RptClientes.rdlc");
+            var clientes = _clienteBLL.ObtenerClientesRpt();
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(new ReportDataSource("DataSet1", clientes));
+            byte[] bytes = reporte.Render(formato);
+            return File(bytes, tipoContenido, nombreArchivo);
         }
     }
 }
