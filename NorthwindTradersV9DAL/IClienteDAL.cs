@@ -1,5 +1,4 @@
-﻿using NorthwindTradersV9Common;
-using NorthwindTradersV9Entities;
+﻿using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
 
 namespace NorthwindTradersV9DAL
@@ -18,5 +17,7 @@ namespace NorthwindTradersV9DAL
         List<ClienteProveedorDto> ObtenerClientesProveedoresPaginados(string tipo, int pageIndex, int rowsPerPage, out int totalRegistros, out int totalClientes, out int totalProveedores);
         List<ClienteProveedorDto> ObtenerClientesProveedoresPorCiudadPaginados(string tipo, string ciudadPais, int pageIndex, int rowsPerPage, out int totalRegistros, out int totalClientes, out int totalProveedores);
         List<CiudadPaisVwClientesProveedoresDto> ObtenerCiudadesPaisesVwCliProvCbo();
+        List<PaisVwClientesProveedoresDto> ObtenerPaisesVwCliProvCbo();
+        List<ClienteProveedorDto> ObtenerClientesProveedoresPorPaisPaginados(string tipo, string pais, int pageIndex, int rowsPerPage, out int totalRegistros, out int totalClientes, out int totalProveedores);
     }
 }

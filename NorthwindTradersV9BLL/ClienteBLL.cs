@@ -122,6 +122,24 @@ namespace NorthwindTradersV9BLL
             }
             return ciudadesPaisesKvp;
         }
+        public List<KeyValuePair<string, string>> ObtenerPaisesVwCliProvCbo()
+        {
+            var paises = _clienteDAL.ObtenerPaisesVwCliProvCbo();
+            var paisesKvp = new List<KeyValuePair<string, string>>();
+            paisesKvp.Add(new KeyValuePair<string, string>("»--- Seleccione ---«", ""));
+            paisesKvp.Add(new KeyValuePair<string, string>("»--- Todos los paises ---«", "00000"));
+            foreach (var item in paises)
+            {
+                paisesKvp.Add(new KeyValuePair<string, string>(item.Pais ?? string.Empty, item.Pais ?? string.Empty));
+            }
+            return paisesKvp;
+        }
+        public List<ClienteProveedorDto> ObtenerClientesProveedoresPorPaisPaginados(string tipo, string pais, int pageIndex, int rowsPerPage, out int totalRegistros, out int totalClientes, out int totalProveedores)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _clienteDAL.ObtenerClientesProveedoresPorPaisPaginados(tipo, pais, pageIndex, rowsPerPage, out totalRegistros, out totalClientes, out totalProveedores);
+        }
 
     }
 }

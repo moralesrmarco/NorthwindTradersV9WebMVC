@@ -87,7 +87,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 MostrarProveedores = mostrarProveedores,
                 ConsultaSolicitada = consultaSolicitada
             };
-            CargarCiudadesPaises(model);
+            model.CiudadesPaises = CargarCiudadesPaises();
             if(!consultaSolicitada)
                 return View(model);
             if (string.IsNullOrWhiteSpace(ciudadPaisSeleccionado) || (!mostrarClientes && !mostrarProveedores))
@@ -127,16 +127,81 @@ namespace NorthwindTradersV9WebMVC.Controllers
             };
             return View(model);
         }
-        private void CargarCiudadesPaises(DirectorioClientesProveedoresPorCiudadViewModel model)
+        private List<SelectListItem> CargarCiudadesPaises()
         {
-            model.CiudadesPaises = _clienteBLL
-                .ObtenerCiudadesPaisesVwCliProvCbo()
-                .Select(x => new SelectListItem
+            return _clienteBLL
+                    .ObtenerCiudadesPaisesVwCliProvCbo()
+                    .Select(x => new SelectListItem
+                    {
+                        Text = x.Key,
+                        Value = x.Value
+                    })
+                    .ToList();
+        }
+        public IActionResult DirectorioClientesProveedoresPorPais(
+            int pageIndex = 1,
+            string? paisSeleccionado = null,
+            bool mostrarClientes = true,
+            bool mostrarProveedores = true,
+            bool consultaSolicitada = false)
+        {
+            var model = new DirectorioClientesProveedoresPorPaisViewModel
+            {
+                PaisSeleccionado = paisSeleccionado,
+                MostrarClientes = mostrarClientes,
+                MostrarProveedores = mostrarProveedores,
+                ConsultaSolicitada = consultaSolicitada
+            };
+            model.Paises = CargarPaises();
+            if (!consultaSolicitada)
+                return View(model);
+            if (string.IsNullOrWhiteSpace(paisSeleccionado) || (!mostrarClientes && !mostrarProveedores))
+            {
+                TempData["Error"] = StringsCommons.ErrorCriterioSelec;
+                model.ConsultaSolicitada = false;
+                return View(model);
+            }
+            var registros = _clienteBLL.ObtenerClientesProveedoresPorPaisPaginados(
+                model.Tipo,
+                paisSeleccionado,
+                pageIndex,
+                _appSettings.RowsPerPage,
+                out int totalRegistros,
+                out int totalClientes,
+                out int totalProveedores);
+            model.ClientesProveedores = registros;
+            model.TotalClientes = totalClientes;
+            model.TotalProveedores = totalProveedores;
+            model.Paginacion = new PaginacionViewModel
+            {
+                PageIndex = pageIndex,
+                PageSize = _appSettings.RowsPerPage,
+                TotalRegistros = totalRegistros
+            };
+            model.ParametrosPaginacion = new ParametrosPaginacionViewModel
+            {
+                Controller = "ClientesProveedores",
+                Action = "DirectorioClientesProveedoresPorPais",
+                Parametros = new Dictionary<string, string?>
                 {
-                    Text = x.Key,
-                    Value = x.Value
-                })
-                .ToList();
+                    ["ConsultaSolicitada"] = "true",
+                    ["PaisSeleccionado"] = model.PaisSeleccionado,
+                    ["MostrarClientes"] = model.MostrarClientes.ToString().ToLowerInvariant(),
+                    ["MostrarProveedores"] = model.MostrarProveedores.ToString().ToLowerInvariant()
+                }
+            };
+            return View(model);
+        }
+        private List<SelectListItem> CargarPaises()
+        {
+            return _clienteBLL
+                    .ObtenerPaisesVwCliProvCbo()
+                    .Select(x => new SelectListItem
+                    {
+                        Text = x.Key,
+                        Value = x.Value
+                    })
+                    .ToList();
         }
     }
 }

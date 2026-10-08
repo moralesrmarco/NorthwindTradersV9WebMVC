@@ -1,6 +1,6 @@
-﻿@model NorthwindTradersV9WebMVC.Models.ClientesProveedores.DirectorioClientesProveedoresViewModel
+﻿@model NorthwindTradersV9WebMVC.Models.ClientesProveedores.DirectorioClientesProveedoresPorPaisViewModel
 @{
-    ViewData["Title"] = "Directorio de clientes y proveedores";
+    ViewData["Title"] = "Directorio de clientes y proveedores por país";
 }
 <h2 class="mb-4">
     @Model.TituloDirectorio
@@ -9,28 +9,38 @@
     <input type="hidden"
            name="ConsultaSolicitada"
            value="true" />
-    <div>
-        Buscar por: &nbsp;&nbsp;
-        <div class="form-check form-check-inline">
-            <input asp-for="MostrarClientes"
-                   class="form-check-input" />
-            <label asp-for="MostrarClientes"
-                   class="form-check-label label-sin-estilo">
-                Clientes
+    <div class="row align-items-end mb-3">
+        <div class="col-md-5">
+            <label asp-for="PaisSeleccionado" class="form-label">
+                Buscar por país
             </label>
+            <select asp-for="PaisSeleccionado"
+                    asp-items="Model.Paises"
+                    class="form-select form-select-sm">
+            </select>
         </div>
-        <div class="form-check form-check-inline">
-            <input asp-for="MostrarProveedores"
-                   class="form-check-input" />
-            <label asp-for="MostrarProveedores"
-                   class="form-check-label label-sin-estilo">
-                Proveedores
-            </label>
+        <div class="col-md-7">
+            <div class="form-check form-check-inline">
+                <input asp-for="MostrarClientes"
+                       class="form-check-input" />
+                <label asp-for="MostrarClientes"
+                       class="form-check-label label-sin-estilo">
+                    Clientes
+                </label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input asp-for="MostrarProveedores"
+                       class="form-check-input" />
+                <label asp-for="MostrarProveedores"
+                       class="form-check-label label-sin-estilo">
+                    Proveedores
+                </label>
+            </div>
+            <button type="submit"
+                    class="btn btn-primary btn-sm ms-2">
+                Aplicar
+            </button>
         </div>
-        <button type="submit"
-                class="btn btn-primary btn-sm ms-2">
-            Aplicar
-        </button>
     </div>
 </form>
 @if (Model.ConsultaSolicitada)
@@ -39,7 +49,6 @@
         <p class="text-muted">
             @Model.MensajeResultados
         </p>
-
         @{
             ViewData["PageIndex"] = Model.Paginacion.PageIndex;
             ViewData["TotalPages"] = Model.Paginacion.TotalPages;
@@ -55,27 +64,23 @@
                     <div class="card shadow-sm h-100">
                         <div class="card-header encabezado-usuario">
                             <h5 class="card-title">
-                                @clienteProveedor.CompanyName
+                                @clienteProveedor.Country
                             </h5>
                         </div>
                         <div class="card-body">
                             <p class="card-text">
-                                <strong class="fs-6">Relacion: @clienteProveedor.Relation</strong><br />
+                                <strong class="fs-6">Ciudad: @clienteProveedor.City</strong> <br />
+                                <strong class="fs-6">Compañía: @clienteProveedor.CompanyName</strong> <br />
+                                <strong class="fs-6">Relación: @clienteProveedor.Relation</strong> <br />
                                 <strong>Contacto:</strong> @clienteProveedor.Contact<br />
                                 <strong>Domicilio:</strong>
                                 @clienteProveedor.Address
-                                <br />
-                                <strong>Ciudad:</strong>
-                                @clienteProveedor.City
                                 <br />
                                 <strong>Region:</strong>
                                 @clienteProveedor.Region
                                 <br />
                                 <strong>Código postal:</strong>
                                 @clienteProveedor.PostalCode
-                                <br />
-                                <strong>País:</strong>
-                                @clienteProveedor.Country
                                 <br />
                                 <strong>Teléfono:</strong>
                                 @clienteProveedor.Phone
@@ -88,7 +93,6 @@
                 </div>
             }
         </div>
-
         @{
             ViewData["PageIndex"] = Model.Paginacion.PageIndex;
             ViewData["TotalPages"] = Model.Paginacion.TotalPages;
@@ -96,13 +100,12 @@
         }
         <partial name="_Paginacion"
                  model="Model.ParametrosPaginacion" />
-
     </div>
 }
 else
 {
     <div class="alert alert-info">
-        Seleccione clientes y/o proveedores, haga clic en aplicar.
+        Seleccione el país, clientes y/o proveedores, haga clic en aplicar.
     </div>
 }
 @if (TempData["Error"] != null)

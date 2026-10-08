@@ -69,8 +69,9 @@
                         <div class="card-body">
                             <p class="card-text">
                                 <strong class="fs-6">Compañía: @clienteProveedor.CompanyName</strong> <br />
-                                <strong>Contacto:</strong> @clienteProveedor.Contact (@clienteProveedor.Relation)<br />
-                                <strong>Domicilio</strong>
+                                <strong class="fs-6">Relacion: @clienteProveedor.Relation</strong> <br />
+                                <strong>Contacto:</strong> @clienteProveedor.Contact <br />
+                                <strong>Domicilio:</strong>
                                 @clienteProveedor.Address
                                 <br />
                                 <strong>Region:</strong>
@@ -98,7 +99,6 @@
         }
         <partial name="_Paginacion"
                  model="Model.ParametrosPaginacion" />
-
     </div>
 }
 else
