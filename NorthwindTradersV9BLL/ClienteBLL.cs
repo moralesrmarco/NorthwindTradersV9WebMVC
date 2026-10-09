@@ -147,5 +147,12 @@ namespace NorthwindTradersV9BLL
             List<Cliente> clientes = _clienteDAL.ObtenerClientesRpt();
             return clientes;
         }
+        public List<ClienteProveedorDto> ObtenerClientesProveedoresRpt(string tipo)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _clienteDAL.ObtenerClientesProveedoresRpt(tipo);
+        }
+
     }
 }

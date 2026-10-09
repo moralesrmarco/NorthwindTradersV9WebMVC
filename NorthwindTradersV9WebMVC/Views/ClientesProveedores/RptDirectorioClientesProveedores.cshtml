@@ -1,0 +1,259 @@
+﻿@{
+    ViewData["Title"] = "Reporte directorio de clientes y proveedores";
+}
+<h2 id="tituloDirectorio" class="mb-4">
+    @ViewBag.TituloDirectorio
+</h2>
+<form id="formReporte"
+      method="post"
+      asp-controller="ClientesProveedores"
+      asp-action="VerPdfRptDirectorioClientesProveedores"
+      class="mb-3">
+    @Html.AntiForgeryToken()
+    <div>
+        Buscar por: &nbsp;&nbsp;
+        <div class="form-check form-check-inline">
+            <input type="checkbox"
+               name="mostrarClientes"
+               value="true"
+               class="form-check-input" 
+               @(ViewBag.MostrarClientes ? "checked" : "") />
+            <label class="form-check-label label-sin-estilo">
+                Clientes
+            </label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input type="checkbox"
+               name="mostrarProveedores"
+               value="true"
+               class="form-check-input" 
+               @(ViewBag.MostrarProveedores ? "checked" : "") />
+            <label class="form-check-label label-sin-estilo">
+                Proveedores
+            </label>
+        </div>
+        <button type="submit"
+                class="btn btn-primary btn-sm ms-2"
+                title="Aplicar"
+                data-no-overlay>
+            <i class="bi bi-check-square"></i>
+            <span class="d-none d-md-inline"> Aplicar</span>
+        </button>
+    </div>
+</form>
+
+<div id="botonesExportacion" class="mt-3" style="display: none;">
+
+    <a href="@Url.Action(
+            "ExportarExcelRptDirectorioClientesProveedores",
+            "ClientesProveedores")"
+       id="btnExportarExcel"
+       class="btn btn-sm btn-success"
+       title="Exportar a Excel">
+        <i class="bi bi-file-earmark-excel"></i>
+        <span class="d-none d-md-inline"> Excel</span>
+    </a>
+
+    <a href="@Url.Action(
+            "ExportarWordRptDirectorioClientesProveedores",
+            "ClientesProveedores")"
+       id="btnExportarWord"
+       class="btn btn-sm btn-primary"
+       title="Exportar a Word">
+        <i class="bi bi-file-earmark-word"></i>
+        <span class="d-none d-md-inline"> Word</span>
+    </a>
+</div>
+
+<div id="contenedorPdf" class="mt-3"></div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @Html.Raw(TempData["Error"])
+    </div>
+}
+@section Scripts {
+    <script>
+        document.getElementById("formReporte")
+            .addEventListener("submit", async function (e) {
+
+                e.preventDefault();
+
+                const form = this;
+                const contenedor = document.getElementById("contenedorPdf");
+
+                const mostrarClientes =
+                    form.querySelector('[name="mostrarClientes"]').checked;
+
+                const mostrarProveedores =
+                    form.querySelector('[name="mostrarProveedores"]').checked;
+
+                const titulo = document.getElementById("tituloDirectorio");
+
+                if (mostrarClientes && mostrarProveedores) {
+                    titulo.textContent = "Reporte directorio de clientes y proveedores";
+                } else if (mostrarClientes) {
+                    titulo.textContent = "Reporte directorio de clientes";
+                } else if (mostrarProveedores) {
+                    titulo.textContent = "Reporte directorio de proveedores";
+                } else {
+                    titulo.textContent = "Reporte directorio de clientes y proveedores";
+                }
+
+                // Validar antes de activar el overlay.
+                if (!mostrarClientes && !mostrarProveedores) {
+                    document.getElementById("botonesExportacion")
+                        .style.display = "none";
+                    contenedor.innerHTML = `
+                        <div class="alert alert-danger">
+                            Proporcione los criterios de selección.
+                        </div>`;
+                    return;
+                }
+
+                document.getElementById("botonesExportacion")
+                    .style.display = "none";
+
+                contenedor.innerHTML = `
+                    <div class="alert alert-info">
+                        Generando reporte, espere un momento...
+                    </div>`;
+
+                // Activar el overlay para la petición AJAX.
+                mostrarLoadingOverlay();
+
+                try {
+                    const respuesta = await fetch(form.action, {
+                        method: "POST",
+                        body: new FormData(form),
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    });
+
+                    if (!respuesta.ok) {
+                        throw new Error(
+                            "No fue posible generar el reporte.");
+                    }
+
+                    const contenido = respuesta.headers
+                        .get("content-type");
+
+                    if (!contenido ||
+                        !contenido.includes("application/pdf")) {
+                        throw new Error(
+                            "El servidor no devolvió un documento PDF.");
+                    }
+
+                    const pdf = await respuesta.blob();
+                    const urlPdf = URL.createObjectURL(pdf);
+
+                    contenedor.innerHTML = "";
+
+                    const visor = document.createElement("iframe");
+                    visor.src = urlPdf;
+                    visor.width = "100%";
+                    visor.style.height = "75vh";
+                    visor.style.border = "1px solid #dee2e6";
+                    visor.title =
+                        "Reporte directorio de clientes y proveedores";
+
+                    contenedor.appendChild(visor);
+
+                    document.getElementById("botonesExportacion")
+                        .style.display = "block";
+
+                } catch (error) {
+                    contenedor.innerHTML = `
+                        <div class="alert alert-danger">
+                            ${error.message}
+                        </div>`;
+                } finally {
+                    // Ocultar el overlay tanto si funciona como si falla.
+                    ocultarLoadingOverlay();
+                }
+            });
+
+            async function exportarReporte(url, extension) {
+                const form = document.getElementById("formReporte");
+                const contenedor = document.getElementById("contenedorPdf");
+
+                const mostrarClientes =
+                    form.querySelector('[name="mostrarClientes"]').checked;
+
+                const mostrarProveedores =
+                    form.querySelector('[name="mostrarProveedores"]').checked;
+
+                if (!mostrarClientes && !mostrarProveedores) {
+                    contenedor.insertAdjacentHTML("afterbegin", `
+                        <div class="alert alert-danger">
+                            Proporcione los criterios de selección.
+                        </div>`);
+                    return;
+                }
+
+                mostrarLoadingOverlay();
+
+                try {
+                    const respuesta = await fetch(url, {
+                        method: "POST",
+                        body: new FormData(form),
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    });
+
+                    if (!respuesta.ok) {
+                        const detalle = await respuesta.text();
+                        throw new Error(
+                            detalle || "No fue posible exportar el reporte.");
+                    }
+
+                    const archivo = await respuesta.blob();
+                    const urlArchivo = URL.createObjectURL(archivo);
+
+                    let nombreReporte = "DirectorioClientesProveedores";
+
+                    if (mostrarClientes && !mostrarProveedores) {
+                        nombreReporte = "DirectorioClientes";
+                    } else if (mostrarProveedores && !mostrarClientes) {
+                        nombreReporte = "DirectorioProveedores";
+                    }
+
+                    const enlace = document.createElement("a");
+                    enlace.href = urlArchivo;
+                    enlace.download = `${nombreReporte}.${extension}`;
+
+                    document.body.appendChild(enlace);
+                    enlace.click();
+                    enlace.remove();
+
+                    setTimeout(() => URL.revokeObjectURL(urlArchivo), 1000);
+
+                } catch (error) {
+                    contenedor.insertAdjacentHTML("afterbegin", `
+                        <div class="alert alert-danger">
+                            ${error.message}
+                        </div>`);
+                } finally {
+                    ocultarLoadingOverlay();
+                }
+            }
+
+            document.getElementById("btnExportarExcel")
+                .addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    exportarReporte(this.href, "xlsx");
+                });
+
+            document.getElementById("btnExportarWord")
+                .addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    exportarReporte(this.href, "docx");
+                });
+    </script>
+}
+
