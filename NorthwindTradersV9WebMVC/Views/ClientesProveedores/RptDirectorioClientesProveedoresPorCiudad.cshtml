@@ -1,0 +1,91 @@
+﻿@model NorthwindTradersV9WebMVC.Models.ClientesProveedores.RptDirectorioClientesProveedoresPorCiudadViewModel
+@{
+    ViewData["Title"] = "Reporte directorio de clientes y proveedores por ciudad";
+}
+<h2 class="mb-4">@Model.TituloDirectorio</h2>
+<form asp-controller = "ClientesProveedores"
+    asp-action = "RptDirectorioClientesProveedoresPorCiudad"
+    method = "post"
+    class = "mb-3">
+    @Html.AntiForgeryToken()
+    <div class="row align-items-end mb-3">
+        <div class="col-md-5">
+            <label asp-for="CiudadPaisSeleccionado" class="form-label">Buscar por ciudad:</label>
+            <select asp-for="CiudadPaisSeleccionado"
+                asp-items="Model.CiudadesPaises"
+                class="form-select form-select-sm">
+            </select>
+        </div>
+        <div class="col-md-7">
+            <div class="form-check form-check-inline">
+                <input asp-for="MostrarClientes"
+                    class="form-check-input" />
+                <label asp-for="MostrarClientes" class="form-check-label label-sin-estilo">Clientes</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input asp-for="MostrarProveedores"
+                    class="form-check-input" />
+                <label asp-for="MostrarProveedores" class="form-check-label label-sin-estilo">Proveedores</label>
+            </div>
+            <button type="submit"
+                class="btn btn-primary btn-sm ms-2"
+                title="Aplicar"
+                data-no-overlay>
+                <i class="bi bi-check-square"></i>
+                <span class="d-none d-md-inline"> Aplicar</span>
+            </button>
+        </div>
+    </div>
+</form>
+@if (Model.ConsultaSolicitada)
+{
+    <a asp-controller="ClientesProveedores"
+       asp-action="ExportarExcelRptDirectorioClientesProveedoresPorCiudad"
+       asp-route-CiudadPaisSeleccionado="@Model.CiudadPaisSeleccionado"
+       asp-route-MostrarClientes="@Model.MostrarClientes"
+       asp-route-MostrarProveedores="@Model.MostrarProveedores"
+       class="btn btn-sm btn-success">
+        Excel
+    </a>
+
+    <a asp-controller="ClientesProveedores"
+       asp-action="ExportarWordRptDirectorioClientesProveedoresPorCiudad"
+       asp-route-CiudadPaisSeleccionado="@Model.CiudadPaisSeleccionado"
+       asp-route-MostrarClientes="@Model.MostrarClientes"
+       asp-route-MostrarProveedores="@Model.MostrarProveedores"
+       class="btn btn-sm btn-primary">
+        Word
+    </a>
+
+    <p>&nbsp;</p>
+
+    <iframe id="visorReporte"
+            data-report-src="@Url.Action(
+                "VerPdfRptDirectorioClientesProveedoresPorCiudad",
+                "ClientesProveedores",
+                new
+                {
+                    CiudadPaisSeleccionado = Model.CiudadPaisSeleccionado,
+                    MostrarClientes = Model.MostrarClientes,
+                    MostrarProveedores = Model.MostrarProveedores
+                })"
+            width="100%"
+            height="600"
+            style="border:1px solid #ccc;">
+    </iframe>
+}
+else
+{
+    <div class="alert alert-info">
+        Seleccione la ciudad, clientes y/o proveedores y haga clic en aplicar.
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+@section Scripts {
+    <script src="~/js/loading-overlay.js"></script>
+}

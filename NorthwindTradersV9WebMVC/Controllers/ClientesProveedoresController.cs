@@ -348,5 +348,117 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 "DirectorioClientesProveedores.docx");
         }
+        public IActionResult RptDirectorioClientesProveedoresPorCiudad()
+        { 
+            var model = new RptDirectorioClientesProveedoresPorCiudadViewModel
+            {
+                CiudadesPaises = CargarCiudadesPaises()
+            };
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RptDirectorioClientesProveedoresPorCiudad(
+            RptDirectorioClientesProveedoresPorCiudadViewModel model)
+        {
+            // Recargar el combo para volver a mostrar la vista
+            model.CiudadesPaises = CargarCiudadesPaises();
+            // Validar que se haya seleccionado una ciudad
+            // y al menos un tipo de registro.
+            if (string.IsNullOrWhiteSpace(model.CiudadPaisSeleccionado) || 
+                (!model.MostrarClientes && !model.MostrarProveedores))
+            {
+                TempData["Error"] = StringsCommons.ErrorCriterioSelec;
+                model.ConsultaSolicitada = false;
+                return View(model);
+            }
+            model.ConsultaSolicitada = true;
+            return View(model);
+        }
+        private LocalReport CrearRptDirectorioClientesProveedoresPorCiudad(
+            RptDirectorioClientesProveedoresPorCiudadViewModel model)
+        {
+            LocalReport reporte = new();
+
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "ClientesProveedores",
+                "RptClientesyProveedoresDirectorioxCiudad.rdlc");
+
+            var clientesProveedores =
+                _clienteBLL.ObtenerClientesProveedoresPorCiudadRpt(
+                    model.Tipo,
+                    model.CiudadPaisSeleccionado);
+
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(
+                new ReportDataSource("DataSet1", clientesProveedores));
+
+            reporte.SetParameters(new[]
+            {
+                new ReportParameter("titulo", model.TituloReporte)
+            });
+
+            return reporte;
+        }
+        [HttpGet]
+        public IActionResult VerPdfRptDirectorioClientesProveedoresPorCiudad(
+            [FromQuery] RptDirectorioClientesProveedoresPorCiudadViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.CiudadPaisSeleccionado) ||
+                (!model.MostrarClientes && !model.MostrarProveedores))
+            {
+                return BadRequest(StringsCommons.ErrorCriterioSelec);
+            }
+
+            var reporte =
+                CrearRptDirectorioClientesProveedoresPorCiudad(model);
+
+            byte[] pdf = reporte.Render("PDF");
+
+            return File(pdf, "application/pdf");
+        }
+        [HttpGet]
+        public IActionResult ExportarExcelRptDirectorioClientesProveedoresPorCiudad(
+            [FromQuery] RptDirectorioClientesProveedoresPorCiudadViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.CiudadPaisSeleccionado) ||
+                (!model.MostrarClientes && !model.MostrarProveedores))
+            {
+                return BadRequest(StringsCommons.ErrorCriterioSelec);
+            }
+
+            var reporte =
+                CrearRptDirectorioClientesProveedoresPorCiudad(model);
+
+            byte[] archivo = reporte.Render("EXCELOPENXML");
+
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "DirectorioClientesProveedoresPorCiudad.xlsx");
+        }
+
+        [HttpGet]
+        public IActionResult ExportarWordRptDirectorioClientesProveedoresPorCiudad(
+            [FromQuery] RptDirectorioClientesProveedoresPorCiudadViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.CiudadPaisSeleccionado) ||
+                (!model.MostrarClientes && !model.MostrarProveedores))
+            {
+                return BadRequest(StringsCommons.ErrorCriterioSelec);
+            }
+
+            var reporte =
+                CrearRptDirectorioClientesProveedoresPorCiudad(model);
+
+            byte[] archivo = reporte.Render("WORDOPENXML");
+
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "DirectorioClientesProveedoresPorCiudad.docx");
+        }
     }
 }
