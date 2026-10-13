@@ -204,149 +204,86 @@ namespace NorthwindTradersV9WebMVC.Controllers
                     })
                     .ToList();
         }
-        public IActionResult RptDirectorioClientesProveedores(
-            bool mostrarClientes = false,
-            bool mostrarProveedores = false,
-            bool consultaSolicitada = false)
+        //***************************************************************************************************
+        public IActionResult RptDirectorioClientesProveedores()
         {
-            ViewBag.MostrarClientes = mostrarClientes;
-            ViewBag.MostrarProveedores = mostrarProveedores;
-            ViewBag.ConsultaSolicitada = consultaSolicitada;
-            ViewBag.TituloDirectorio = ObtenerTituloDirectorio(
-                mostrarClientes,
-                mostrarProveedores);
-            // Primera carga de la página.
-            if (!consultaSolicitada)
-            {
-                return View();
-            }
-            // Debe seleccionar al menos una opción.
-            if (!mostrarClientes && !mostrarProveedores)
+            var model = new RptDirectorioClientesProveedoresViewModel();
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RptDirectorioClientesProveedores(
+            RptDirectorioClientesProveedoresViewModel model)
+        {
+            if (!model.MostrarClientes && !model.MostrarProveedores)
             {
                 TempData["Error"] = StringsCommons.ErrorCriterioSelec;
-                return View();
+                model.ConsultaSolicitada = false;
+                return View(model);
             }
-            return View();
+            model.ConsultaSolicitada = true;
+            return View(model);
         }
-        private string ObtenerTipoDirectorio(
-            bool mostrarClientes,
-            bool mostrarProveedores)
-        {
-            if (mostrarClientes && mostrarProveedores)
-                return "DirectorioClientesProveedores";
-            if (mostrarClientes)
-                return "DirectorioClientes";
-            if (mostrarProveedores)
-                return "DirectorioProveedores";
-            return "DirectorioClientesProveedores";
-        }
-        private string ObtenerTituloDirectorio(
-            bool mostrarClientes,
-            bool mostrarProveedores)
-        {
-            if (mostrarClientes && mostrarProveedores)
-                return "Reporte directorio de clientes y proveedores";
-            if (mostrarClientes)
-                return "Reporte directorio de clientes";
-            if (mostrarProveedores)
-                return "Reporte directorio de proveedores";
-            return "Reporte directorio de clientes y proveedores";
-        }
-        private LocalReport GenerarRptDirectorioClientesProveedores(
-            bool mostrarClientes,
-            bool mostrarProveedores)
+        private LocalReport CrearRptDirectorioClientesProveedores(
+            RptDirectorioClientesProveedoresViewModel model)
         {
             LocalReport reporte = new();
-            reporte.ReportPath = Path.Combine(
-                Directory.GetCurrentDirectory(),
+            reporte.ReportPath = Path.Combine(Directory.GetCurrentDirectory(),
                 "Reportes",
                 "ClientesProveedores",
                 "RptClientesyProveedoresDirectorio.rdlc");
-            string tipo = ObtenerTipoDirectorio(
-                mostrarClientes,
-                mostrarProveedores);
-            var clientesProveedores =
-                _clienteBLL.ObtenerClientesProveedoresRpt(tipo);
+            var clientesProveedores = _clienteBLL.ObtenerClientesProveedoresRpt(model.Tipo);
             reporte.DataSources.Clear();
-            reporte.DataSources.Add(
-                new ReportDataSource(
-                    "DataSet1",
-                    clientesProveedores));
-            string titulo = ObtenerTituloDirectorio(
-                mostrarClientes,
-                mostrarProveedores);
+            reporte.DataSources.Add(new ReportDataSource("DataSet1", clientesProveedores));
             reporte.SetParameters(new[]
             {
-                new ReportParameter("titulo", titulo)
+                new ReportParameter("titulo", model.TituloReporte)
             });
             return reporte;
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult VerPdfRptDirectorioClientesProveedores(bool mostrarClientes, bool mostrarProveedores)
+        [HttpGet]
+        public IActionResult VerPdfRptDirectorioClientesProveedores(
+            [FromQuery] RptDirectorioClientesProveedoresViewModel model)
         {
-            // Validar que se haya seleccionado al menos un tipo de registro.
-            if (!mostrarClientes && !mostrarProveedores)
+            if (!model.MostrarClientes && !model.MostrarProveedores)
             {
-                return BadRequest(
-                    "Proporcione los criterios de selección.");
+                return BadRequest(StringsCommons.ErrorCriterioSelec);
             }
-            // Generar el reporte con las opciones seleccionadas.
-            var reporte = GenerarRptDirectorioClientesProveedores(
-                mostrarClientes,
-                mostrarProveedores);
-
-            // Renderizar el reporte en formato PDF.
+            var reporte =
+                CrearRptDirectorioClientesProveedores(model);
             byte[] pdf = reporte.Render("PDF");
-
-            // Devolver el PDF para visualizarlo en el navegador.
             return File(pdf, "application/pdf");
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public IActionResult ExportarExcelRptDirectorioClientesProveedores(
-            bool mostrarClientes,
-            bool mostrarProveedores)
+            [FromQuery] RptDirectorioClientesProveedoresViewModel model)
         {
-            if (!mostrarClientes && !mostrarProveedores)
+            if (!model.MostrarClientes && !model.MostrarProveedores)
             {
-                return BadRequest(
-                    "Proporcione los criterios de selección.");
+                return BadRequest(StringsCommons.ErrorCriterioSelec);
             }
-
-            var reporte = GenerarRptDirectorioClientesProveedores(
-                mostrarClientes,
-                mostrarProveedores);
-
+            var reporte = CrearRptDirectorioClientesProveedores(model);
             byte[] archivo = reporte.Render("EXCELOPENXML");
-
             return File(
                 archivo,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 "DirectorioClientesProveedores.xlsx");
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public IActionResult ExportarWordRptDirectorioClientesProveedores(
-            bool mostrarClientes,
-            bool mostrarProveedores)
+            [FromQuery] RptDirectorioClientesProveedoresViewModel model)
         {
-            if (!mostrarClientes && !mostrarProveedores)
+            if (!model.MostrarClientes && !model.MostrarProveedores)
             {
-                return BadRequest(
-                    "Proporcione los criterios de selección.");
+                return BadRequest(StringsCommons.ErrorCriterioSelec);
             }
-
-            var reporte = GenerarRptDirectorioClientesProveedores(
-                mostrarClientes,
-                mostrarProveedores);
-
+            var reporte = CrearRptDirectorioClientesProveedores(model);
             byte[] archivo = reporte.Render("WORDOPENXML");
-
             return File(
                 archivo,
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 "DirectorioClientesProveedores.docx");
+
         }
         public IActionResult RptDirectorioClientesProveedoresPorCiudad()
         {
