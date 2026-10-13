@@ -159,5 +159,11 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return _clienteDAL.ObtenerClientesProveedoresPorCiudadRpt(tipo, ciudadPais);
         }
+        public List<ClienteProveedorDto> ObtenerClientesProveedoresPorPaisRpt(string tipo, string pais)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _clienteDAL.ObtenerClientesProveedoresPorPaisRpt(tipo, pais);
+        }
     }
 }

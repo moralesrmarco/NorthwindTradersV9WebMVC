@@ -22,5 +22,6 @@ namespace NorthwindTradersV9DAL
         List<Cliente> ObtenerClientesRpt();
         List<ClienteProveedorDto> ObtenerClientesProveedoresRpt(string tipo);
         List<ClienteProveedorDto> ObtenerClientesProveedoresPorCiudadRpt(string tipo, string ciudadPais);
+        List<ClienteProveedorDto> ObtenerClientesProveedoresPorPaisRpt(string tipo, string pais);
     }
 }

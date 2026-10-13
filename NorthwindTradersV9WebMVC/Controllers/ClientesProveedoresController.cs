@@ -76,7 +76,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
         }
         public IActionResult DirectorioClientesProveedoresPorCiudad(
             int pageIndex = 1,
-            string? ciudadPaisSeleccionado = null, 
+            string? ciudadPaisSeleccionado = null,
             bool mostrarClientes = true,
             bool mostrarProveedores = true,
             bool consultaSolicitada = false)
@@ -89,7 +89,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 ConsultaSolicitada = consultaSolicitada
             };
             model.CiudadesPaises = CargarCiudadesPaises();
-            if(!consultaSolicitada)
+            if (!consultaSolicitada)
                 return View(model);
             if (string.IsNullOrWhiteSpace(ciudadPaisSeleccionado) || (!mostrarClientes && !mostrarProveedores))
             {
@@ -349,7 +349,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 "DirectorioClientesProveedores.docx");
         }
         public IActionResult RptDirectorioClientesProveedoresPorCiudad()
-        { 
+        {
             var model = new RptDirectorioClientesProveedoresPorCiudadViewModel
             {
                 CiudadesPaises = CargarCiudadesPaises()
@@ -365,7 +365,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
             model.CiudadesPaises = CargarCiudadesPaises();
             // Validar que se haya seleccionado una ciudad
             // y al menos un tipo de registro.
-            if (string.IsNullOrWhiteSpace(model.CiudadPaisSeleccionado) || 
+            if (string.IsNullOrWhiteSpace(model.CiudadPaisSeleccionado) ||
                 (!model.MostrarClientes && !model.MostrarProveedores))
             {
                 TempData["Error"] = StringsCommons.ErrorCriterioSelec;
@@ -379,27 +379,22 @@ namespace NorthwindTradersV9WebMVC.Controllers
             RptDirectorioClientesProveedoresPorCiudadViewModel model)
         {
             LocalReport reporte = new();
-
             reporte.ReportPath = Path.Combine(
                 Directory.GetCurrentDirectory(),
                 "Reportes",
                 "ClientesProveedores",
                 "RptClientesyProveedoresDirectorioxCiudad.rdlc");
-
             var clientesProveedores =
                 _clienteBLL.ObtenerClientesProveedoresPorCiudadRpt(
                     model.Tipo,
                     model.CiudadPaisSeleccionado);
-
             reporte.DataSources.Clear();
             reporte.DataSources.Add(
                 new ReportDataSource("DataSet1", clientesProveedores));
-
             reporte.SetParameters(new[]
             {
                 new ReportParameter("titulo", model.TituloReporte)
             });
-
             return reporte;
         }
         [HttpGet]
@@ -411,12 +406,9 @@ namespace NorthwindTradersV9WebMVC.Controllers
             {
                 return BadRequest(StringsCommons.ErrorCriterioSelec);
             }
-
             var reporte =
                 CrearRptDirectorioClientesProveedoresPorCiudad(model);
-
             byte[] pdf = reporte.Render("PDF");
-
             return File(pdf, "application/pdf");
         }
         [HttpGet]
@@ -428,18 +420,14 @@ namespace NorthwindTradersV9WebMVC.Controllers
             {
                 return BadRequest(StringsCommons.ErrorCriterioSelec);
             }
-
             var reporte =
                 CrearRptDirectorioClientesProveedoresPorCiudad(model);
-
             byte[] archivo = reporte.Render("EXCELOPENXML");
-
             return File(
                 archivo,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 "DirectorioClientesProveedoresPorCiudad.xlsx");
         }
-
         [HttpGet]
         public IActionResult ExportarWordRptDirectorioClientesProveedoresPorCiudad(
             [FromQuery] RptDirectorioClientesProveedoresPorCiudadViewModel model)
@@ -459,6 +447,93 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 archivo,
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 "DirectorioClientesProveedoresPorCiudad.docx");
+        }
+        public IActionResult RptDirectorioClientesProveedoresPorPais()
+        {
+            var model = new RptDirectorioClientesProveedoresPorPaisViewModel
+            {
+                Paises = CargarPaises()
+            };
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RptDirectorioClientesProveedoresPorPais(RptDirectorioClientesProveedoresPorPaisViewModel model)
+        {
+            model.Paises = CargarPaises();
+            if (string.IsNullOrWhiteSpace(model.PaisSeleccionado) ||
+                (!model.MostrarClientes && !model.MostrarProveedores))
+            {
+                TempData["Error"] = StringsCommons.ErrorCriterioSelec;
+                model.ConsultaSolicitada = false;
+                return View(model);
+            }
+            model.ConsultaSolicitada = true;
+            return View(model);
+        }
+        private LocalReport CrearRptDirectorioClientesProveedoresPorPais(RptDirectorioClientesProveedoresPorPaisViewModel model)
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "ClientesProveedores",
+                "RptClientesyProveedoresDirectorioxPais.rdlc");
+            var clientesProveedores =
+                _clienteBLL.ObtenerClientesProveedoresPorPaisRpt(
+                    model.Tipo,
+                    model.PaisSeleccionado);
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(
+                new ReportDataSource("DataSet1", clientesProveedores));
+            reporte.SetParameters(new[]
+            {
+                new ReportParameter("titulo", model.TituloReporte)
+            });
+            return reporte;
+        }
+        [HttpGet]
+        public IActionResult VerPdfRptDirectorioClientesProveedoresPorPais([FromQuery] RptDirectorioClientesProveedoresPorPaisViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.PaisSeleccionado) ||
+                (!model.MostrarClientes && !model.MostrarProveedores))
+            {
+                return BadRequest(StringsCommons.ErrorCriterioSelec);
+            }
+            var reporte = CrearRptDirectorioClientesProveedoresPorPais(model);
+            byte[] pdf = reporte.Render("PDF");
+            return File(pdf, "application/pdf");
+        }
+        [HttpGet]
+        public IActionResult ExportarExcelRptDirectorioClientesProveedoresPorPais([FromQuery] RptDirectorioClientesProveedoresPorPaisViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.PaisSeleccionado) ||
+                (!model.MostrarClientes && !model.MostrarProveedores))
+            {
+                return BadRequest(StringsCommons.ErrorCriterioSelec);
+            }
+            var reporte = CrearRptDirectorioClientesProveedoresPorPais(model);
+            byte[] archivo = reporte.Render("EXCELOPENXML");
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "DirectorioClientesProveedoresPorPais.xlsx");
+        }
+        [HttpGet]
+        public IActionResult ExportarWordRptDirectorioClientesProveedoresPorPais(
+            [FromQuery] RptDirectorioClientesProveedoresPorPaisViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.PaisSeleccionado) ||
+                (!model.MostrarClientes && !model.MostrarProveedores))
+            {
+                return BadRequest(StringsCommons.ErrorCriterioSelec);
+            }
+            var reporte = CrearRptDirectorioClientesProveedoresPorPais(model);
+            byte[] archivo = reporte.Render("WORDOPENXML");
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "DirectorioClientesProveedoresPorPais.docx");
         }
     }
 }

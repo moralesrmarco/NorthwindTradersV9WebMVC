@@ -908,25 +908,6 @@
                     </TablixCell>
                   </TablixCells>
                 </TablixRow>
-                <TablixRow>
-                  <Height>0.15cm</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Rectangle Name="Rectangle4">
-                          <KeepTogether>true</KeepTogether>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                          </Style>
-                        </Rectangle>
-                        <ColSpan>2</ColSpan>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell />
-                  </TablixCells>
-                </TablixRow>
               </TablixRows>
             </TablixBody>
             <TablixColumnHierarchy>
@@ -972,16 +953,11 @@
                     <Hidden>=CountDistinct(LCase(Trim(Fields!Country.Value)), "DataSet1") = 0</Hidden>
                   </Visibility>
                 </TablixMember>
-                <TablixMember>
-                  <Visibility>
-                    <Hidden>=CountDistinct(LCase(Trim(Fields!Country.Value)), "DataSet1") = 0</Hidden>
-                  </Visibility>
-                </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
             <Top>1.46106cm</Top>
             <Left>16.6497cm</Left>
-            <Height>3cm</Height>
+            <Height>2.85cm</Height>
             <Width>9.08717cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
@@ -995,7 +971,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>1.78782in</Height>
+        <Height>1.69727in</Height>
         <Style />
       </Body>
       <Width>10.25191in</Width>
