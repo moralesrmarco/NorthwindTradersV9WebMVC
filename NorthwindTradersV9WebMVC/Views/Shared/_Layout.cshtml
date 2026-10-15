@@ -147,6 +147,108 @@
                                 </span>
                             </li>
                         }
+                        <!-- Menú  proveedores con submenús -->
+                        @if (User.HasClaim("Permiso", Permisos.Proveedores.ToString()))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="proveedoresDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Proveedores
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="proveedoresDropdown">
+                                    <!-- Gestión de proveedores -->
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Proveedores" asp-action="Index">Gestión de proveedores</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <!-- Submenú Consultas -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item dropdown-toggle" href="#">Consultas</a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-area=""
+                                                   asp-controller="ClientesProveedores"
+                                                   asp-action="DirectorioClientesProveedores">
+                                                    Directorio de clientes y proveedores
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-area=""
+                                                   asp-controller="ClientesProveedores"
+                                                   asp-action="DirectorioClientesProveedoresPorCiudad">
+                                                    Directorio de clientes y proveedores por ciudad
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-area=""
+                                                   asp-controller="ClientesProveedores"
+                                                   asp-action="DirectorioClientesProveedoresPorPais">
+                                                    Directorio de clientes y proveedores por país
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item">
+                                                    Consulta de productos por proveedor
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <!-- Submenú Reportes -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item dropdown-toggle" href="#">Reportes</a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item">
+                                                    Directorio de proveedores
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-area=""
+                                                   asp-controller="ClientesProveedores"
+                                                   asp-action="RptDirectorioClientesProveedores">
+                                                    Directorio de clientes y proveedores
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-area=""
+                                                   asp-controller="ClientesProveedores"
+                                                   asp-action="RptDirectorioClientesProveedoresPorCiudad">
+                                                    Directorio de clientes y proveedores por ciudad
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-area=""
+                                                   asp-controller="ClientesProveedores"
+                                                   asp-action="RptDirectorioClientesProveedoresPorPais">
+                                                    Directorio de clientes y proveedores por país
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item">
+                                                    Reporte de productos por proveedor
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item">
+                                                    Reporte de productos por proveedor con detalle del proveedor
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-dark menu-deshabilitado">
+                                    Proveedores
+                                </span>
+                            </li>
+                        }
 
                         <!-- Menú Administración con submenús -->
                         @if (User.HasClaim("Permiso", Permisos.Administracion.ToString()))

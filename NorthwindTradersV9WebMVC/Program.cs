@@ -126,7 +126,7 @@ builder.Services.AddAuthorization(options =>
             .RequireAuthenticatedUser()
             .Build();
 });
-
+//******** Inyeccion de dependencias **********//
 builder.Services.Configure<AppSettings>(
     builder.Configuration.GetSection("AppSettings"));
 
@@ -145,6 +145,9 @@ builder.Services.AddScoped<IClienteDAL, ClienteDAL>();
 builder.Services.AddScoped<ClienteBLL>();
 
 builder.Services.AddScoped<ComboDataHelper>();
+
+builder.Services.AddScoped<IProveedorDAL, ProveedorDAL>();
+builder.Services.AddScoped<ProveedorBLL>();
 
 var app = builder.Build();
 
