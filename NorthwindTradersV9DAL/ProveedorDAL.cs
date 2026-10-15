@@ -110,5 +110,51 @@ namespace NorthwindTradersV9DAL
 
             return resultado;
         }
+        public Proveedor? ObtenerProveedorPorId(int id)
+        {
+            Proveedor? proveedor = null;
+            try
+            {
+                using (var con = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpProveedorObtenerPorId", con))
+                {
+                    con.Open();
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            proveedor = MapearProveedor(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el proveedor por ID " + ex.Message);
+            }
+            return proveedor;
+        }
+        private Proveedor MapearProveedor(SqlDataReader reader)
+        {
+            var proveedor = new Proveedor()
+            {
+                SupplierID = reader.GetInt32(reader.GetOrdinal("SupplierID")),
+                CompanyName = reader.IsDBNull(reader.GetOrdinal("CompanyName")) ? null : reader["CompanyName"].ToString(),
+                ContactName = reader.IsDBNull(reader.GetOrdinal("ContactName")) ? null : reader["ContactName"].ToString(),
+                ContactTitle = reader.IsDBNull(reader.GetOrdinal("ContactTitle")) ? null : reader["ContactTitle"].ToString(),
+                Address = reader.IsDBNull(reader.GetOrdinal("Address")) ? null : reader["Address"].ToString(),
+                City = reader.IsDBNull(reader.GetOrdinal("City")) ? null : reader["City"].ToString(),
+                Region = reader.IsDBNull(reader.GetOrdinal("Region")) ? null : reader["Region"].ToString(),
+                PostalCode = reader.IsDBNull(reader.GetOrdinal("PostalCode")) ? null : reader["PostalCode"].ToString(),
+                Country = reader.IsDBNull(reader.GetOrdinal("Country")) ? null : reader["Country"].ToString(),
+                Phone = reader.IsDBNull(reader.GetOrdinal("Phone")) ? null : reader["Phone"].ToString(),
+                Fax = reader.IsDBNull(reader.GetOrdinal("Fax")) ? null : reader["Fax"].ToString(),
+                RowVersion = reader.IsDBNull(reader.GetOrdinal("RowVersion")) ? null : (byte[])reader["RowVersion"]
+            };
+            return proveedor;
+        }
+
     }
 }

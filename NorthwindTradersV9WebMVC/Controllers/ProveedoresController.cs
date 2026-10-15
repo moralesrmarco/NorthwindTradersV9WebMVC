@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using NorthwindTradersV9BLL;
+using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
 using NorthwindTradersV9WebMVC.Models.Common;
@@ -88,6 +89,18 @@ namespace NorthwindTradersV9WebMVC.Controllers
                         ["BuscarAbierto"] = BuscarAbierto.ToString().ToLower()
                     }
                 }
+            };
+            return View(model);
+        }
+        public IActionResult Consultar(int id, string? returnUrl = null)
+        {
+            var proveedor = _proveedorBLL.ObtenerProveedorPorId(id);
+            if (proveedor == null)
+                TempData["Error"] = "<p>Proveedor no encontrado</p>" + StringsCommons.Nefep;
+            var model = new ProveedoresConsultarViewModel
+            {
+                Proveedor = proveedor,
+                ReturnUrl = returnUrl
             };
             return View(model);
         }

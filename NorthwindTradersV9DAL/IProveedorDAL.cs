@@ -1,4 +1,5 @@
-﻿using NorthwindTradersV9Entities.DTOs;
+﻿using NorthwindTradersV9Entities;
+using NorthwindTradersV9Entities.DTOs;
 
 namespace NorthwindTradersV9DAL
 {
@@ -8,5 +9,6 @@ namespace NorthwindTradersV9DAL
             int pageIndex,
             int pageSize,
             ProveedoresBuscarDto filtro);
+        Proveedor? ObtenerProveedorPorId(int id);
     }
 }

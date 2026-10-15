@@ -33,5 +33,12 @@ namespace NorthwindTradersV9BLL
                 pageSize,
                 filtro);
         }
+        public Proveedor? ObtenerProveedorPorId(int id)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _proveedorDAL.ObtenerProveedorPorId(id);
+        }
+
     }
 }
