@@ -104,5 +104,47 @@ namespace NorthwindTradersV9WebMVC.Controllers
             };
             return View(model);
         }
+        public IActionResult Eliminar(int id, string? returnUrl = null)
+        {
+            var proveedor = _proveedorBLL.ObtenerProveedorPorId(id);
+            var model = new ProveedoresEliminarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            if (proveedor == null)
+            {
+                TempData["Error"] = "<p>Proveedor no encontrado</p>" + StringsCommons.Nefep;
+                model.BloquearEliminacion = true;
+            }
+            else
+                model.Proveedor = proveedor;
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Eliminar(ProveedoresEliminarViewModel model)
+        {
+            if (model.Proveedor != null)
+            {
+                var resultado = _proveedorBLL.Eliminar(model.Proveedor);
+                if (resultado.Exito)
+                {
+                    if (!string.IsNullOrEmpty(model.ReturnUrl))
+                        return LocalRedirect(model.ReturnUrl);
+                    return RedirectToAction("Index", "Proveedores");
+                }
+                else
+                {
+                    TempData["Error"] =
+                        $"<p>El proveedor con Id: <strong>{model.Proveedor.SupplierID}</strong> " +
+                        $"- Nombre de compañía: <strong>{model.Proveedor.CompanyName}</strong>:</p>" +
+                        resultado.Mensaje;
+                    // Sólo bloquea para errores definitivos
+                    if (resultado.Codigo < 0)
+                        model.BloquearEliminacion = true;
+                }
+            }
+            return View(model);
+        }
     }
 }

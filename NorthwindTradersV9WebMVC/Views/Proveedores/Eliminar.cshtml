@@ -1,0 +1,89 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Proveedores.ProveedoresEliminarViewModel
+@{
+    ViewData["Title"] = "Eliminar proveedor";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="alert alert-danger fs-5">
+    ¿Está seguro de eliminar el proveedor con ID: <strong>@Model.Proveedor.SupplierID</strong> - Nombre de compañía: <strong>@Model.Proveedor.CompanyName</strong>?
+</div>
+<form method="post"
+    class="form"
+    onsubmit="return configurarEliminar('btnEliminar');">
+    @if(TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.Raw(TempData["Error"])
+        </div>
+    }
+    <input type="hidden" asp-for="Proveedor.RowVersion" />
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="row">
+        <div class="col-md-2 mb-3">
+            <label asp-for="Proveedor.SupplierID" class="form-label small">ID</label>
+            <input asp-for="Proveedor.SupplierID" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-5 mb-3">
+            <label asp-for="Proveedor.CompanyName" class="form-label small">Nombre de compañía</label>
+            <input asp-for="Proveedor.CompanyName" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-5 mb-3">
+            <label asp-for="Proveedor.ContactName" class="form-label small">Nombre del contacto</label>
+            <input asp-for="Proveedor.ContactName" class="form-control form-control-sm" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <label asp-for="Proveedor.ContactTitle" class="form-label small">Título del contacto</label>
+            <input asp-for="Proveedor.ContactTitle" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-9 mb-3">
+            <label asp-for="Proveedor.Address" class="form-label small">Domicilio</label>
+            <input asp-for="Proveedor.Address" class="form-control form-control-sm" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Proveedor.City" class="form-label small">Ciudad</label>
+            <input asp-for="Proveedor.City" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Proveedor.Region" class="form-label small">Región</label>
+            <input asp-for="Proveedor.Region" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Proveedor.PostalCode" class="form-label small">Código postal</label>
+            <input asp-for="Proveedor.PostalCode" class="form-control form-control-sm" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="Proveedor.Country" class="form-label small">País</label>
+            <input asp-for="Proveedor.Country" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Proveedor.Phone" class="form-label small">Teléfono</label>
+            <input asp-for="Proveedor.Phone" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Proveedor.Fax" class="form-label small">Fax</label>
+            <input asp-for="Proveedor.Fax" class="form-control form-control-sm" readonly />
+        </div>
+    </div>
+    <button type="submit"
+        id="btnEliminar"
+        class="btn btn-sm btn-danger me-1"
+        disabled="@Model.BloquearEliminacion"
+        title="Eliminar">
+        <i class="bi bi-trash"></i>
+        <span class="d-none d-md-inline"> Eliminar</span>
+    </button>
+    <a href="@(Model.ReturnUrl ?? Url.Action("Index", "Proveedores"))"
+       class="btn btn-sm btn-cancelar me-1"
+       title="Cancelar">
+        <i class="bi bi-x-circle"></i>
+        <span class="d-none d-md-inline"> Cancelar</span>
+    </a>
+</form>
+@section Scripts {
+    <script src="~/js/form-delete.js"></script>
+}

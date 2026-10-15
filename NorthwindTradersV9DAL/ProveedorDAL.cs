@@ -155,6 +155,29 @@ namespace NorthwindTradersV9DAL
             };
             return proveedor;
         }
-
+        public int Eliminar(Proveedor proveedor)
+        {
+            int numRegs = 0;
+            try
+            {
+                using (var con = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpProveedorEliminar", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@SupplierID", proveedor.SupplierID);
+                    cmd.Parameters.AddWithValue("@RowVersion", proveedor.RowVersion);
+                    var returnParameter = cmd.Parameters.Add("@ReturnVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    numRegs = Convert.ToInt32(returnParameter.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar el proveedor." + ex.Message);
+            }
+            return numRegs;
+        }
     }
 }
