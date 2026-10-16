@@ -11,5 +11,6 @@ namespace NorthwindTradersV9DAL
             ProveedoresBuscarDto filtro);
         Proveedor? ObtenerProveedorPorId(int id);
         int Eliminar(Proveedor proveedor);
+        int Insertar(Proveedor proveedor);
     }
 }

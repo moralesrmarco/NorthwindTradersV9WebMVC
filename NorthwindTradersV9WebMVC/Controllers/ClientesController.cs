@@ -175,7 +175,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
         public IActionResult Insertar(ClienteInsertarViewModel model)
         {
             // Validaciones en el servidor
-            if (string.IsNullOrEmpty(model.Cliente?.Country))
+            if (string.IsNullOrWhiteSpace(model.Cliente?.Country))
                 ModelState.AddModelError(
                     "Cliente.Country",
                     "Seleccione o escriba un país");

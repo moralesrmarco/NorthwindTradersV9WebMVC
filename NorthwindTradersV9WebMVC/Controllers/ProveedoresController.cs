@@ -6,6 +6,7 @@ using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
+using NorthwindTradersV9WebMVC.Models.Clientes;
 using NorthwindTradersV9WebMVC.Models.Common;
 using NorthwindTradersV9WebMVC.Models.Proveedores;
 
@@ -30,14 +31,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
         {
             filtro ??= new ProveedoresBuscarDto();
             // Obtener los países para llenar el combo.
-            var paises = _proveedorBLL.ObtenerProveedoresPaisesCbo()
-                .Select(p => new SelectListItem
-                {
-                    Value = p.Value,
-                    Text = p.Text,
-                    Selected = p.Value == filtro.Country
-                })
-                .ToList();
+            var paises = ObtenerPaises(null);
             ProveedorPaginadoDto resultado;
             if (ModelState.IsValid)
             {
@@ -144,6 +138,83 @@ namespace NorthwindTradersV9WebMVC.Controllers
                         model.BloquearEliminacion = true;
                 }
             }
+            return View(model);
+        }
+        public IActionResult Insertar(string? returnUrl = null)
+        {
+            var model = new ProveedoresInsertarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            model.Paises = ObtenerPaises(model.Proveedor?.Country);
+            return View(model);
+        }
+        private List<SelectListItem> ObtenerPaises(string? country)
+        {
+            var paises = _proveedorBLL.ObtenerProveedoresPaisesCbo()
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Value,
+                    Text = p.Text
+                })
+                .ToList();
+            // Si el usuario escribió un país nuevo,
+            // agregarlo para conservarlo en el combo.
+            if (!string.IsNullOrEmpty(country)
+                && !paises.Any(p => p.Value == country))
+            {
+                paises.Add(new SelectListItem
+                {
+                    Value = country,
+                    Text = country
+                });
+            }
+            return paises;
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Insertar(ProveedoresInsertarViewModel model)
+        {
+            // Validaciones en el servidor
+            if (string.IsNullOrWhiteSpace(model.Proveedor?.Country))
+            {
+                ModelState.AddModelError(
+                    "Proveedor.Country",
+                    "Seleccione o escriba un país");
+            }
+            if (!ModelState.IsValid)
+            {
+                model.Paises = ObtenerPaises(model.Proveedor?.Country);
+                return View(model);
+            }
+            try
+            {
+                if (model.Proveedor != null)
+                {
+                    var resultado = _proveedorBLL.Insertar(model.Proveedor);
+                    if (resultado.Exito)
+                    {
+                        if (!string.IsNullOrEmpty(model.ReturnUrl))
+                            return LocalRedirect(model.ReturnUrl);
+                        return RedirectToAction("Index", "Proveedores");
+                    }
+                    TempData["Error"] =
+                        $"<p>El proveedor <strong>{model.Proveedor.CompanyName}</strong>:</p>" +
+                        resultado.Mensaje;
+                    // Sólo bloquea para errores definitivos
+                    if (resultado.Codigo < 0)
+                        model.BloquearEdicion = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    $"<p>Error al insertar el proveedor " +
+                    $"<strong>{model.Proveedor?.CompanyName}</strong>.</p>" +
+                    $"<p>Detalles: {ex.Message}</p>";
+
+            }
+            model.Paises = ObtenerPaises(model.Proveedor?.Country);
             return View(model);
         }
     }
