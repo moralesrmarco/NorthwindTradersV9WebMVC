@@ -72,6 +72,23 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return resultado;
         }
+        public ResultadoOperacion Actualizar(Proveedor proveedor)
+        {
+            var resultado = new ResultadoOperacion();
+            int numRegs = _proveedorDAL.Actualizar(proveedor);
+            resultado.Codigo = numRegs;
+            if (numRegs > 0)
+                resultado.Exito = true;
+            else if (numRegs == -1)
+                resultado.Mensaje = StringsCommons.Nfmfe;
+            else if (numRegs == -2)
+                resultado.Mensaje = StringsCommons.Nfmfm;
+            else
+                resultado.Mensaje = StringsCommons.Nfmmd;
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return resultado;
+        }
 
     }
 }

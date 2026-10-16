@@ -209,5 +209,41 @@ namespace NorthwindTradersV9DAL
             }
             return numRegs;
         }
+        public int Actualizar(Proveedor proveedor)
+        {
+            int numRegs = 0;
+            try
+            {
+                using (var con = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpProveedorActualizar", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@SupplierId", proveedor.SupplierID);
+                    cmd.Parameters.AddWithValue("@CompanyName", proveedor.CompanyName);
+                    cmd.Parameters.AddWithValue("@ContactName", proveedor.ContactName);
+                    cmd.Parameters.AddWithValue("@ContactTitle", proveedor.ContactTitle);
+                    cmd.Parameters.AddWithValue("@Address", proveedor.Address);
+                    cmd.Parameters.AddWithValue("@City", proveedor.City);
+                    cmd.Parameters.AddWithValue("@Region", string.IsNullOrWhiteSpace(proveedor.Region) ? (object)DBNull.Value : proveedor.Region);
+                    cmd.Parameters.AddWithValue("@PostalCode", string.IsNullOrWhiteSpace(proveedor.PostalCode) ? (object)DBNull.Value : proveedor.PostalCode);
+                    cmd.Parameters.AddWithValue("@Country", proveedor.Country);
+                    cmd.Parameters.AddWithValue("@Phone", proveedor.Phone);
+                    cmd.Parameters.AddWithValue("@Fax", string.IsNullOrWhiteSpace(proveedor.Fax) ? (object)DBNull.Value : proveedor.Fax);
+                    var rowVersion = cmd.Parameters.Add("@RowVersion", SqlDbType.Binary, 8);
+                    rowVersion.Value = proveedor.RowVersion ?? (object)DBNull.Value;
+                    // Parámetro de retorno
+                    var returnParameter = cmd.Parameters.Add("@ReturnVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    numRegs = (int)returnParameter.Value;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return numRegs;
+        }
     }
 }

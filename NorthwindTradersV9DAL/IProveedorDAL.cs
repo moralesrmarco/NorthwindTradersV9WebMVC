@@ -12,5 +12,6 @@ namespace NorthwindTradersV9DAL
         Proveedor? ObtenerProveedorPorId(int id);
         int Eliminar(Proveedor proveedor);
         int Insertar(Proveedor proveedor);
+        int Actualizar(Proveedor proveedor);
     }
 }

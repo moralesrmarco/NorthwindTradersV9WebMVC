@@ -217,5 +217,64 @@ namespace NorthwindTradersV9WebMVC.Controllers
             model.Paises = ObtenerPaises(model.Proveedor?.Country);
             return View(model);
         }
+        public IActionResult Editar(int id, string? returnUrl = null)
+        {
+            var model = new ProveedoresEditarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            model.Proveedor = _proveedorBLL.ObtenerProveedorPorId(id);
+            if (model.Proveedor == null)
+            {
+                TempData["Error"] = "<p>Proveedor no encontrado</p>" + StringsCommons.Nefep;
+                model.BloquearEdicion = true;
+
+            }
+            model.Paises = ObtenerPaises(model.Proveedor?.Country);
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Editar(ProveedoresEditarViewModel model)
+        {
+            // Validaciones en el servidor
+            if (string.IsNullOrWhiteSpace(model.Proveedor?.Country))
+                ModelState.AddModelError(
+                    "Proveedor.Country",
+                    "Seleccione o escriba un país");
+            if (!ModelState.IsValid)
+            {
+                model.Paises = ObtenerPaises(model.Proveedor?.Country);
+                return View(model);
+            }
+            try
+            {
+                if (model.Proveedor != null)
+                {
+                    var resultado = _proveedorBLL.Actualizar(model.Proveedor);
+                    if (resultado.Exito)
+                    {
+                        if (!string.IsNullOrEmpty(model.ReturnUrl))
+                            return LocalRedirect(model.ReturnUrl);
+                        return RedirectToAction("Index", "Proveedores");
+                    }
+                    TempData["Error"] =
+                        $"<p>El proveedor <strong>{model.Proveedor.CompanyName}</strong>:</p>" +
+                        resultado.Mensaje;
+                    // Sólo bloquea para errores definitivos
+                    if (resultado.Codigo < 0)
+                        model.BloquearEdicion = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    $"<p>Error al actualizar el proveedor " +
+                    $"<strong>{model.Proveedor?.CompanyName}</strong>.</p>" +
+                    $"<p>Detalles: {ex.Message}</p>";
+            }
+            model.Paises = ObtenerPaises(model.Proveedor?.Country);
+            return View(model);
+        }
     }
 }
