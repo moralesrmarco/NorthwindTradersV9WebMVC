@@ -245,5 +245,43 @@ namespace NorthwindTradersV9DAL
             }
             return numRegs;
         }
+        public List<ProductosPorProveedorDto> ObtenerProductosPorProveedorId(int supplierID)
+        {
+            var productosPorProveedor = new List<ProductosPorProveedorDto>();
+            try
+            {
+                using (var conn = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpProductosObtenerPorProveedorId", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@SupplierID", supplierID);
+                    conn.Open();
+                    using (var rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            var productoPorProveedor = new ProductosPorProveedorDto()
+                            {
+                                ProductID = rdr["ProductID"] != DBNull.Value ? Convert.ToInt32(rdr["ProductID"]) : 0,
+                                ProductName = rdr["ProductName"] != DBNull.Value ? rdr["ProductName"].ToString() : string.Empty,
+                                QuantityPerUnit = rdr["QuantityPerUnit"] != DBNull.Value ? rdr["QuantityPerUnit"].ToString() : string.Empty,
+                                UnitPrice = rdr["UnitPrice"] != DBNull.Value ? Convert.ToDecimal(rdr["UnitPrice"]) : 0,
+                                UnitsInStock = rdr["UnitsInStock"] != DBNull.Value ? (short?)rdr["UnitsInStock"] : 0,
+                                UnitsOnOrder = rdr["UnitsOnOrder"] != DBNull.Value ? (short?)rdr["UnitsOnOrder"] : 0,
+                                ReorderLevel = rdr["ReorderLevel"] != DBNull.Value ? (short?)rdr["ReorderLevel"] : 0,
+                                Discontinued = (bool)rdr["Discontinued"],
+                                CategoryName = rdr["CategoryName"] != DBNull.Value ? rdr["CategoryName"].ToString() : string.Empty
+                            };
+                            productosPorProveedor.Add(productoPorProveedor);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los productos por proveedor " + ex.Message);
+            }
+            return productosPorProveedor;
+        }
     }
 }

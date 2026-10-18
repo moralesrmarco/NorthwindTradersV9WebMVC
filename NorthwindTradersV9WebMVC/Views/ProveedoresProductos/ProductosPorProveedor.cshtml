@@ -1,0 +1,98 @@
+﻿@model NorthwindTradersV9WebMVC.Models.ProveedoresProductos.ProductosPorProveedorViewModel
+@{
+    ViewData["Title"] = "Productos por proveedor";
+}
+<h2>@ViewData["Title"]</h2>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@Html.Raw(TempData["Error"])</div>
+}
+<div class="row mb-3">
+    <div class="col-md-2">
+        <label asp-for="Proveedor.SupplierID" class="form-label">ID</label>
+        <input asp-for="Proveedor.SupplierID" class="form-control form-control-sm" readonly />
+    </div>
+    <div class="col-md-5">
+        <label asp-for="Proveedor.CompanyName" class="form-label">Nombre de compañía</label>
+        <input asp-for="Proveedor.CompanyName" class="form-control form-control-sm" readonly />
+    </div>
+    <div class="col-md-5">
+        <label asp-for="Proveedor.ContactName" class="form-label">Contacto</label>
+        <input asp-for="Proveedor.ContactName" class="form-control form-control-sm" readonly />
+    </div>
+</div>
+@if (Model.ProductosPorProveedor.Any())
+{
+    <div class="container mt-4">
+        <div class="row">
+            @foreach (var productoPorProveedor in Model.ProductosPorProveedor)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header encabezado-usuario">
+                            <h5 class="card-title">
+                                @productoPorProveedor.ProductName
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong class="fs-6">
+                                    ID: @productoPorProveedor.ProductID
+                                </strong><br />
+                                <strong>Cantidad por unidad:</strong>
+                                @productoPorProveedor.QuantityPerUnit
+                                <br />
+
+                                <strong>Precio:</strong>
+                                @productoPorProveedor.UnitPrice?.ToString("C2")
+                                <br />
+
+                                <strong>Unidades en inventario:</strong>
+                                @productoPorProveedor.UnitsInStock?.ToString("N0")
+                                <br />
+
+                                <strong>Unidades en pedido:</strong>
+                                @productoPorProveedor.UnitsOnOrder?.ToString("N0")
+                                <br />
+
+                                <strong>Nivel de reorden:</strong>
+                                @productoPorProveedor.ReorderLevel?.ToString("N0")
+                                <br />
+
+                                <strong>Categoría:</strong>
+                                @productoPorProveedor.CategoryName
+                                <br />
+                                <strong>Estatus: </strong>
+                                 <span class="badge @(productoPorProveedor.Discontinued
+                                    ? "bg-danger"
+                                    : "bg-success")">
+
+                                    @(productoPorProveedor.Discontinued
+                                        ? "Descontinuado"
+                                        : "Activo")
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning mt-3">
+        Este proveedor no contiene productos registrados
+    </div>
+}
+
+<a href="@(
+    Url.IsLocalUrl(Model.ReturnUrl)
+        ? Model.ReturnUrl
+        : Url.Action("BuscarProveedoresProductos", "ProveedoresProductos")
+    )"
+   class="btn btn-sm btn-success navigation-btn"
+   title="Regresar">
+    <i class="bi bi-arrow-left"></i>
+    <span class="d-none d-md-inline"> Regresar</span>
+</a>
