@@ -165,5 +165,47 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 "ProductosPorProveedor.docx");
         }
+        public IActionResult RptProductosPorProveedorConDetalleProveedor()
+        {
+            return View();
+        }
+        private LocalReport CrearRptProductosPorProveedorConDetalleProveedor()
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "ProveedoresProductos",
+                "RptProdPorProvConDetProv.rdlc");
+            var productosPorProveedor = _proveedorBLL.ObtenerProductosPorProveedorConDetalleDelProveedorRpt();
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(new ReportDataSource("DataSet1", productosPorProveedor));
+            return reporte;
+        }
+        public IActionResult RptProductosPorProveedorConDetalleProveedorPdf()
+        {
+            var reporte = CrearRptProductosPorProveedorConDetalleProveedor();
+            byte[] pdf = reporte.Render("PDF");
+            return File(pdf, "application/pdf");
+        }
+        public IActionResult RptProductosPorProveedorConDetalleProveedorExcel()
+        {
+            var reporte = CrearRptProductosPorProveedorConDetalleProveedor();
+            byte[] archivo = reporte.Render("EXCELOPENXML");
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "ProductosPorProveedorConDetalleProveedor.xlsx");
+        }
+        public IActionResult RptProductosPorProveedorConDetalleProveedorWord()
+        {
+            var reporte = CrearRptProductosPorProveedorConDetalleProveedor();
+            byte[] archivo = reporte.Render("WORDOPENXML");
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "ProductosPorProveedorConDetalleProveedor.docx");
+        }
+
     }
 }

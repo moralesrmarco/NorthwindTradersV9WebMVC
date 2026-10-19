@@ -16,5 +16,6 @@ namespace NorthwindTradersV9DAL
         List<ProductosPorProveedorDto> ObtenerProductosPorProveedorId(int supplierID);
         List<Proveedor> ObtenerProveedoresRpt();
         List<ProductosPorProveedorDto> ObtenerProductosPorProveedorRpt();
+        List<ProductosPorProveedorConDetProvDto> ObtenerProductosPorProveedorConDetalleDelProveedorRpt();
     }
 }
