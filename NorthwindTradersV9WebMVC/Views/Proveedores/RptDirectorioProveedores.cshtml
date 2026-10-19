@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Reporte directorio de proveedores";
 }
-<h2>@ViewData["Title"]</h2>
+<h2 class="mb-4">@ViewData["Title"]</h2>
 <div class="mb-3">
     <a asp-controller="Proveedores"
        asp-action="RptDirectorioProveedoresExcel"
@@ -18,8 +18,12 @@
         <span class="d-none d-md-inline"> Word</span>
     </a>
 </div>
-<iframe src="@Url.Action("RptDirectorioProveedoresPdf", "Proveedores")"
+<iframe id="visorReporte"
+        data-report-src="@Url.Action("RptDirectorioProveedoresPdf", "Proveedores")"
         width="100%"
         height="700"
         style="border:1px solid #ccc;">
 </iframe>
+@section Scripts {
+    <script src="~/js/loading-overlay.js"></script>
+}
