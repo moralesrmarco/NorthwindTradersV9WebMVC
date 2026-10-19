@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Productos por proveedor";
 }
-<h2>@ViewData["Title"]</h2>
+<h2 class="mb-4">@ViewData["Title"]</h2>
 @if (TempData["Error"] != null)
 {
     <div class="alert alert-danger">@Html.Raw(TempData["Error"])</div>
