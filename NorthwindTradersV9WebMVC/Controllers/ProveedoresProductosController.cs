@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
+using Microsoft.Reporting.NETCore;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
@@ -122,6 +123,47 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 model.ProductosPorProveedor = _proveedorBLL.ObtenerProductosPorProveedorId(proveedor.SupplierID);
             }
             return View(model);
+        }
+        public IActionResult RptProductosPorProveedor()
+        {
+            return View();
+        }
+        private LocalReport CrearRptProductosPorProveedor()
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "ProveedoresProductos",
+                "RptProductosPorProveedor.rdlc");
+            var productosPorProveedor = _proveedorBLL.ObtenerProductosPorProveedorRpt();
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(new ReportDataSource("DataSet1", productosPorProveedor));
+            return reporte;
+        }
+        public IActionResult RptProductosPorProveedorPdf()
+        {
+            var reporte = CrearRptProductosPorProveedor();
+            byte[] pdf = reporte.Render("PDF");
+            return File(pdf, "application/pdf");
+        }
+        public IActionResult RptProductosPorProveedorExcel()
+        {
+            var reporte = CrearRptProductosPorProveedor();
+            byte[] archivo = reporte.Render("EXCELOPENXML");
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "ProductosPorProveedor.xlsx");
+        }
+        public IActionResult RptProductosPorProveedorWord()
+        {
+            var reporte = CrearRptProductosPorProveedor();
+            byte[] archivo = reporte.Render("WORDOPENXML");
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "ProductosPorProveedor.docx");
         }
     }
 }
