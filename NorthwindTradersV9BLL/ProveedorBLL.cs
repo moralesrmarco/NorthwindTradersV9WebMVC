@@ -95,5 +95,11 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return _proveedorDAL.ObtenerProductosPorProveedorId(supplierID);
         }
+        public List<Proveedor> ObtenerProveedoresRpt()
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _proveedorDAL.ObtenerProveedoresRpt();
+        }
     }
 }

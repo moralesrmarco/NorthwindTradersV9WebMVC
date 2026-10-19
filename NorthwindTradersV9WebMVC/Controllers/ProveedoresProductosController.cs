@@ -7,7 +7,6 @@ using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
 using NorthwindTradersV9WebMVC.Models.Common;
-using NorthwindTradersV9WebMVC.Models.Proveedores;
 using NorthwindTradersV9WebMVC.Models.ProveedoresProductos;
 
 namespace NorthwindTradersV9WebMVC.Controllers

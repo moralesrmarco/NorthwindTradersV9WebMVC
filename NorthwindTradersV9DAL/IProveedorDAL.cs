@@ -14,5 +14,6 @@ namespace NorthwindTradersV9DAL
         int Insertar(Proveedor proveedor);
         int Actualizar(Proveedor proveedor);
         List<ProductosPorProveedorDto> ObtenerProductosPorProveedorId(int supplierID);
+        List<Proveedor> ObtenerProveedoresRpt();
     }
 }

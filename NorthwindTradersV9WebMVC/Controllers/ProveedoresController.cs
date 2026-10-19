@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
+using Microsoft.Reporting.NETCore;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
@@ -275,6 +276,47 @@ namespace NorthwindTradersV9WebMVC.Controllers
             }
             model.Paises = ObtenerPaises(model.Proveedor?.Country);
             return View(model);
+        }
+        public IActionResult RptDirectorioProveedores()
+        {
+            return View();
+        }
+        private LocalReport CrearRptDirectorioProveedores()
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Proveedores",
+                "RptProveedores.rdlc");
+            var proveedores = _proveedorBLL.ObtenerProveedoresRpt();
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(new ReportDataSource("DataSet1", proveedores));
+            return reporte;
+        }
+        public IActionResult RptDirectorioProveedoresPdf()
+        {
+            var reporte = CrearRptDirectorioProveedores();
+            byte[] pdf = reporte.Render("PDF");
+            return File(pdf, "application/pdf");
+        }
+        public IActionResult RptDirectorioProveedoresExcel()
+        {
+            var reporte = CrearRptDirectorioProveedores();
+            byte[] archivo = reporte.Render("EXCELOPENXML");
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "DirectorioProveedores.xlsx");
+        }
+        public IActionResult RptDirectorioProveedoresWord()
+        {
+            var reporte = CrearRptDirectorioProveedores();
+            byte[] archivo = reporte.Render("WORDOPENXML");
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "DirectorioProveedores.docx");
         }
     }
 }
