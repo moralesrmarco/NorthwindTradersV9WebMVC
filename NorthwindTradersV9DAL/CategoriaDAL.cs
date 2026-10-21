@@ -139,5 +139,28 @@ namespace NorthwindTradersV9DAL
             }
             return numRegs;
         }
+        public int Insertar(Categoria categoria)
+        {
+            int numRegs = 0;
+            try
+            {
+                using (var conn = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpCategoriaInsertar", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@CategoryName", categoria.CategoryName);
+                    cmd.Parameters.AddWithValue("@Description", categoria.Description ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Picture", categoria.Picture ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@CategoryID", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    conn.Open();
+                    numRegs = cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al insertar la categoria " + ex.Message);
+            }
+            return numRegs;
+        }
     }
 }

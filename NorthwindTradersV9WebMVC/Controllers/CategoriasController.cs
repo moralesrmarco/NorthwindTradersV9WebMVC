@@ -7,6 +7,7 @@ using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
 using NorthwindTradersV9WebMVC.Models.Categorias;
 using NorthwindTradersV9WebMVC.Models.Common;
+using NorthwindTradersV9WebMVC.Models.Empleados;
 
 namespace NorthwindTradersV9WebMVC.Controllers
 {
@@ -123,6 +124,188 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 }
             }
             return View(model);
+        }
+        public IActionResult Insertar(string? returnUrl = null)
+        {
+            var model = new CategoriasInsertarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Insertar(CategoriasInsertarViewModel model)
+        {
+
+            byte[]? pictureBytes = null;
+
+            // Procesar una imagen nueva, si se seleccionó.
+            if (model.Picture != null && model.Picture.Length > 0)
+            {
+                // Validar el tamaño antes de leer el archivo.
+                if (model.Picture.Length > MaximoImagenBytes)
+                {
+                    ModelState.AddModelError(
+                        "Picture",
+                        "La imagen no puede exceder 2 MB.");
+
+                    model.PictureTemporalBase64 = null;
+                    model.PictureMime = null;
+
+                    return View(model);
+                }
+
+                using var ms = new MemoryStream();
+                model.Picture.CopyTo(ms);
+
+                pictureBytes = ms.ToArray();
+
+                if (!EsImagenValida(pictureBytes, model.Picture.ContentType))
+                {
+                    ModelState.AddModelError(
+                        "Picture",
+                        "El archivo no es una imagen JPG, PNG, GIF o WEBP válida.");
+
+                    model.PictureTemporalBase64 = null;
+                    model.PictureMime = null;
+
+                    return View(model);
+                }
+
+                model.PictureTemporalBase64 =
+                    Convert.ToBase64String(pictureBytes);
+
+                model.PictureMime = model.Picture.ContentType;
+            }
+            else if (!string.IsNullOrWhiteSpace(model.PictureTemporalBase64))
+            {
+                try
+                {
+                    pictureBytes = Convert.FromBase64String(
+                        model.PictureTemporalBase64);
+
+                    if (pictureBytes.Length == 0 ||
+                        pictureBytes.Length > MaximoImagenBytes ||
+                        !EsImagenValida(pictureBytes, model.PictureMime))
+                    {
+                        throw new FormatException();
+                    }
+                }
+                catch (FormatException)
+                {
+                    ModelState.AddModelError(
+                        "Picture",
+                        "La imagen temporal no es válida o excede 2 MB.");
+
+                    model.PictureTemporalBase64 = null;
+                    model.PictureMime = null;
+
+                    return View(model);
+                }
+            }
+
+            // Validar el nombre antes de continuar.
+            if (model.Categoria == null)
+            {
+                ModelState.AddModelError(
+                    "Categoria",
+                    "No se recibieron los datos de la categoría.");
+            }
+            else if (string.IsNullOrWhiteSpace(model.Categoria.CategoryName))
+            {
+                ModelState.AddModelError(
+                    "Categoria.CategoryName",
+                    "El nombre de la categoría es obligatorio.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            try
+            {
+                if (model.Categoria != null)
+                {
+                    if (pictureBytes != null)
+                        model.Categoria.Picture = pictureBytes;
+                    else
+                    {
+                        var defaultImagePath = Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "wwwroot",
+                            "images",
+                            "Categorias.png");
+                        if (System.IO.File.Exists(defaultImagePath))
+                            model.Categoria.Picture = System.IO.File.ReadAllBytes(defaultImagePath);
+                    }
+                    var resultado = _categoriaBLL.Insertar(model.Categoria);
+                    if (resultado.Exito)
+                    {
+                        if (!string.IsNullOrEmpty(model.ReturnUrl))
+                            return LocalRedirect(model.ReturnUrl);
+                        return RedirectToAction("Index", "Categorias");
+                    }
+                    TempData["Error"] =
+                        $"<p>La categoría <strong>{model.Categoria.CategoryName}</strong>:</p>" +
+                        $"{resultado.Mensaje}";
+                    if (resultado.Codigo < 0)
+                        model.BloquearEdicion = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    "Ocurrió un error al insertar la categoría. " +
+                    "Verifica los datos e inténtalo nuevamente.";
+            }
+            return View(model);
+        }
+        private const int MaximoImagenBytes = 2 * 1024 * 1024;
+        private static bool EsImagenValida(
+            byte[] bytes,
+            string? contentType)
+        {
+            if (bytes.Length < 12)
+                return false;
+            return contentType switch
+            {
+                "image/jpeg" =>
+                    bytes[0] == 0xFF &&
+                    bytes[1] == 0xD8 &&
+                    bytes[2] == 0xFF,
+
+                "image/png" =>
+                    bytes[0] == 0x89 &&
+                    bytes[1] == 0x50 &&
+                    bytes[2] == 0x4E &&
+                    bytes[3] == 0x47 &&
+                    bytes[4] == 0x0D &&
+                    bytes[5] == 0x0A &&
+                    bytes[6] == 0x1A &&
+                    bytes[7] == 0x0A,
+
+                "image/gif" =>
+                    bytes[0] == 0x47 &&
+                    bytes[1] == 0x49 &&
+                    bytes[2] == 0x46 &&
+                    bytes[3] == 0x38 &&
+                    (bytes[4] == 0x37 || bytes[4] == 0x39) &&
+                    bytes[5] == 0x61,
+
+                "image/webp" =>
+                    bytes[0] == 0x52 &&
+                    bytes[1] == 0x49 &&
+                    bytes[2] == 0x46 &&
+                    bytes[3] == 0x46 &&
+                    bytes[8] == 0x57 &&
+                    bytes[9] == 0x45 &&
+                    bytes[10] == 0x42 &&
+                    bytes[11] == 0x50,
+
+                _ => false
+            };
         }
     }
 }

@@ -1,0 +1,102 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Categorias.CategoriasInsertarViewModel
+@{
+    ViewData["Title"] = "Insertar categoría";
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<form asp-controller="Categorias"
+      asp-action="Insertar"
+      method="post"
+      class="form"
+      enctype="multipart/form-data"
+      onsubmit="return disableSaveButton();">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.Raw(TempData["Error"])
+        </div>        
+    }
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <label asp-for="Categoria.CategoryName" class="form-label small">Nombre</label>
+            <input asp-for="Categoria.CategoryName" class="form-control form-control-sm" />
+            <span asp-validation-for="Categoria.CategoryName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <label asp-for="Categoria.Description" class="form-label small">Descripción</label>
+            <textarea asp-for="Categoria.Description" 
+            class="form-control form-control-sm" 
+            rows="5"
+            style="resize:none; overflow-y:auto; max-height:200px;"></textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 mb-3 d-flex align-items-end">
+            <!-- Imagen por defecto o previa -->
+            <img id="previewFoto"
+                 src="@(!string.IsNullOrEmpty(Model.PictureTemporalBase64)
+                     ? $"data:{Model.PictureMime};base64,{Model.PictureTemporalBase64}"
+                     : Url.Content("~/images/Categorias.png"))"
+                 alt="Imagen de la categoría"
+                 class="img-thumbnail"
+                 style="max-width:150px; max-height:150px;" />
+
+            <!-- Campo para seleccionar archivo -->
+            <input type="file"
+                   asp-for="Picture"
+                   id="fileFoto"
+                   class="d-none"
+                   accept="image/jpeg,image/png,image/gif,image/webp" />
+
+            <span asp-validation-for="Picture"
+                class="text-danger small"></span>
+
+            <!-- Botón que dispara el input file -->
+            <button type="button"
+                    class="btn btn-primary ms-2"
+                    style="padding:2px 6px; font-size:0.7rem;"
+                    onclick="document.getElementById('fileFoto').click();">
+                <i class="bi bi-camera"></i>
+                Cargar imagen...
+            </button>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <input type="hidden" asp-for="PictureTemporalBase64" />
+            <input type="hidden" asp-for="PictureMime" />
+            <input type="hidden" asp-for="ReturnUrl" />
+            <button type="submit"
+                    id="btnGuardar"
+                    class="btn btn-sm btn-success me-1"
+                    disabled="@Model.BloquearEdicion"
+                    title="Guardar">
+                <i class="bi bi-save"></i>
+                <span class="d-none d-md-inline"> Guardar</span>
+            </button>
+            <a href="@(Model.ReturnUrl ?? Url.Action("Index", "Categorias"))"
+               class="btn btn-sm btn-cancelar me-1"
+               title="Cancelar">
+                <i class="bi bi-x-circle"></i>
+                <span class="d-none d-md-inline"> Cancelar</span>
+            </a>
+        </div>
+    </div>
+</form>
+@section Scripts {
+    <script src="~/js/form-submit.js"></script>
+    <script src="~/js/manejo-foto.js"></script>
+    <script>
+        $(function () {
+            configurarSubmitFormulario(null);
+            configurarPreviewImagen(
+                'fileFoto',
+                'previewFoto',
+                'PictureTemporalBase64',
+                'PictureMime',
+                2
+            );
+        });
+    </script>
+}

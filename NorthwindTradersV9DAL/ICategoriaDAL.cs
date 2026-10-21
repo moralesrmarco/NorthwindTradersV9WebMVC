@@ -11,5 +11,6 @@ namespace NorthwindTradersV9DAL
             CategoriasBuscarDto filtro);
         Categoria? ObtenerCategoriaPorId(int id);
         int Eliminar(Categoria categoria);
+        int Insertar(Categoria categoria);
     }
 }
