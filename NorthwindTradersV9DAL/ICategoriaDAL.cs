@@ -10,5 +10,6 @@ namespace NorthwindTradersV9DAL
             int pageSize,
             CategoriasBuscarDto filtro);
         Categoria? ObtenerCategoriaPorId(int id);
+        int Eliminar(Categoria categoria);
     }
 }

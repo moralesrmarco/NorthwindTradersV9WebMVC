@@ -82,5 +82,47 @@ namespace NorthwindTradersV9WebMVC.Controllers
             };
             return View(model);
         }
+        public IActionResult Eliminar(int id, string? returnUrl = null)
+        {
+            var categoria = _categoriaBLL.ObtenerCategoriaPorId(id);
+            var model = new CategoriasEliminarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            if (categoria == null)
+            {
+                TempData["Error"] = "<p>Categoría no encontrada</p>" + StringsCommons.Nefep;
+                model.BloquearEliminacion = true;
+            }
+            else
+                model.Categoria = categoria;
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Eliminar(CategoriasEliminarViewModel model)
+        {
+            if (model.Categoria != null)
+            {
+                var resultado = _categoriaBLL.Eliminar(model.Categoria);
+                if (resultado.Exito)
+                {
+                    if (!string.IsNullOrEmpty(model.ReturnUrl))
+                        return LocalRedirect(model.ReturnUrl);
+                    return RedirectToAction("Index", "Categorias");
+                }
+                else
+                {
+                    TempData["Error"] =
+                        $"<p>La categoría con Id: <strong>{model.Categoria.CategoryID}</strong> " +
+                        $"- Nombre de categoría: <strong>{model.Categoria.CategoryName}</strong>:</p>" +
+                        resultado.Mensaje;
+                    // Sólo bloquea para errores definitivos
+                    if (resultado.Codigo < 0)
+                        model.BloquearEliminacion = true;
+                }
+            }
+            return View(model);
+        }
     }
 }

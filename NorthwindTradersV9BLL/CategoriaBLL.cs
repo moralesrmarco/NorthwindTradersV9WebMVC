@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using NorthwindTradersV9Common;
 using NorthwindTradersV9DAL;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
@@ -31,6 +32,25 @@ namespace NorthwindTradersV9BLL
             if (_appSettings.EjecutarTiempoDemora)
                 Thread.Sleep(_appSettings.TiempoDemora);
             return _categoriaDAL.ObtenerCategoriaPorId(id);
+        }
+        public ResultadoOperacion Eliminar(Categoria categoria)
+        {
+            var resultado = new ResultadoOperacion();
+            int numRegs = _categoriaDAL.Eliminar(categoria);
+            resultado.Codigo = numRegs;
+            if (numRegs > 0)
+                resultado.Exito = true;
+            else if (numRegs == -1)
+                resultado.Mensaje = StringsCommons.Nfefe;
+            else if (numRegs == -2)
+                resultado.Mensaje = StringsCommons.Nfefm;
+            else if (numRegs == -3)
+                resultado.Mensaje = StringsCommons.Nferr;
+            else
+                resultado.Mensaje = StringsCommons.Nfemd;
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return resultado;
         }
 
     }

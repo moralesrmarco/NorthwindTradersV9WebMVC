@@ -113,5 +113,31 @@ namespace NorthwindTradersV9DAL
                 throw new Exception("Error al obtener la categoria por ID " + ex.Message);
             }
         }
+        public int Eliminar(Categoria categoria)
+        {
+            int numRegs = 0;
+            try
+            {
+                using (var conn = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpCategoriaEliminar", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@CategoryID", categoria.CategoryID);
+                    var pRrowVersion = cmd.Parameters.Add("@RowVersion", SqlDbType.Binary, 8);
+                    pRrowVersion.Value = categoria.RowVersion ?? (object)DBNull.Value;
+                    // Parámetro de retorno
+                    var returnParameter = cmd.Parameters.Add("@ReturnVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    numRegs = (int)returnParameter.Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar la categoria " + ex.Message);
+            }
+            return numRegs;
+        }
     }
 }
