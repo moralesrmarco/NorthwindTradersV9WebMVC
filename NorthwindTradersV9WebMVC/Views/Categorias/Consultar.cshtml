@@ -1,0 +1,62 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Categorias.CategoriasConsultarViewModel
+@{
+    ViewData["Title"] = "Consulta de categoría";
+}
+<h2 class="mb-4">Detalle de la categoría</h2>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @Html.Raw(TempData["Error"])
+    </div>
+}
+<div class="row mb-3">
+    <div class="col-md-12">
+        <label asp-for="Categoria.CategoryID" class="form-label small">ID</label>
+        <input asp-for="Categoria.CategoryID" class="form-control form-control-sm" readonly />
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-12">
+        <label asp-for="Categoria.CategoryName" class="form-label small">Nombre</label>
+        <input asp-for="Categoria.CategoryName" class="form-control form-control-sm" readonly />
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-12">
+        <label asp-for="Categoria.Description" class="form-label small">Descripción</label>
+        <textarea asp-for="Categoria.Description" 
+            class="form-control form-control-sm" 
+            rows="5"
+            readonly
+            style="resize:none; overflow-y:auto; max-height:200px;"></textarea>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-12">
+        @if(Model.Categoria.Picture != null && Model.Categoria.Picture.Length > 0)
+        {
+            <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Categoria.Picture)"
+                alt="Imagen de la categoría"
+                class="img-thumbnail float-start"
+                style="max-width:250px; max-height:250px;" />
+        }
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-12">
+        <a href="@(Model.ReturnUrl ?? Url.Action("Index", "Categorias"))"
+            class="btn btn-sm btn-success me-1 navigation-btn"
+            title="Regresar">
+            <i class="bi bi-arrow-left"></i>
+            <span class="d-none d-md-inline"> Regresar</span>
+        </a>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/navigation-actions.js"></script>
+    <script>
+        $(function () {
+            configurarNavegacion();
+        });
+    </script>
+}

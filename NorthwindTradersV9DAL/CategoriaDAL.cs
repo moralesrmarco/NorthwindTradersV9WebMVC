@@ -78,5 +78,40 @@ namespace NorthwindTradersV9DAL
             }
             return resultado;
         }
+        public Categoria? ObtenerCategoriaPorId(int id)
+        {
+            try
+            {
+                using (var conn = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpCategoriaObtenerPorIdV2", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ID", id);
+                    conn.Open();
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            return new Categoria
+                            {
+                                CategoryID = dr["CategoryID"] != DBNull.Value ? Convert.ToInt32(dr["CategoryID"]) : 0,
+                                CategoryName = dr["CategoryName"] != DBNull.Value ? dr["CategoryName"].ToString() : null,
+                                Description = dr["Description"] != DBNull.Value ? dr["Description"].ToString() : null,
+                                Picture = dr["Picture"] as byte[],
+                                RowVersion = dr["RowVersion"] != DBNull.Value ? (byte[])dr["RowVersion"] : null
+                            };
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener la categoria por ID " + ex.Message);
+            }
+        }
     }
 }

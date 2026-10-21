@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NorthwindTradersV9BLL;
+using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
 using NorthwindTradersV9WebMVC.Models.Categorias;
@@ -66,6 +67,18 @@ namespace NorthwindTradersV9WebMVC.Controllers
                         ["BuscarAbierto"] = BuscarAbierto.ToString().ToLower()
                     }
                 }
+            };
+            return View(model);
+        }
+        public IActionResult Consultar(int id, string? returnUrl = null)
+        {
+            var categoria = _categoriaBLL.ObtenerCategoriaPorId(id);
+            if (categoria == null)
+                TempData["Error"] = "<p>Categoría no encontrada</p>" + StringsCommons.Nefep;
+            var model = new CategoriasConsultarViewModel
+            {
+                Categoria = categoria,
+                ReturnUrl = returnUrl
             };
             return View(model);
         }
