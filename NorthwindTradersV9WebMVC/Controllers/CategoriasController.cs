@@ -137,14 +137,12 @@ namespace NorthwindTradersV9WebMVC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Insertar(CategoriasInsertarViewModel model)
         {
-
             byte[]? pictureBytes = null;
-
             // Procesar una imagen nueva, si se seleccionó.
             if (model.Picture != null && model.Picture.Length > 0)
             {
                 // Validar el tamaño antes de leer el archivo.
-                if (model.Picture.Length > MaximoImagenBytes)
+                if (model.Picture.Length > ValidadorImagenes.MaximoImagenBytes)
                 {
                     ModelState.AddModelError(
                         "Picture",
@@ -152,30 +150,22 @@ namespace NorthwindTradersV9WebMVC.Controllers
 
                     model.PictureTemporalBase64 = null;
                     model.PictureMime = null;
-
                     return View(model);
                 }
-
                 using var ms = new MemoryStream();
                 model.Picture.CopyTo(ms);
-
                 pictureBytes = ms.ToArray();
-
-                if (!EsImagenValida(pictureBytes, model.Picture.ContentType))
+                if (!ValidadorImagenes.EsImagenValida(pictureBytes, model.Picture.ContentType))
                 {
                     ModelState.AddModelError(
                         "Picture",
                         "El archivo no es una imagen JPG, PNG, GIF o WEBP válida.");
-
                     model.PictureTemporalBase64 = null;
                     model.PictureMime = null;
-
                     return View(model);
                 }
-
                 model.PictureTemporalBase64 =
                     Convert.ToBase64String(pictureBytes);
-
                 model.PictureMime = model.Picture.ContentType;
             }
             else if (!string.IsNullOrWhiteSpace(model.PictureTemporalBase64))
@@ -184,10 +174,9 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 {
                     pictureBytes = Convert.FromBase64String(
                         model.PictureTemporalBase64);
-
                     if (pictureBytes.Length == 0 ||
-                        pictureBytes.Length > MaximoImagenBytes ||
-                        !EsImagenValida(pictureBytes, model.PictureMime))
+                        pictureBytes.Length > ValidadorImagenes.MaximoImagenBytes ||
+                        !ValidadorImagenes.EsImagenValida(pictureBytes, model.PictureMime))
                     {
                         throw new FormatException();
                     }
@@ -197,14 +186,11 @@ namespace NorthwindTradersV9WebMVC.Controllers
                     ModelState.AddModelError(
                         "Picture",
                         "La imagen temporal no es válida o excede 2 MB.");
-
                     model.PictureTemporalBase64 = null;
                     model.PictureMime = null;
-
                     return View(model);
                 }
             }
-
             // Validar el nombre antes de continuar.
             if (model.Categoria == null)
             {
@@ -218,12 +204,10 @@ namespace NorthwindTradersV9WebMVC.Controllers
                     "Categoria.CategoryName",
                     "El nombre de la categoría es obligatorio.");
             }
-
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-
             try
             {
                 if (model.Categoria != null)
@@ -261,51 +245,6 @@ namespace NorthwindTradersV9WebMVC.Controllers
                     "Verifica los datos e inténtalo nuevamente.";
             }
             return View(model);
-        }
-        private const int MaximoImagenBytes = 2 * 1024 * 1024;
-        private static bool EsImagenValida(
-            byte[] bytes,
-            string? contentType)
-        {
-            if (bytes.Length < 12)
-                return false;
-            return contentType switch
-            {
-                "image/jpeg" =>
-                    bytes[0] == 0xFF &&
-                    bytes[1] == 0xD8 &&
-                    bytes[2] == 0xFF,
-
-                "image/png" =>
-                    bytes[0] == 0x89 &&
-                    bytes[1] == 0x50 &&
-                    bytes[2] == 0x4E &&
-                    bytes[3] == 0x47 &&
-                    bytes[4] == 0x0D &&
-                    bytes[5] == 0x0A &&
-                    bytes[6] == 0x1A &&
-                    bytes[7] == 0x0A,
-
-                "image/gif" =>
-                    bytes[0] == 0x47 &&
-                    bytes[1] == 0x49 &&
-                    bytes[2] == 0x46 &&
-                    bytes[3] == 0x38 &&
-                    (bytes[4] == 0x37 || bytes[4] == 0x39) &&
-                    bytes[5] == 0x61,
-
-                "image/webp" =>
-                    bytes[0] == 0x52 &&
-                    bytes[1] == 0x49 &&
-                    bytes[2] == 0x46 &&
-                    bytes[3] == 0x46 &&
-                    bytes[8] == 0x57 &&
-                    bytes[9] == 0x45 &&
-                    bytes[10] == 0x42 &&
-                    bytes[11] == 0x50,
-
-                _ => false
-            };
         }
     }
 }
