@@ -149,6 +149,9 @@ builder.Services.AddScoped<ComboDataHelper>();
 builder.Services.AddScoped<IProveedorDAL, ProveedorDAL>();
 builder.Services.AddScoped<ProveedorBLL>();
 
+builder.Services.AddScoped<ICategoriaDAL, CategoriaDAL>();
+builder.Services.AddScoped<CategoriaBLL>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

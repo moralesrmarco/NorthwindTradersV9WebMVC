@@ -261,7 +261,71 @@
                                 </span>
                             </li>
                         }
-
+                        <!-- Menú Categorías con submenús -->
+                        @if (User.HasClaim("Permiso", Permisos.Categorias.ToString()))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="categoriasDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Categorías
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="categoriasDropDown">
+                                    <!-- Gestión de categorías -->
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Categorias"
+                                            asp-action="Index">
+                                            Gestión de categorías
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <!-- Submenú Consultas -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item dropdown-toggle" href="#">Consultas</a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-page="/CategoriasProductosComun/Consultas/BuscarCategoriasProductos">
+                                                    Consulta de productos por categoría
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-page="/CategoriasProductosComun/Consultas/ListadoCategoriasConProductos">
+                                                    Listado de categorías con productos
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <!-- Submenú Reportes -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item dropdown-toggle" href="#">Reportes</a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-page="/Categorias/Reportes/CategoriasRpt">
+                                                    Reporte de categorías
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-page="/CategoriasProductosComun/Reportes/CategoriasConProductosRpt">
+                                                    Reporte de categorías con productos
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-dark menu-deshabilitado">
+                                    Categorías
+                                </span>
+                            </li>
+                        }
                         <!-- Menú Administración con submenús -->
                         @if (User.HasClaim("Permiso", Permisos.Administracion.ToString()))
                         {
