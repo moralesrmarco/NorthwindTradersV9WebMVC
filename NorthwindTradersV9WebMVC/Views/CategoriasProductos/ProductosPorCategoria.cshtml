@@ -1,0 +1,90 @@
+﻿@model NorthwindTradersV9WebMVC.Models.CategoriasProductos.ProductosPorCategoriaViewModel
+@{
+    ViewData["Title"] = "Productos por categoría";
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@Html.Raw(TempData["Error"])</div>
+}
+<div class="row mb-3">
+    <div class="col-md-3">
+        @if(Model.Categoria?.Picture != null && Model.Categoria.Picture.Length > 0)
+        {
+            <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Categoria.Picture)" alt="Imagen" class="img-thumbnail" style="max-width: 100px; max-height: 100px;" /> 
+        }
+    </div>
+    <div class="col-md-2">
+        <label asp-for="Categoria.CategoryID" class="form-label">ID</label>
+        <input asp-for="Categoria.CategoryID" class="form-control form-control-sm" readonly />
+    </div>
+    <div class="col-md-7">
+        <label asp-for="Categoria.CategoryName" class="form-label">Nombre de categoría</label>
+        <input asp-for="Categoria.CategoryName" class="form-control form-control-sm" readonly />
+    </div>
+</div>
+@if (Model.Productos.Any())
+{
+    <div class="container mt-4">
+        <div class="row">
+            @foreach (var producto in Model.Productos)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header encabezado-usuario">
+                            <h5 class="card-title">
+                                @producto.ProductName
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong class="fs-6">
+                                    ID: @producto.ProductID
+                                </strong><br />
+                                <strong>Cantidad por unidad:</strong>
+                                @producto.QuantityPerUnit
+                                <br />
+                                <strong>Precio:</strong>
+                                @producto.UnitPrice?.ToString("C2")
+                                <br />
+                                <strong>Unidades en inventario:</strong>
+                                @producto.UnitsInStock?.ToString("N0")
+                                <br />
+                                <strong>Unidades en pedido:</strong>
+                                @producto.UnitsOnOrder?.ToString("N0")
+                                <br />
+                                <strong>Nivel de reorden:</strong>
+                                @producto.ReorderLevel?.ToString("N0")
+                                <br />
+                                <strong>Estatus: </strong>
+                                 <span class="badge @(producto.Discontinued
+                                    ? "bg-danger"
+                                    : "bg-success")">
+                                    @(producto.Discontinued
+                                        ? "Descontinuado"
+                                        : "Activo")
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning mt-3">
+        Esta categoría no contiene productos registrados
+    </div>
+}
+<a href="@(
+    Url.IsLocalUrl(Model.ReturnUrl)
+        ? Model.ReturnUrl
+        : Url.Action("BuscarCategoriasProductos", "CategoriasProductos")
+    )"
+   class="btn btn-sm btn-success navigation-btn"
+   title="Regresar">
+    <i class="bi bi-arrow-left"></i>
+    <span class="d-none d-md-inline"> Regresar</span>
+</a>

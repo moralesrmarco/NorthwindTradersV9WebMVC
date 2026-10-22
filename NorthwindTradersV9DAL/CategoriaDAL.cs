@@ -191,5 +191,45 @@ namespace NorthwindTradersV9DAL
             }
             return numRegs;
         }
+        public List<Producto> ObtenerProductosPorCategoriaId(int categoriaId)
+        {
+            try
+            {
+                using (var conn = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpProductosObtenerPorCategoriaId", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@CategoryID", categoriaId);
+                    conn.Open();
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        var productos = new List<Producto>();
+                        while (dr.Read())
+                        {
+                            productos.Add(new Producto
+                            {
+                                ProductID = dr["ProductID"] != DBNull.Value ? Convert.ToInt32(dr["ProductID"]) : 0,
+                                ProductName = dr["ProductName"] != DBNull.Value ? dr["ProductName"].ToString() : null,
+                                QuantityPerUnit = dr["QuantityPerUnit"] != DBNull.Value ? dr["QuantityPerUnit"].ToString() : null,
+                                UnitPrice = dr["UnitPrice"] != DBNull.Value ? Convert.ToDecimal(dr["UnitPrice"]) : null,
+                                UnitsInStock = dr["UnitsInStock"] != DBNull.Value ? Convert.ToInt16(dr["UnitsInStock"]) : null,
+                                UnitsOnOrder = dr["UnitsOnOrder"] != DBNull.Value ? Convert.ToInt16(dr["UnitsOnOrder"]) : null,
+                                ReorderLevel = dr["ReorderLevel"] != DBNull.Value ? Convert.ToInt16(dr["ReorderLevel"]) : null,
+                                Discontinued = dr["Discontinued"] != DBNull.Value ? Convert.ToBoolean(dr["Discontinued"]) : false,
+                                Proveedor = new Proveedor
+                                {
+                                    CompanyName = dr["CompanyName"] != DBNull.Value ? dr["CompanyName"].ToString() : null
+                                }
+                            });
+                        }
+                        return productos;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los productos por categoria " + ex.Message);
+            }
+        }
     }
 }

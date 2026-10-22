@@ -1,0 +1,166 @@
+﻿@model NorthwindTradersV9WebMVC.Models.CategoriasProductos.BuscarCategoriasProductosViewModel
+@{
+    ViewData["Title"] = "Consulta de productos por categoría";
+    var returnUrl = Url.Action(
+        "BuscarCategoriasProductos",
+        "CategoriasProductos",
+        new
+        {
+            pageIndex = Model.Paginacion.PageIndex,
+            IdIni = Model.Filtro.IdIni,
+            IdFin = Model.Filtro.IdFin,
+            CategoryName = Model.Filtro.CategoryName,
+            BuscarAbierto = Model.ParametrosPaginacion.BuscarAbierto
+        }
+    );
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<ul class="nav nav-tabs mb-0">
+    <li class="nav-item small">
+        <button type="button"
+                id="btnPestañaBuscar"
+                class="nav-link active pestaña-buscar"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelBusqueda"
+                aria-expanded="@(Model.ParametrosPaginacion.BuscarAbierto.ToString().ToLower())"
+                aria-controls="panelBusqueda">
+            <i class="bi bi-search"></i>
+            Buscar categoría
+        </button>
+    </li>
+</ul>
+<div id="mensajeBusqueda"
+     class="border border-top-0 p-3 small text-muted @(Model.ParametrosPaginacion.BuscarAbierto ? "d-none" : "")">
+    Seleccione buscar categoría para proporcionar los criterios de búsqueda
+</div>
+<div id="panelBusqueda"
+     class="collapse border border-top-0 @(Model.ParametrosPaginacion.BuscarAbierto ? "show" : "")">
+    <div class="p-3 small">
+        <form asp-controller="CategoriasProductos"
+              asp-action="BuscarCategoriasProductos"
+              method="get"
+              id="formBuscar">
+            <input type="hidden"
+                   name="BuscarAbierto"
+                   value="true" />
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="txtIdIni" class="form-label">Id inicial</label>
+                    <input type="number"
+                           name="Filtro.IdIni"
+                           id="txtIdIni"
+                           value="@Model.Filtro.IdIni"
+                           class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-3">
+                    <label for="txtIdFin" class="form-label">Id final</label>
+                    <input type="number"
+                           name="Filtro.IdFin"
+                           id="txtIdFin"
+                           value="@Model.Filtro.IdFin"
+                           class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-3">
+                    <label for="CategoryName" class="form-label">Categoría</label>
+                    <input asp-for="Filtro.CategoryName"
+                           id="CategoryName"
+                           class="form-control form-control-sm" />
+                    <span asp-validation-for="Filtro.CategoryName" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button type="submit"
+                            id="btnBuscar"
+                            class="btn btn-sm btn-buscar"
+                            onclick="return disableSearchButton();">
+                        <i class="bi bi-search"></i>
+                        <span class="d-none d-md-inline"> Buscar</span>
+                    </button>
+                    <a asp-controller="CategoriasProductos"
+                       asp-action="BuscarCategoriasProductos"
+                       class="btn btn-sm btn-primary navigation-btn">
+                        <i class="bi bi-eraser"></i>
+                        <span class="d-none d-md-inline"> Limpiar</span>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<br />
+<partial name="_Paginacion"
+         model="Model.ParametrosPaginacion"
+         view-data='new ViewDataDictionary(ViewData)
+         {
+             ["PageIndex"] = Model.Paginacion.PageIndex,
+             ["TotalPages"] = Model.Paginacion.TotalPages,
+             ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+         }' />
+<br />
+<div class="table responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="encabezado-tabla">
+            <tr>
+                <th class="text-center">Imagen</th>
+                <th class="text-center">ID</th>
+                <th>Categoría</th>
+                <th>Descripción</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var categoria in Model.Categorias)
+            {
+                <tr class="align-middle">
+                    <td class="text-center">
+                        @if(categoria.Picture != null && categoria.Picture.Length > 0)
+                        {
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(categoria.Picture)" alt="Imagen" class="img-thumbnail" style="max-width: 80px; max-height: 80px;" /> 
+                        }
+                    </td>
+                    <td class="text-center">@categoria.CategoryID</td>
+                    <td>@categoria.CategoryName</td>
+                    <td>@categoria.Description</td>
+                    <td class="text-center text-nowrap">
+                        <a asp-controller="Categorias"
+                           asp-action="Consultar"
+                           asp-route-id="@categoria.CategoryID"
+                           asp-route-returnUrl="@returnUrl"
+                           class="btn btn-sm btn-success me-1 action-btn"
+                           title="Consultar">
+                            <i class="bi bi-eye"></i>
+                            <span class="d-none d-md-inline"> Consultar</span>
+                        </a>
+                         <a asp-controller="CategoriasProductos"
+                           asp-action="ProductosPorCategoria"
+                           asp-route-id="@categoria.CategoryID"
+                           asp-route-returnUrl="@returnUrl"
+                           class="btn btn-sm btn-primary me-1 action-btn"
+                           title="Productos">
+                            <i class="bi bi-cart"></i>
+                            <span class="d-none d-md-inline"> Productos</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<br />
+<partial name="_Paginacion"
+         model="Model.ParametrosPaginacion"
+         view-data='new ViewDataDictionary(ViewData)
+         {
+             ["PageIndex"] = Model.Paginacion.PageIndex,
+             ["TotalPages"] = Model.Paginacion.TotalPages,
+             ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+         }' />
+@section Scripts {
+    <script src="~/js/list-actions.js"></script>
+    <script src="~/js/navigation-actions.js"></script>
+    <script src="~/js/form-buscar.js"></script>
+    <script>
+        $(function () {
+            configurarAccionesListado();
+        });
+    </script>
+}
