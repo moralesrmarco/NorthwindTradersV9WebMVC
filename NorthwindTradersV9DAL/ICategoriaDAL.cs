@@ -12,5 +12,6 @@ namespace NorthwindTradersV9DAL
         Categoria? ObtenerCategoriaPorId(int id);
         int Eliminar(Categoria categoria);
         int Insertar(Categoria categoria);
+        int Actualizar(Categoria categoria);
     }
 }

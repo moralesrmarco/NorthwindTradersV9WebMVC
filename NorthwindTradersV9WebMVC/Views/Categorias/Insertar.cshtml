@@ -41,17 +41,14 @@
                  alt="Imagen de la categoría"
                  class="img-thumbnail"
                  style="max-width:150px; max-height:150px;" />
-
             <!-- Campo para seleccionar archivo -->
             <input type="file"
                    asp-for="Picture"
                    id="fileFoto"
                    class="d-none"
                    accept="image/jpeg,image/png,image/gif,image/webp" />
-
             <span asp-validation-for="Picture"
                 class="text-danger small"></span>
-
             <!-- Botón que dispara el input file -->
             <button type="button"
                     class="btn btn-primary ms-2"

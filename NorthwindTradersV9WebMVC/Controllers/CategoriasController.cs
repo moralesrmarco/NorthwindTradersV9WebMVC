@@ -74,13 +74,14 @@ namespace NorthwindTradersV9WebMVC.Controllers
         public IActionResult Consultar(int id, string? returnUrl = null)
         {
             var categoria = _categoriaBLL.ObtenerCategoriaPorId(id);
-            if (categoria == null)
-                TempData["Error"] = "<p>Categoría no encontrada</p>" + StringsCommons.Nefep;
             var model = new CategoriasConsultarViewModel
             {
-                Categoria = categoria,
                 ReturnUrl = returnUrl
             };
+            if (categoria == null)
+                TempData["Error"] = "<p>Categoría no encontrada</p>" + StringsCommons.Nefep;
+            else
+                model.Categoria = categoria;
             return View(model);
         }
         public IActionResult Eliminar(int id, string? returnUrl = null)
@@ -245,6 +246,177 @@ namespace NorthwindTradersV9WebMVC.Controllers
                     "Verifica los datos e inténtalo nuevamente.";
             }
             return View(model);
+        }
+        public IActionResult Editar(int id, string? returnUrl = null)
+        {
+            var model = new CategoriasEditarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            var categoria = _categoriaBLL.ObtenerCategoriaPorId(id);
+            if (categoria == null)
+            {
+                TempData["Error"] = "<p>Categoría no encontrada.</p>" + StringsCommons.Nefep;
+                model.BloquearEdicion = true;
+            }
+            else
+            {
+                // Preparar la imagen almacenada para mostrarla en la vista.
+                PrepararImagenTemporal(model, categoria.Picture);
+            }
+            model.Categoria = categoria;
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Editar(CategoriasEditarViewModel model)
+        {
+            if (model.Categoria == null)
+            {
+                TempData["Error"] =
+                    "No se recibieron los datos de la categoría.";
+                return RedirectToAction("Index", "Categorias");
+            }
+            int id = model.Categoria.CategoryID;
+            // Recuperar la categoría actual para conservar su imagen.
+            var categoriaActual = _categoriaBLL.ObtenerCategoriaPorId(id);
+            if (categoriaActual == null)
+            {
+                TempData["Error"] = "No se encontró la categoría que deseas editar.";
+                return RedirectToAction("Index", "Categorias");
+            }
+
+            byte[]? pictureBytes = null;
+            // Las imágenes de las categorías 1 a 8 están protegidas.
+            if (id >= 1 && id <= 8)
+            {
+                pictureBytes = categoriaActual.Picture;
+            }
+            else if (model.Picture != null && model.Picture.Length > 0)
+            {
+                if (model.Picture.Length > ValidadorImagenes.MaximoImagenBytes)
+                {
+                    ModelState.AddModelError(
+                        "Picture",
+                        "La imagen no puede exceder 2 MB.");
+                    PrepararImagenTemporal(model, categoriaActual.Picture);
+                    return View(model);
+                }
+                using var ms = new MemoryStream();
+                model.Picture.CopyTo(ms);
+                pictureBytes = ms.ToArray();
+                if (!ValidadorImagenes.EsImagenValida(
+                        pictureBytes,
+                        model.Picture.ContentType))
+                {
+                    ModelState.AddModelError(
+                        "Picture",
+                        "El archivo no es una imagen JPG, PNG, GIF o WEBP válida.");
+                    PrepararImagenTemporal(model, categoriaActual.Picture);
+                    return View(model);
+                }
+                model.PictureTemporalBase64 =
+                    Convert.ToBase64String(pictureBytes);
+                model.PictureMime = model.Picture.ContentType;
+            }
+            else if (!string.IsNullOrWhiteSpace(model.PictureTemporalBase64))
+            {
+                try
+                {
+                    pictureBytes =
+                        Convert.FromBase64String(model.PictureTemporalBase64);
+                    if (pictureBytes.Length == 0 ||
+                        pictureBytes.Length > ValidadorImagenes.MaximoImagenBytes ||
+                        !ValidadorImagenes.EsImagenValida(
+                            pictureBytes,
+                            model.PictureMime))
+                    {
+                        throw new FormatException();
+                    }
+                }
+                catch (FormatException)
+                {
+                    ModelState.AddModelError(
+                        "Picture",
+                        "La imagen temporal no es válida o excede 2 MB.");
+                    PrepararImagenTemporal(model, categoriaActual.Picture);
+                    return View(model);
+                }
+            }
+            else
+            {
+                pictureBytes = categoriaActual.Picture;
+                PrepararImagenTemporal(model, categoriaActual.Picture);
+            }
+            // Validar los datos de la categoría.
+            if (string.IsNullOrWhiteSpace(model.Categoria.CategoryName))
+            {
+                ModelState.AddModelError(
+                    "Categoria.CategoryName",
+                    "El nombre de la categoría es obligatorio.");
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            try
+            {
+                model.Categoria.Picture = pictureBytes;
+                var resultado = _categoriaBLL.Actualizar(model.Categoria);
+                if (resultado.Exito)
+                {
+                    if (!string.IsNullOrEmpty(model.ReturnUrl))
+                        return LocalRedirect(model.ReturnUrl);
+                    return RedirectToAction("Index", "Categorias");
+                }
+                TempData["Error"] =
+                    $"<p>La categoría con Id: <strong>{model.Categoria.CategoryID}</strong> - Nombre: <strong>{model.Categoria.CategoryName}</strong>:</p> " +
+                    $"{resultado.Mensaje}";
+                if (resultado.Codigo < 0)
+                    model.BloquearEdicion = true;
+            }
+            catch (Exception)
+            {
+                TempData["Error"] =
+                    "Ocurrió un error al actualizar la categoría. " +
+                    "Verifica los datos e inténtalo nuevamente.";
+            }
+            return View(model);
+        }
+        private static void PrepararImagenTemporal(
+            CategoriasEditarViewModel model,
+            byte[]? pictureBytes)
+        {
+            string? mime = ObtenerMimeImagen(pictureBytes);
+            if (pictureBytes != null && mime != null)
+            {
+                model.PictureTemporalBase64 =
+                    Convert.ToBase64String(pictureBytes);
+                model.PictureMime = mime;
+            }
+            else
+            {
+                model.PictureTemporalBase64 = null;
+                model.PictureMime = null;
+            }
+        }
+        private static string? ObtenerMimeImagen(byte[]? bytes)
+        {
+            if (bytes == null || bytes.Length < 12)
+                return null;
+            // Imagen BMP original de Northwind.
+            // La firma BMP comienza con los bytes 0x42 y 0x4D ("BM").
+            if (bytes[0] == 0x42 && bytes[1] == 0x4D)
+                return "image/bmp"; 
+            if (ValidadorImagenes.EsImagenValida(bytes, "image/jpeg"))
+                return "image/jpeg";
+            if (ValidadorImagenes.EsImagenValida(bytes, "image/png"))
+                return "image/png";
+            if (ValidadorImagenes.EsImagenValida(bytes, "image/gif"))
+                return "image/gif";
+            if (ValidadorImagenes.EsImagenValida(bytes, "image/webp"))
+                return "image/webp";
+            return null;
         }
     }
 }
