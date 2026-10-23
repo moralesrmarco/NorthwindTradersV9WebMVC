@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Reporte de categorías con productos";
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<div class="mb-3">
+    <a asp-controller="CategoriasProductos"
+       asp-action="RptCategoriasConProductosExcel"
+       class="btn btn-sm btn-success"
+        title="Exportar a Excel">
+        <i class="bi bi-file-earmark-excel"></i> 
+        <span class="d-none d-md-inline"> Excel</span>
+    </a>
+    <a asp-controller="CategoriasProductos"
+       asp-action="RptCategoriasConProductosWord"
+       class="btn btn-sm btn-primary"
+        title="Exportar a Word">
+        <i class="bi bi-file-earmark-word"></i>
+        <span class="d-none d-md-inline"> Word</span>
+    </a>
+</div>
+<iframe id="visorReporte"
+        data-report-src="@Url.Action("RptCategoriasConProductosPdf", "CategoriasProductos")"
+        width="100%"
+        height="700"
+        style="border:1px solid #ccc;">
+</iframe>
+@section Scripts {
+    <script src="~/js/loading-overlay.js"></script>
+}

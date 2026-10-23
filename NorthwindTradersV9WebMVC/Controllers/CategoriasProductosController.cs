@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.Reporting.NETCore;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
@@ -87,6 +88,47 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 CategoriasConProductos = categoriaConProductos
             };
             return View(model);
+        }
+        public IActionResult RptCategoriasConProductos()
+        {
+            return View();
+        }
+        private LocalReport CrearRptCategoriasConProductos()
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "CategoriasProductos",
+                "RptCategoriasConProductos.rdlc");
+            var categoriasConProductos = _categoriaBLL.ObtenerCategoriasConProductosRpt();
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(new ReportDataSource("DataSet1", categoriasConProductos));
+            return reporte;
+        }
+        public IActionResult RptCategoriasConProductosPdf()
+        {
+            var reporte = CrearRptCategoriasConProductos();
+            byte[] pdf = reporte.Render("PDF");
+            return File(pdf, "application/pdf");
+        }
+        public IActionResult RptCategoriasConProductosExcel()
+        {
+            var reporte = CrearRptCategoriasConProductos();
+            byte[] archivo = reporte.Render("EXCELOPENXML");
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "CategoriasConProductos.xlsx");
+        }
+        public IActionResult RptCategoriasConProductosWord()
+        {
+            var reporte = CrearRptCategoriasConProductos();
+            byte[] archivo = reporte.Render("WORDOPENXML");
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "CategoriasConProductos.docx");
         }
     }
 }
