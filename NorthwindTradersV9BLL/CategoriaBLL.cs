@@ -88,5 +88,12 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return _categoriaDAL.ObtenerProductosPorCategoriaId(categoriaId);
         }
+        public List<CategoriasConProductosDto> ObtenerCategoriasConProductosRpt()
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _categoriaDAL.ObtenerCategoriasConProductosRpt();
+        }
+
     }
 }

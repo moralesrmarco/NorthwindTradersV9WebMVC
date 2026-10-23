@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
+using NorthwindTradersV9DAL;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
 using NorthwindTradersV9WebMVC.Models.CategoriasProductos;
@@ -77,6 +78,15 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 model.Categoria = categoria;
                 model.Productos = _categoriaBLL.ObtenerProductosPorCategoriaId(categoria.CategoryID);
             }
+            return View(model);
+        }
+        public IActionResult ListadoCategoriasConProductos()
+        {
+            var categoriaConProductos = _categoriaBLL.ObtenerCategoriasConProductosRpt();
+            var model = new ListadoCategoriasConProductosViewModel
+            {
+                CategoriasConProductos = categoriaConProductos
+            };
             return View(model);
         }
     }

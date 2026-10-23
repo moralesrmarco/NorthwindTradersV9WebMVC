@@ -1,0 +1,56 @@
+﻿@model NorthwindTradersV9WebMVC.Models.CategoriasProductos.ListadoCategoriasConProductosViewModel
+@{
+    ViewData["Title"] = "Listado de categorías con productos";
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead class="encabezado-tabla">
+            <tr>
+                <th>Categoría</th>
+                <th class="text-center">Producto</th>
+                <th class="text-center">Cantidad por unidad</th>
+                <th class="text-center">Precio</th>
+                <th class="text-center">Unidades en inventario</th>
+                <th class="text-center">Unidades en pedido</th>
+                <th class="text-center">Nivel de reorden</th>
+                <th class="text-center">Estatus</th>
+                <th class="text-center">Proveedor</th>
+            </tr>
+        </thead>
+        @{
+            string? categoriaAnterior = null;
+        }
+        <tbody>
+            @foreach (var categoriaProducto in Model.CategoriasConProductos)
+            {
+                if (categoriaAnterior != categoriaProducto.CategoryName)
+                {
+                    categoriaAnterior = categoriaProducto.CategoryName;
+                    <tr class="table-secondary">
+                        <td colspan="9" class="fw-bold">@categoriaAnterior</td>
+                    </tr>
+                }
+                <tr>
+                    <td></td>
+                    <td>@categoriaProducto.ProductName</td>
+                    <td>@categoriaProducto.QuantityPerUnit</td>
+                    <td class="text-center">@categoriaProducto.UnitPrice?.ToString("C2")</td>
+                    <td class="text-center">@categoriaProducto.UnitsInStock?.ToString("N0")</td>
+                    <td class="text-center">@categoriaProducto.UnitsOnOrder?.ToString("N0")</td>
+                    <td class="text-center">@categoriaProducto.ReorderLevel?.ToString("N0")</td>
+                    <td class="text-center">
+                        <span class="badge @(categoriaProducto.Discontinued
+                            ? "bg-danger"
+                            : "bg-success")">
+                            @(categoriaProducto.Discontinued
+                                ? "Descontinuado"
+                                : "Activo")
+                        </span>
+                    </td>
+                    <td>@categoriaProducto.CompanyName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

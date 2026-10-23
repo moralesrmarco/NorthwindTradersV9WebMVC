@@ -231,5 +231,42 @@ namespace NorthwindTradersV9DAL
                 throw new Exception("Error al obtener los productos por categoria " + ex.Message);
             }
         }
+        public List<CategoriasConProductosDto> ObtenerCategoriasConProductosRpt()
+        {
+            try
+            {
+                using (var conn = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("Select * from VwCategoriasConProductos Order by CategoryName, ProductName", conn))
+                {
+                    cmd.CommandType = CommandType.Text;
+                    conn.Open();
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        var categoriasConProductos = new List<CategoriasConProductosDto>();
+                        while (dr.Read())
+                        {
+                            categoriasConProductos.Add(new CategoriasConProductosDto
+                            {
+                                CategoryName = dr["CategoryName"] != DBNull.Value ? dr["CategoryName"].ToString() : null,
+                                CompanyName = dr["CompanyName"] != DBNull.Value ? dr["CompanyName"].ToString() : null,
+                                ProductID = dr["ProductID"] != DBNull.Value ? Convert.ToInt32(dr["ProductID"]) : null,
+                                ProductName = dr["ProductName"] != DBNull.Value ? dr["ProductName"].ToString() : null,
+                                QuantityPerUnit = dr["QuantityPerUnit"] != DBNull.Value ? dr["QuantityPerUnit"].ToString() : null,
+                                UnitPrice = dr["UnitPrice"] != DBNull.Value ? Convert.ToDecimal(dr["UnitPrice"]) : null,
+                                UnitsInStock = dr["UnitsInStock"] != DBNull.Value ? Convert.ToInt16(dr["UnitsInStock"]) : null,
+                                UnitsOnOrder = dr["UnitsOnOrder"] != DBNull.Value ? Convert.ToInt16(dr["UnitsOnOrder"]) : null,
+                                ReorderLevel = dr["ReorderLevel"] != DBNull.Value ? Convert.ToInt16(dr["ReorderLevel"]) : null,
+                                Discontinued = dr["Discontinued"] != DBNull.Value ? Convert.ToBoolean(dr["Discontinued"]) : false
+                            });
+                        }
+                        return categoriasConProductos;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener las categorias con productos para el reporte " + ex.Message);
+            }
+        }
     }
 }

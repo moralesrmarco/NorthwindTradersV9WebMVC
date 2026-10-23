@@ -14,5 +14,6 @@ namespace NorthwindTradersV9DAL
         int Insertar(Categoria categoria);
         int Actualizar(Categoria categoria);
         List<Producto> ObtenerProductosPorCategoriaId(int categoriaId);
+        List<CategoriasConProductosDto> ObtenerCategoriasConProductosRpt();
     }
 }
