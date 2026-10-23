@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
-using NorthwindTradersV9DAL;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
 using NorthwindTradersV9WebMVC.Models.CategoriasProductos;

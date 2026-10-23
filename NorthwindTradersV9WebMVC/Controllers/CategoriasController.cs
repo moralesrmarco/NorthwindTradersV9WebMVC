@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.Reporting.NETCore;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
@@ -418,5 +419,47 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 return "image/webp";
             return null;
         }
+        public IActionResult RptCategorias()
+        {
+            return View();
+        }
+        private LocalReport CrearRptCategorias()
+        {
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Categorias",
+                "RptCategorias.rdlc");
+            var categorias = _categoriaBLL.ObtenerCategoriasRpt();
+            reporte.DataSources.Clear();
+            reporte.DataSources.Add(new ReportDataSource("DataSet1", categorias));
+            return reporte;
+        }
+        public IActionResult RptCategoriasPdf()
+        {
+            var reporte = CrearRptCategorias();
+            byte[] pdf = reporte.Render("PDF");
+            return File(pdf, "application/pdf");
+        }
+        public IActionResult RptCategoriasExcel()
+        {
+            var reporte = CrearRptCategorias();
+            byte[] archivo = reporte.Render("EXCELOPENXML");
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Categorias.xlsx");
+        }
+        public IActionResult RptCategoriasWord()
+        {
+            var reporte = CrearRptCategorias();
+            byte[] archivo = reporte.Render("WORDOPENXML");
+            return File(
+                archivo,
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "Categorias.docx");
+        }
+
     }
 }

@@ -268,5 +268,66 @@ namespace NorthwindTradersV9DAL
                 throw new Exception("Error al obtener las categorias con productos para el reporte " + ex.Message);
             }
         }
+        public List<Categoria> ObtenerCategoriasRpt()
+        {
+            try
+            {
+                using (var conn = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpCategoriaObtener", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@top100", 1);
+                    conn.Open();
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        var categorias = new List<Categoria>();
+                        while (dr.Read())
+                        {
+                            categorias.Add(new Categoria
+                            {
+                                CategoryID = dr["CategoryID"] != DBNull.Value ? Convert.ToInt32(dr["CategoryID"]) : 0,
+                                CategoryName = dr["CategoryName"] != DBNull.Value ? dr["CategoryName"].ToString() : null,
+                                Description = dr["Description"] != DBNull.Value ? dr["Description"].ToString() : null,
+                                Picture = ObtenerCategoriaPicturePorId(Convert.ToInt32(dr["CategoryID"]))
+                            });
+                        }
+                        return categorias;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener las categorias para el reporte " + ex.Message);
+            }
+        }
+        private byte[]? ObtenerCategoriaPicturePorId(int id)
+        {
+            try
+            {
+                using (var conn = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpCategoriasObtenerPicturePorIdV2", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@CategoryID", id);
+                    conn.Open();
+                    var result = cmd.ExecuteScalar();
+                    byte[]? pictureBytes = null;
+                    if (result == null || result == DBNull.Value)
+                    {
+                        // Cargar la imagen por defecto desde wwwroot/images
+                        var defaultPath = Path.Combine("wwwroot", "images", "Categorias.png");
+                        pictureBytes = File.ReadAllBytes(defaultPath);
+                    }
+                    else
+                        pictureBytes = (byte[])result;
+                    return pictureBytes;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener la imagen de la categoria " + ex.Message);
+            }
+        }
+
     }
 }
