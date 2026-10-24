@@ -30,11 +30,26 @@
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label small">Categoría</label>
-            <input value="@(Model.Producto?.Categoria?.CategoryName ?? string.Empty)" class="form-control form-control-sm" readonly />
+@*          esto se utiliza para el caso de que el registro haya sido eliminado previamente por otro usuario*@
+            <input value="@Model.CategoriaNombre"
+               class="form-control form-control-sm"
+               readonly />
+           <input type="hidden" asp-for="CategoriaNombre" />
+
+@*          esto ya no se utiliza para el caso de que el registro haya sido eliminado previamente por otro usuario
+            se tendria que aplicar el mismo criterio para los demas datos que no se envian con asp-for
+            <input value="@(Model.Producto?.Categoria?.CategoryName ?? string.Empty)" class="form-control form-control-sm" readonly />*@
+
         </div>
         <div class="col-md-6 mb-3">
             <label class="form-label small">Proveedor</label>
-            <input value="@(Model.Producto?.Proveedor?.CompanyName ?? string.Empty)" class="form-control form-control-sm" readonly />
+            <input value="@Model.ProveedorNombre"
+               class="form-control form-control-sm"
+               readonly />
+           <input type="hidden" asp-for="ProveedorNombre" />
+
+@*          <input value="@(Model.Producto?.Proveedor?.CompanyName ?? string.Empty)" class="form-control form-control-sm" readonly />*@
+
         </div>
     </div>
     <div class="row">

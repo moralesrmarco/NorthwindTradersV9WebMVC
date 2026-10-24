@@ -121,7 +121,12 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 model.BloquearEliminacion = true;
             }
             else
+            {
                 model.Producto = producto;
+                // se utilizan para el caso en que otro usuario lo haya eliminado previamente
+                model.CategoriaNombre = producto.Categoria?.CategoryName;
+                model.ProveedorNombre = producto.Proveedor?.CompanyName;
+            }
             return View(model);
         }
         // se trata diferente la eliminacion de productos por que en el POST, cuando pulsas Eliminar, el navegador envía solamente los campos incluidos en el formulario. Los campos readonly sí se envían, pero los datos de categoría y proveedor se muestran mediante campos sin asp-for, y no se envían al servidor. 
@@ -132,7 +137,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
             if (model.Producto != null)
             {
                 var resultado = _productoBLL.Eliminar(model.Producto);
-
+                // En el caso de que tenga exito se redirecciona
                 if (resultado.Exito)
                 {
                     if (!string.IsNullOrEmpty(model.ReturnUrl))
@@ -140,7 +145,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
 
                     return RedirectToAction("Index", "Productos");
                 }
-
+                // Continua aqui en el caso en que no tenga exito
                 TempData["Error"] =
                     $"<p>El producto con Id: <strong>{model.Producto.ProductID}</strong> " +
                     $"- Nombre de producto: <strong>{model.Producto.ProductName}</strong>:</p>" +
