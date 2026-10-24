@@ -1,0 +1,202 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Productos.ProductosIndexViewModel
+@{
+    ViewData["Title"] = "Gestión de productos";
+    var returnUrl = Url.Action(
+    "Index",
+    "Productos",
+    new
+    {
+        pageIndex = Model.Paginacion.PageIndex,
+        IdIni = Model.Filtro.IdIni,
+        IdFin = Model.Filtro.IdFin,
+        Producto = Model.Filtro.Producto,
+        Categoria = Model.Filtro.Categoria,
+        Proveedor = Model.Filtro.Proveedor,
+        BuscarAbierto = Model.ParametrosPaginacion.BuscarAbierto
+    });
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<ul class="nav nav-tabs mb-0">
+    <li class="nav-item small">
+        <button type="button"
+                id="btnPestañaBuscar"
+                class="nav-link active pestaña-buscar"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelBusqueda"
+                aria-expanded="@(Model.ParametrosPaginacion.BuscarAbierto.ToString().ToLower())"
+                aria-controls="panelBusqueda">
+            <i class="bi bi-search"></i>
+            Buscar producto
+        </button>
+    </li>
+</ul>
+<div id="mensajeBusqueda"
+     class="border border-top-0 p-3 small text-muted @(Model.ParametrosPaginacion.BuscarAbierto ? "d-none" : "")">
+    Seleccione buscar producto para proporcionar los criterios de búsqueda
+</div>
+<div id="panelBusqueda"
+     class="collapse border border-top-0 @(Model.ParametrosPaginacion.BuscarAbierto ? "show" : "")">
+    <div class="p-3 small">
+        <form asp-controller="Productos"
+              asp-action="Index"
+              method="get"
+              id="formBuscar">
+            <input type="hidden"
+                   name="BuscarAbierto"
+                   value="true" />
+            <div class="row">
+                <div class="col-md-2">
+                    <label for="txtIdIni" class="form-label mt-1">Id inicial</label>
+                    <input type="number"
+                           name="Filtro.IdIni"
+                           id="txtIdIni"
+                           value="@Model.Filtro.IdIni"
+                           class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-2">
+                    <label for="txtIdFin" class="form-label mt-1">Id final</label>
+                    <input type="number"
+                           name="Filtro.IdFin"
+                           id="txtIdFin"
+                           value="@Model.Filtro.IdFin"
+                           class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="Filtro.Producto" class="form-label mt-1">Nombre del producto</label>
+                    <input asp-for="Filtro.Producto" class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="Filtro.Categoria" class="form-label mt-1">Categoría</label>
+                    <select id="cboCategoria"
+                            asp-for="Filtro.Categoria"
+                            asp-items="Model.Categorias"
+                            class="form-select form-select-sm">
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="Filtro.Proveedor" class="form-label mt-1">Proveedor</label>
+                    <select id="cboProveedor"
+                            asp-for="Filtro.Proveedor"
+                            asp-items="Model.Proveedores"
+                            class="form-select form-select-sm">
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                    <button type="submit"
+                            id="btnBuscar"
+                            class="btn btn-sm btn-buscar mt-2"
+                            onclick="return disableSearchButton();">
+                        <i class="bi bi-search"></i>
+                        <span class="d-none d-md-inline"> Buscar</span>
+                    </button>
+                    <a asp-controller="Productos"
+                       asp-action="Index"
+                       class="btn btn-sm btn-primary navigation-btn mt-2">
+                        <i class="bi bi-eraser"></i>
+                        <span class="d-none d-md-inline"> Limpiar</span>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<br />
+<a asp-controller="Productos"
+   asp-action="Insertar"
+   asp-route-returnUrl="@returnUrl"
+   class="btn btn-sm btn-primary mb-3 action-btn"
+   title="Nueva producto">
+    <i class="bi bi-plus-circle"></i>
+    <span class="d-none d-md-inline"> Nuevo producto</span>
+</a>
+<partial name="_Paginacion"
+         model="Model.ParametrosPaginacion"
+         view-data='new ViewDataDictionary(ViewData)
+         {
+             ["PageIndex"] = Model.Paginacion.PageIndex,
+             ["TotalPages"] = Model.Paginacion.TotalPages,
+             ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+         }' />
+<br />
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="encabezado-tabla">
+            <tr>
+                <th class="text-center">ID</th>
+                <th>Producto</th>
+                <th class="text-center">Precio</th>
+                <th class="text-center">Unidades en inventario</th>
+                <th class="text-center">Estatus</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var producto in Model.Productos)
+            {
+                <tr>
+                    <td class="text-center">@producto.ProductID</td>
+                    <td>@producto.ProductName</td>
+                    <td class="text-center">@string.Format("${0:N2}", producto.UnitPrice)</td>
+                    <td class="text-center">@string.Format("{0:N0}", producto.UnitsInStock)</td>
+                    <td class="text-center">
+                        <span class="badge @(producto.Discontinued
+                            ? "bg-danger"
+                            : "bg-success")">
+                            @(producto.Discontinued
+                                ? "Descontinuado"
+                                : "Activo")
+                        </span>
+                    </td>
+                    <td class="text-center text-nowrap">
+                        <a asp-controller="Productos"
+                           asp-action="Consultar"
+                           asp-route-id="@producto.ProductID"
+                           asp-route-returnUrl="@returnUrl"
+                           class="btn btn-sm btn-success me-1 action-btn"
+                           title="Consultar">
+                            <i class="bi bi-eye"></i>
+                            <span class="d-none d-md-inline"> Consultar</span>
+                        </a>
+                        <a asp-controller="Productos"
+                           asp-action="Editar"
+                           asp-route-id="@producto.ProductID"
+                           asp-route-returnUrl="@returnUrl"
+                           class="btn btn-sm btn-warning me-1 action-btn"
+                           title="Editar">
+                            <i class="bi bi-pencil"></i>
+                            <span class="d-none d-md-inline"> Editar</span>
+                        </a>
+                        <a asp-controller="Productos"
+                           asp-action="Eliminar"
+                           asp-route-id="@producto.ProductID"
+                           asp-route-returnUrl="@returnUrl"
+                           class="btn btn-sm btn-danger me-1 action-btn"
+                           title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                            <span class="d-none d-md-inline"> Eliminar</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<br />
+<partial name="_Paginacion"
+         model="Model.ParametrosPaginacion"
+         view-data='new ViewDataDictionary(ViewData)
+         {
+             ["PageIndex"] = Model.Paginacion.PageIndex,
+             ["TotalPages"] = Model.Paginacion.TotalPages,
+             ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+         }' />
+@section Scripts {
+    <script src="~/js/list-actions.js"></script>
+    <script src="~/js/navigation-actions.js"></script>
+    <script src="~/js/form-buscar.js"></script>
+    <script>
+        $(function () {
+            configurarAccionesListado();
+        });
+    </script>
+}

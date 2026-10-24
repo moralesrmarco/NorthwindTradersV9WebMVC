@@ -113,5 +113,10 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return _proveedorDAL.ObtenerProductosPorProveedorConDetalleDelProveedorRpt();
         }
+        public List<ComboItemDto> ObtenerProveedoresCbo()
+        {
+            return _comboDataHelper.LlenarCbo("SpProveedorObtenerCbo");
+        }
+
     }
 }

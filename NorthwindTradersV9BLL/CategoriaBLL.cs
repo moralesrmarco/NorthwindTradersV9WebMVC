@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using NorthwindTradersV9Common;
 using NorthwindTradersV9DAL;
+using NorthwindTradersV9DAL.Helpers;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
 
@@ -10,10 +11,12 @@ namespace NorthwindTradersV9BLL
     {
         private readonly ICategoriaDAL _categoriaDAL;
         private readonly AppSettings _appSettings;
-        public CategoriaBLL(ICategoriaDAL categoriaDAL, IOptions<AppSettings> appSettings)
+        private readonly ComboDataHelper _comboDataHelper;
+        public CategoriaBLL(ICategoriaDAL categoriaDAL, IOptions<AppSettings> appSettings, ComboDataHelper comboDataHelper)
         {
             _categoriaDAL = categoriaDAL;
             _appSettings = appSettings.Value;
+            _comboDataHelper = comboDataHelper;
         }
         public CategoriaPaginadoDto ObtenerCategoriasPaginadosConBusqueda(
             int pageIndex,
@@ -100,6 +103,9 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return _categoriaDAL.ObtenerCategoriasRpt();
         }
-
+        public List<ComboItemDto> ObtenerCategoriasCbo()
+        {
+            return _comboDataHelper.LlenarCbo("SpCategoriaObtenerCbo");
+        }
     }
 }

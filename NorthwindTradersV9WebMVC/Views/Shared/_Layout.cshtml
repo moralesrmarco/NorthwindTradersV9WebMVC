@@ -334,6 +334,59 @@
                                 </span>
                             </li>
                         }
+                        <!-- Menú Productos con submenús -->
+                        @if (User.HasClaim("Permiso", Permisos.Productos.ToString()))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="productosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Productos
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="productosDropdown">
+                                    <!-- Gestión de productos -->
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Productos"
+                                           asp-action="Index">
+                                            Gestión de productos
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <!-- Consultas con submenú -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item dropdown-toggle" href="#">Consultas</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" asp-page="/Productos/Consultas/ListadoProductos">Listado de productos</a></li>
+                                            <li><a class="dropdown-item" asp-page="/CategoriasProductosComun/Consultas/BuscarCategoriasProductos">Consulta de productos por categoría</a></li>
+                                            <li><a class="dropdown-item" asp-page="/ProveedoresProductosComun/Consultas/BuscarProveedorProductos">Consulta de productos por proveedor</a></li>
+                                            <li><a class="dropdown-item" asp-page="/Productos/Consultas/ListadoAlfabeticoProductos">Consulta alfabética de productos</a></li>
+                                            <li><a class="dropdown-item" asp-page="/CategoriasProductosComun/Consultas/ListadoCategoriasConProductos">Listado de categorías con productos</a></li>
+                                            <li><a class="dropdown-item" asp-page="/Productos/Consultas/ProductosPorEncimaDelPrecioPromedio">Productos por encima del precio promedio</a></li>
+                                        </ul>
+                                    </li>
+
+                                    <!-- Reportes con submenú -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item dropdown-toggle" href="#">Reportes</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" asp-page="/Productos/Reportes/ProductosRpt">Reporte de productos</a></li>
+                                            <li><a class="dropdown-item" asp-page="/Productos/Reportes/ProductosAlfabeticoRpt">Reporte de productos en orden alfabético</a></li>
+                                            <li><a class="dropdown-item" asp-page="/ProveedoresProductosComun/Reportes/ProductosPorProveedorRpt">Reporte de productos por proveedor</a></li>
+                                            <li><a class="dropdown-item" asp-page="/ProveedoresProductosComun/Reportes/ProductosPorProveedorConDetalleProveedorRpt">Reporte de productos por proveedor con detalle del proveedor</a></li>
+                                            <li><a class="dropdown-item" asp-page="/CategoriasProductosComun/Reportes/CategoriasConProductosRpt">Reporte de categorías con productos</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-dark menu-deshabilitado">
+                                    Productos
+                                </span>
+                            </li>
+                        }
                         <!-- Menú Administración con submenús -->
                         @if (User.HasClaim("Permiso", Permisos.Administracion.ToString()))
                         {
