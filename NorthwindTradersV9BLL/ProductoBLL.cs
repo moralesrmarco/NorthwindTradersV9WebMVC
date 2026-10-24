@@ -27,5 +27,11 @@ namespace NorthwindTradersV9BLL
                 pageSize,
                 filtro);
         }
+        public Producto? ObtenerProductoPorId(int id)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _productoDAL.ObtenerProductoPorId(id);
+        }
     }
 }

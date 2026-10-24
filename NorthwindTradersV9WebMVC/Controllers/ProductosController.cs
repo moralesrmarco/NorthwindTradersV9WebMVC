@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using NorthwindTradersV9BLL;
+using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
+using NorthwindTradersV9WebMVC.Models.Categorias;
 using NorthwindTradersV9WebMVC.Models.Common;
 using NorthwindTradersV9WebMVC.Models.Productos;
 
@@ -93,5 +95,19 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 Text = p.Text
             }).ToList();
         }
+        public IActionResult Consultar(int id, string? returnUrl = null)
+        {
+            var producto = _productoBLL.ObtenerProductoPorId(id);
+            var model = new ProductosConsultarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            if (producto == null)
+                TempData["Error"] = "<p>Producto no encontrado</p>" + StringsCommons.Nefep;
+            else
+                model.Producto = producto;
+            return View(model);
+        }
+
     }
 }

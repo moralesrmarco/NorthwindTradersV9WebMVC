@@ -1,0 +1,87 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Productos.ProductosConsultarViewModel
+@{
+    ViewData["Title"] = "Consulta de producto";
+}
+<h2 class="mb-4">Detalle del producto</h2>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @Html.Raw(TempData["Error"])
+    </div>
+}
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="Producto.ProductID" class="form-label">ID</label>
+        <input asp-for="Producto.ProductID" class="form-control form-control-sm" readonly />
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="Producto.ProductName" class="form-label">Producto</label>
+        <input asp-for="Producto.ProductName" class="form-control form-control-sm" readonly />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Categoría</label>
+        <input value="@(Model.Producto?.Categoria?.CategoryName ?? string.Empty)" class="form-control form-control-sm" readonly />
+    </div>
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Proveedor</label>
+        <input value="@(Model.Producto?.Proveedor?.CompanyName ?? string.Empty)" class="form-control form-control-sm" readonly />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="Producto.QuantityPerUnit" class="form-label">Cantidad por unidad</label>
+        <input asp-for="Producto.QuantityPerUnit" class="form-control form-control-sm" readonly />
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="Producto.UnitPrice" class="form-label">Precio $</label>
+        <input value="@(Model.Producto?.UnitPrice?.ToString("N2") ?? string.Empty)" class="form-control form-control-sm" readonly />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="Producto.UnitsInStock" class="form-label">Unidades en stock</label>
+        <input value="@(Model.Producto?.UnitsInStock?.ToString("N0") ?? string.Empty)" class="form-control form-control-sm" readonly />
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="Producto.UnitsOnOrder" class="form-label">Unidades en orden</label>
+        <input value="@(Model.Producto?.UnitsOnOrder?.ToString("N0") ?? string.Empty)" class="form-control form-control-sm" readonly />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="Producto.ReorderLevel" class="form-label">Nivel de reorden</label>
+        <input value="@(Model.Producto?.ReorderLevel?.ToString("N0") ?? string.Empty)" class="form-control form-control-sm" readonly />
+    </div>
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Estatus</label>
+        <div>
+            <span class="badge @(Model.Producto?.Discontinued == true
+                ? "bg-danger"
+                : "bg-success")">
+                @(Model.Producto?.Discontinued == true
+                    ? "Descontinuado"
+                    : "Activo")
+            </span>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-12">
+        <a href="@(Model.ReturnUrl ?? Url.Action("Index", "Productos"))"
+            class="btn btn-sm btn-success me-1 navigation-btn"
+            title="Regresar">
+            <i class="bi bi-arrow-left"></i>
+            <span class="d-none d-md-inline"> Regresar</span>
+        </a>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/navigation-actions.js"></script>
+    <script>
+        $(function () {
+            configurarNavegacion();
+        });
+    </script>
+}
