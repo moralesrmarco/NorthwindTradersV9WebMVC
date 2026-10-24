@@ -11,51 +11,51 @@
 }
 <div class="row">
     <div class="col-md-6 mb-3">
-        <label asp-for="Producto.ProductID" class="form-label">ID</label>
+        <label asp-for="Producto.ProductID" class="form-label small">ID</label>
         <input asp-for="Producto.ProductID" class="form-control form-control-sm" readonly />
     </div>
     <div class="col-md-6 mb-3">
-        <label asp-for="Producto.ProductName" class="form-label">Producto</label>
+        <label asp-for="Producto.ProductName" class="form-label small">Producto</label>
         <input asp-for="Producto.ProductName" class="form-control form-control-sm" readonly />
     </div>
 </div>
 <div class="row">
     <div class="col-md-6 mb-3">
-        <label class="form-label">Categoría</label>
+        <label class="form-label small">Categoría</label>
         <input value="@(Model.Producto?.Categoria?.CategoryName ?? string.Empty)" class="form-control form-control-sm" readonly />
     </div>
     <div class="col-md-6 mb-3">
-        <label class="form-label">Proveedor</label>
+        <label class="form-label small">Proveedor</label>
         <input value="@(Model.Producto?.Proveedor?.CompanyName ?? string.Empty)" class="form-control form-control-sm" readonly />
     </div>
 </div>
 <div class="row">
     <div class="col-md-6 mb-3">
-        <label asp-for="Producto.QuantityPerUnit" class="form-label">Cantidad por unidad</label>
+        <label asp-for="Producto.QuantityPerUnit" class="form-label small">Cantidad por unidad</label>
         <input asp-for="Producto.QuantityPerUnit" class="form-control form-control-sm" readonly />
     </div>
     <div class="col-md-6 mb-3">
-        <label asp-for="Producto.UnitPrice" class="form-label">Precio $</label>
+        <label asp-for="Producto.UnitPrice" class="form-label small">Precio $</label>
         <input value="@(Model.Producto?.UnitPrice?.ToString("N2") ?? string.Empty)" class="form-control form-control-sm" readonly />
     </div>
 </div>
 <div class="row">
     <div class="col-md-6 mb-3">
-        <label asp-for="Producto.UnitsInStock" class="form-label">Unidades en stock</label>
+        <label asp-for="Producto.UnitsInStock" class="form-label small">Unidades en stock</label>
         <input value="@(Model.Producto?.UnitsInStock?.ToString("N0") ?? string.Empty)" class="form-control form-control-sm" readonly />
     </div>
     <div class="col-md-6 mb-3">
-        <label asp-for="Producto.UnitsOnOrder" class="form-label">Unidades en orden</label>
+        <label asp-for="Producto.UnitsOnOrder" class="form-label small">Unidades en orden</label>
         <input value="@(Model.Producto?.UnitsOnOrder?.ToString("N0") ?? string.Empty)" class="form-control form-control-sm" readonly />
     </div>
 </div>
 <div class="row">
     <div class="col-md-6 mb-3">
-        <label asp-for="Producto.ReorderLevel" class="form-label">Nivel de reorden</label>
+        <label asp-for="Producto.ReorderLevel" class="form-label small">Nivel de reorden</label>
         <input value="@(Model.Producto?.ReorderLevel?.ToString("N0") ?? string.Empty)" class="form-control form-control-sm" readonly />
     </div>
     <div class="col-md-6 mb-3">
-        <label class="form-label">Estatus</label>
+        <label class="form-label small">Estatus</label>
         <div>
             <span class="badge @(Model.Producto?.Discontinued == true
                 ? "bg-danger"

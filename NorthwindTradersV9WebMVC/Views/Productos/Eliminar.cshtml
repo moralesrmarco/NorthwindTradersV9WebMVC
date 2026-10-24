@@ -1,0 +1,95 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Productos.ProductosEliminarViewModel
+@{
+    ViewData["Title"] = "Eliminar producto";
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<div class="alert alert-danger fs-5">
+    ¿Está seguro de eliminar el producto con ID: <strong>@Model.Producto?.ProductID</strong> - Nombre de producto: <strong>@Model.Producto?.ProductName</strong>?
+</div>
+<form method="post"
+    class="form"
+    onsubmit="return configurarEliminar('btnEliminar');">
+    @if(TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.Raw(TempData["Error"])
+        </div>
+    }
+    <input type="hidden" asp-for="Producto.RowVersion" />
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Producto.ProductID" class="form-label small">ID</label>
+            <input asp-for="Producto.ProductID" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="Producto.ProductName" class="form-label small">Producto</label>
+            <input asp-for="Producto.ProductName" class="form-control form-control-sm" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label small">Categoría</label>
+            <input value="@(Model.Producto?.Categoria?.CategoryName ?? string.Empty)" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label small">Proveedor</label>
+            <input value="@(Model.Producto?.Proveedor?.CompanyName ?? string.Empty)" class="form-control form-control-sm" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Producto.QuantityPerUnit" class="form-label small">Cantidad por unidad</label>
+            <input asp-for="Producto.QuantityPerUnit" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="Producto.UnitPrice" class="form-label small">Precio $</label>
+            <input value="@(Model.Producto?.UnitPrice?.ToString("N2") ?? string.Empty)" class="form-control form-control-sm" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Producto.UnitsInStock" class="form-label small">Unidades en stock</label>
+            <input value="@(Model.Producto?.UnitsInStock?.ToString("N0") ?? string.Empty)" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="Producto.UnitsOnOrder" class="form-label small">Unidades en orden</label>
+            <input value="@(Model.Producto?.UnitsOnOrder?.ToString("N0") ?? string.Empty)" class="form-control form-control-sm" readonly />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="Producto.ReorderLevel" class="form-label small">Nivel de reorden</label>
+            <input value="@(Model.Producto?.ReorderLevel?.ToString("N0") ?? string.Empty)" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label small">Estatus</label>
+            <div>
+                <span class="badge @(Model.Producto?.Discontinued == true
+                    ? "bg-danger"
+                    : "bg-success")">
+                    @(Model.Producto?.Discontinued == true
+                        ? "Descontinuado"
+                        : "Activo")
+                </span>
+            </div>
+        </div>
+    </div>
+    <button type="submit"
+        id="btnEliminar"
+        class="btn btn-sm btn-danger me-1"
+        disabled="@Model.BloquearEliminacion"
+        title="Eliminar">
+        <i class="bi bi-trash"></i>
+        <span class="d-none d-md-inline"> Eliminar</span>
+    </button>
+    <a href="@(Model.ReturnUrl ?? Url.Action("Index", "Productos"))"
+       class="btn btn-sm btn-cancelar me-1"
+       title="Cancelar">
+        <i class="bi bi-x-circle"></i>
+        <span class="d-none d-md-inline"> Cancelar</span>
+    </a>
+</form>
+@section Scripts {
+    <script src="~/js/form-delete.js"></script>
+}

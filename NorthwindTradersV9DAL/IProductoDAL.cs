@@ -10,5 +10,6 @@ namespace NorthwindTradersV9DAL
             int pageSize,
             ProductosBuscarDto filtro);
         Producto? ObtenerProductoPorId(int id);
+        int Eliminar(Producto producto);
     }
 }

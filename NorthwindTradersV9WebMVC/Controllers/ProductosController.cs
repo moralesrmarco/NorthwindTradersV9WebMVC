@@ -108,6 +108,72 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 model.Producto = producto;
             return View(model);
         }
+        public IActionResult Eliminar(int id, string? returnUrl = null)
+        {
+            var producto = _productoBLL.ObtenerProductoPorId(id);
+            var model = new ProductosEliminarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            if (producto == null)
+            {
+                TempData["Error"] = "<p>Producto no encontrado</p>" + StringsCommons.Nefep;
+                model.BloquearEliminacion = true;
+            }
+            else
+                model.Producto = producto;
+            return View(model);
+        }
+        // se trata diferente la eliminacion de productos por que en el POST, cuando pulsas Eliminar, el navegador envía solamente los campos incluidos en el formulario. Los campos readonly sí se envían, pero los datos de categoría y proveedor se muestran mediante campos sin asp-for, y no se envían al servidor. 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Eliminar(ProductosEliminarViewModel model)
+        {
+            if (model.Producto != null)
+            {
+                var resultado = _productoBLL.Eliminar(model.Producto);
 
+                if (resultado.Exito)
+                {
+                    if (!string.IsNullOrEmpty(model.ReturnUrl))
+                        return LocalRedirect(model.ReturnUrl);
+
+                    return RedirectToAction("Index", "Productos");
+                }
+
+                TempData["Error"] =
+                    $"<p>El producto con Id: <strong>{model.Producto.ProductID}</strong> " +
+                    $"- Nombre de producto: <strong>{model.Producto.ProductName}</strong>:</p>" +
+                    resultado.Mensaje;
+
+                switch (resultado.Codigo)
+                {
+                    case -1:
+                        // El producto ya fue eliminado por otro usuario.
+                        // Se conservan los datos recibidos para mostrar la pantalla.
+                        model.BloquearEliminacion = true;
+                        break;
+
+                    case -2:
+                    case -3:
+                        // El producto existe: recuperar sus datos actuales.
+                        var productoActual =
+                            _productoBLL.ObtenerProductoPorId(model.Producto.ProductID);
+
+                        if (productoActual != null)
+                            model.Producto = productoActual;
+
+                        model.BloquearEliminacion = true;
+                        break;
+
+                    default:
+                        // Error no clasificado: conservar los datos recibidos.
+                        model.BloquearEliminacion = true;
+                        break;
+                }
+            }
+
+            return View(model);
+        }
     }
 }

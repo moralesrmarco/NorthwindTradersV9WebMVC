@@ -132,5 +132,29 @@ namespace NorthwindTradersV9DAL
             }
             return producto;
         }
+        public int Eliminar(Producto producto)
+        {
+            int numRegs = 0;
+            try
+            {
+                using (var con = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpProductoEliminar", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ProductID", producto.ProductID);
+                    cmd.Parameters.AddWithValue("@RowVersion", producto.RowVersion ?? (object)DBNull.Value);
+                    var returnParameter = cmd.Parameters.Add("@ReturnVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    numRegs = (int)returnParameter.Value;
+                }
+            }
+            catch (SqlException)
+            {
+                throw; // Otros errores se relanzan
+            }
+            return numRegs;
+        }
     }
 }
