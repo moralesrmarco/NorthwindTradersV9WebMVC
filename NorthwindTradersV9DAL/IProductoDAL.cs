@@ -11,5 +11,6 @@ namespace NorthwindTradersV9DAL
             ProductosBuscarDto filtro);
         Producto? ObtenerProductoPorId(int id);
         int Eliminar(Producto producto);
+        int Insertar(Producto producto);
     }
 }

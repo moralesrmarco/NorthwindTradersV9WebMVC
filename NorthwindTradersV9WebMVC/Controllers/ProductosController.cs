@@ -79,21 +79,10 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 }
             };
             // Cargar las listas desplegables de categorías y proveedores.
-            CargarCombos(model);
+            var combos = CargarCombos();
+            model.Categorias = combos.Categorias;
+            model.Proveedores = combos.Proveedores;
             return View(model);
-        }
-        private void CargarCombos(ProductosIndexViewModel model)
-        {
-            model.Categorias = _categoriaBLL.ObtenerCategoriasCbo().Select(c => new SelectListItem
-            {
-                Value = c.Value,
-                Text = c.Text
-            }).ToList();
-            model.Proveedores = _proveedorBLL.ObtenerProveedoresCbo().Select(p => new SelectListItem
-            {
-                Value = p.Value,
-                Text = p.Text
-            }).ToList();
         }
         public IActionResult Consultar(int id, string? returnUrl = null)
         {
@@ -179,6 +168,102 @@ namespace NorthwindTradersV9WebMVC.Controllers
             }
 
             return View(model);
+        }
+        public IActionResult Insertar(string? returnUrl = null)
+        {
+            var model = new ProductosInsertarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            var combos = CargarCombos();
+            model.Categorias = combos.Categorias;
+            model.Proveedores = combos.Proveedores;
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Insertar(ProductosInsertarViewModel model)
+        {
+            // Validaciones en el servidor
+            if (model.Producto?.Categoria == null ||
+                model.Producto.Categoria.CategoryID == 0)
+            {
+                ModelState.AddModelError(
+                    "Producto.Categoria.CategoryID",
+                    "Seleccione una categoría");
+            }
+            if (model.Producto?.Proveedor == null ||
+                model.Producto.Proveedor.SupplierID == 0)
+            {
+                ModelState.AddModelError(
+                    "Producto.Proveedor.SupplierID",
+                    "Seleccione un proveedor");
+            }
+            // Ignorar propiedades relacionadas que no se capturan en el formulario.
+            ModelState.Remove("Producto.Categoria.CategoryName");
+
+            ModelState.Remove("Producto.Proveedor.CompanyName");
+            ModelState.Remove("Producto.Proveedor.ContactName");
+            ModelState.Remove("Producto.Proveedor.ContactTitle");
+            ModelState.Remove("Producto.Proveedor.Address");
+            ModelState.Remove("Producto.Proveedor.City");
+            ModelState.Remove("Producto.Proveedor.Country");
+            ModelState.Remove("Producto.Proveedor.Phone");
+            if (!ModelState.IsValid)
+            {
+                var combos = CargarCombos();
+                model.Categorias = combos.Categorias;
+                model.Proveedores = combos.Proveedores;
+                return View(model);
+            }
+            try
+            {
+                if (model.Producto != null)
+                {
+                    var resultado = _productoBLL.Insertar(model.Producto);
+                    if (resultado.Exito)
+                    {
+                        if (!string.IsNullOrEmpty(model.ReturnUrl))
+                            return LocalRedirect(model.ReturnUrl);
+                        return RedirectToAction("Index", "Productos");
+                    }
+                    TempData["Error"] =
+                        $"<p>El producto <strong>{model.Producto.ProductName}</strong>:</p>" +
+                        resultado.Mensaje;
+                    if (resultado.Codigo < 0)
+                        model.BloquearEdicion = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    "Ocurrió un error al insertar el producto. " +
+                    "Verifica los datos e inténtalo nuevamente.";
+            }
+            var combosFinales = CargarCombos();
+            model.Categorias = combosFinales.Categorias;
+            model.Proveedores = combosFinales.Proveedores;
+            return View(model);
+        }
+        private (List<SelectListItem> Categorias, List<SelectListItem> Proveedores) CargarCombos()
+        {
+            var categorias = _categoriaBLL.ObtenerCategoriasCbo()
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Value,
+                    Text = c.Text
+                })
+                .ToList();
+
+            var proveedores = _proveedorBLL.ObtenerProveedoresCbo()
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Value,
+                    Text = p.Text
+                })
+                .ToList();
+
+            return (categorias, proveedores);
         }
     }
 }

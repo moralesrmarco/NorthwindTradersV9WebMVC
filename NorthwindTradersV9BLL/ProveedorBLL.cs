@@ -117,6 +117,5 @@ namespace NorthwindTradersV9BLL
         {
             return _comboDataHelper.LlenarCbo("SpProveedorObtenerCbo");
         }
-
     }
 }

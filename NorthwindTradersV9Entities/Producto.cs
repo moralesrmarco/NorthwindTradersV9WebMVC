@@ -6,6 +6,7 @@ namespace NorthwindTradersV9Entities
     {
         public int ProductID { get; set; }
         [Required(ErrorMessage = "Ingrese producto")]
+        [StringLength(40)]
         public string? ProductName { get; set; }
         public Proveedor? Proveedor { get; set; }
         public Categoria? Categoria { get; set; }
@@ -13,6 +14,7 @@ namespace NorthwindTradersV9Entities
         [Required(ErrorMessage = "Ingrese precio")]
         [Range(typeof(decimal), "0.01", "922337203685477.5807", ErrorMessage = "Ingrese precio válido")]
         public decimal? UnitPrice { get; set; }
+        [Required(ErrorMessage = "Ingrese unidades en stock")]
         [Range(0, short.MaxValue, ErrorMessage = "Ingrese un número válido")]
         public short? UnitsInStock { get; set; }
         [Range(0, short.MaxValue, ErrorMessage = "Ingrese un número válido")]

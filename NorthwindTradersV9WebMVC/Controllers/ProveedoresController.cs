@@ -210,10 +210,8 @@ namespace NorthwindTradersV9WebMVC.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] =
-                    $"<p>Error al insertar el proveedor " +
-                    $"<strong>{model.Proveedor?.CompanyName}</strong>.</p>" +
-                    $"<p>Detalles: {ex.Message}</p>";
-
+                    "Ocurrió un error al insertar el proveedor. " +
+                    "Verifica los datos e inténtalo nuevamente.";
             }
             model.Paises = ObtenerPaises(model.Proveedor?.Country);
             return View(model);
