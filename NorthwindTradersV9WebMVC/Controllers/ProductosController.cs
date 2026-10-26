@@ -234,7 +234,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
                         model.BloquearEdicion = true;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData["Error"] =
                     "Ocurrió un error al insertar el producto. " +
@@ -264,6 +264,89 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 .ToList();
 
             return (categorias, proveedores);
+        }
+        public IActionResult Editar(int id, string? returnUrl = null)
+        {
+            var model = new ProductosEditarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            model.Producto = _productoBLL.ObtenerProductoPorId(id);
+            if (model.Producto == null)
+            {
+                TempData["Error"] = "<p>Producto no encontrado</p>" + StringsCommons.Nefep;
+                model.BloquearEdicion = true;
+            }
+            var combos = CargarCombos();
+            model.Categorias = combos.Categorias;
+            model.Proveedores = combos.Proveedores;
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Editar(ProductosEditarViewModel model)
+        {
+            // Validaciones en el servidor
+            if (model.Producto?.Categoria == null ||
+                model.Producto.Categoria.CategoryID == 0)
+            {
+                ModelState.AddModelError(
+                    "Producto.Categoria.CategoryID",
+                    "Seleccione una categoría");
+            }
+            if (model.Producto?.Proveedor == null ||
+                model.Producto.Proveedor.SupplierID == 0)
+            {
+                ModelState.AddModelError(
+                    "Producto.Proveedor.SupplierID",
+                    "Seleccione un proveedor");
+            }
+            // Ignorar propiedades relacionadas que no se capturan en el formulario.
+            ModelState.Remove("Producto.Categoria.CategoryName");
+
+            ModelState.Remove("Producto.Proveedor.CompanyName");
+            ModelState.Remove("Producto.Proveedor.ContactName");
+            ModelState.Remove("Producto.Proveedor.ContactTitle");
+            ModelState.Remove("Producto.Proveedor.Address");
+            ModelState.Remove("Producto.Proveedor.City");
+            ModelState.Remove("Producto.Proveedor.Country");
+            ModelState.Remove("Producto.Proveedor.Phone");
+            if (!ModelState.IsValid)
+            {
+                var combos = CargarCombos();
+                model.Categorias = combos.Categorias;
+                model.Proveedores = combos.Proveedores;
+                return View(model);
+            }
+            try
+            {
+                if (model.Producto != null)
+                {
+                    var resultado = _productoBLL.Actualizar(model.Producto);
+                    if (resultado.Exito)
+                    {
+                        if (!string.IsNullOrEmpty(model.ReturnUrl))
+                            return LocalRedirect(model.ReturnUrl);
+                        return RedirectToAction("Index", "Productos");
+                    }
+                    TempData["Error"] =
+                        $"<p>El producto <strong>{model.Producto.ProductName}</strong>:</p>" +
+                        resultado.Mensaje;
+                    // Sólo bloquea para errores definitivos
+                    if (resultado.Codigo < 0)
+                        model.BloquearEdicion = true;
+                }
+            }
+            catch (Exception)
+            {
+                TempData["Error"] =
+                    "Ocurrió un error al editar el producto. " +
+                    "Verifica los datos e inténtalo nuevamente.";
+            }
+            var combosFinales = CargarCombos();
+            model.Categorias = combosFinales.Categorias;
+            model.Proveedores = combosFinales.Proveedores;
+            return View(model);
         }
     }
 }

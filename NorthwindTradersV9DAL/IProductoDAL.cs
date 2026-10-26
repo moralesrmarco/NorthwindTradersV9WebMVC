@@ -12,5 +12,6 @@ namespace NorthwindTradersV9DAL
         Producto? ObtenerProductoPorId(int id);
         int Eliminar(Producto producto);
         int Insertar(Producto producto);
+        int Actualizar(Producto producto);
     }
 }

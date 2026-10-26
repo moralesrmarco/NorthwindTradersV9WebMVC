@@ -1,0 +1,108 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Productos.ProductosEditarViewModel
+@{
+    ViewData["Title"] = "Editar producto";
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<form asp-controller="Productos"
+    asp-action="Editar"
+    method="post"
+    class="form"
+    onsubmit="return disableSaveButton();">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.Raw(TempData["Error"])
+        </div>
+    }
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label asp-for="Producto.ProductID" class="form-label small">ID</label>
+            <input asp-for="Producto.ProductID" class="form-control form-control-sm" readonly />
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Producto.ProductName" class="form-label small">Producto</label>
+            <input asp-for="Producto.ProductName" class="form-control form-control-sm" />
+            <span asp-validation-for="Producto.ProductName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label small">Categoría</label>
+            <select asp-for="Producto.Categoria.CategoryID"
+                asp-items="Model.Categorias"
+                class="form-select form-select-sm">
+            </select>
+            <span asp-validation-for="Producto.Categoria.CategoryID" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label small">Proveedor</label>
+            <select asp-for="Producto.Proveedor.SupplierID"
+                asp-items="Model.Proveedores"
+                class="form-select form-select-sm">
+            </select>
+            <span asp-validation-for="Producto.Proveedor.SupplierID" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label asp-for="Producto.QuantityPerUnit" class="form-label small">Cantidad por unidad</label>
+            <input asp-for="Producto.QuantityPerUnit" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Producto.UnitPrice" class="form-label small">Precio $</label>
+            <input asp-for="Producto.UnitPrice" class="form-control form-control-sm" />
+            <span asp-validation-for="Producto.UnitPrice" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label asp-for="Producto.UnitsInStock" class="form-label small">Unidades en stock</label>
+            <input asp-for="Producto.UnitsInStock" class="form-control form-control-sm" />
+            <span asp-validation-for="Producto.UnitsInStock" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Producto.UnitsOnOrder" class="form-label small">Unidades en orden</label>
+            <input asp-for="Producto.UnitsOnOrder" class="form-control form-control-sm" />
+            <span asp-validation-for="Producto.UnitsOnOrder" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label asp-for="Producto.ReorderLevel" class="form-label small">Nivel de reorden</label>
+            <input asp-for="Producto.ReorderLevel" class="form-control form-control-sm" />
+            <span asp-validation-for="Producto.ReorderLevel" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="form-check">
+                <input asp-for="Producto.Discontinued" type="checkbox" class="form-check-input" style="transform: scale(1.5); margin-top: 0.3rem;"/>
+                <label asp-for="Producto.Discontinued" class="form-check-label small label-sin-estilo"> &nbsp;&nbsp;Descontinuado</label>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" asp-for="ReturnUrl" />
+    <input type="hidden" asp-for="Producto.RowVersion" />
+    <button type="submit"
+        id="btnGuardar"
+        class="btn btn-sm btn-success me-1"
+        disabled="@Model.BloquearEdicion"
+        title="Guardar">
+        <i class="bi bi-save"></i>
+        <span class="d-none d-md-inline"> Guardar</span>
+    </button>
+    <a href="@(Model.ReturnUrl ?? Url.Action("Index", "Productos"))"
+        class="btn btn-sm btn-cancelar me-1"
+        title="Cancelar">
+        <i class="bi bi-x-circle"></i>
+        <span class="d-none d-md-inline"> Cancelar</span>
+    </a>
+</form>
+@section Scripts {
+    <script src="~/js/form-submit.js"></script>
+    <script>
+        $(function () {
+            configurarSubmitFormulario(null);
+        });
+    </script>
+}
