@@ -13,5 +13,6 @@ namespace NorthwindTradersV9DAL
         int Eliminar(Producto producto);
         int Insertar(Producto producto);
         int Actualizar(Producto producto);
+        List<ProductoDto> ObtenerProductosRpt(ProductosBuscarDto criterios);
     }
 }

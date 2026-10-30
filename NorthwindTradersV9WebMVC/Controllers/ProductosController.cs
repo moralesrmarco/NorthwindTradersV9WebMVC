@@ -348,5 +348,62 @@ namespace NorthwindTradersV9WebMVC.Controllers
             model.Proveedores = combosFinales.Proveedores;
             return View(model);
         }
+        [HttpGet]
+        public IActionResult ListadoProductos()
+        {
+            var model = new ListadoProductosViewModel
+            {
+                Filtro = new ProductosBuscarDto
+                {
+                    IdIni = null,
+                    IdFin = null,
+                    Producto = string.Empty,
+                    Categoria = 0,
+                    Proveedor = 0,
+                    OrdenadoPor = "ProductID",
+                    AscDesc = "DESC"
+                },
+                BuscarAbierto = false
+            };
+            CargarCombosListadoProductos(model);
+            model.Productos = _productoBLL.ObtenerProductosRpt(model.Filtro);
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ListadoProductos(ListadoProductosViewModel model)
+        {
+            model.BuscarAbierto = true;
+            CargarCombosListadoProductos(model);
+            model.Productos = _productoBLL.ObtenerProductosRpt(model.Filtro);
+            return View(model);
+        }
+
+        private void CargarCombosListadoProductos(
+            ListadoProductosViewModel model)
+        {
+            model.CamposOrden = new List<SelectListItem>
+            {
+                new("ID Producto", "ProductID"),
+                new("Producto", "ProductName"),
+                new("Cantidad por unidad", "QuantityPerUnit"),
+                new("Precio", "UnitPrice"),
+                new("Unidades en inventario", "UnitsInStock"),
+                new("Unidades en pedido", "UnitsOnOrder"),
+                new("Nivel de reorden", "ReorderLevel"),
+                new("Descontinuado", "Discontinued"),
+                new("Categoría", "CategoryName"),
+                new("Proveedor", "CompanyName")
+            };
+            model.Direcciones = new List<SelectListItem>
+            {
+                new("Ascendente", "ASC"),
+                new("Descendente", "DESC")
+            };
+            var combos = CargarCombos();
+            model.Categorias = combos.Categorias;
+            model.Proveedores = combos.Proveedores;
+        }
+
     }
 }

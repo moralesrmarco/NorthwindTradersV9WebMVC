@@ -356,9 +356,24 @@
                                     <li class="dropdown-submenu">
                                         <a class="dropdown-item dropdown-toggle" href="#">Consultas</a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" asp-page="/Productos/Consultas/ListadoProductos">Listado de productos</a></li>
-                                            <li><a class="dropdown-item" asp-page="/CategoriasProductosComun/Consultas/BuscarCategoriasProductos">Consulta de productos por categoría</a></li>
-                                            <li><a class="dropdown-item" asp-page="/ProveedoresProductosComun/Consultas/BuscarProveedorProductos">Consulta de productos por proveedor</a></li>
+                                            <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="ListadoProductos">Listado de productos</a></li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                    asp-area=""
+                                                    asp-controller="CategoriasProductos"
+                                                    asp-action="BuscarCategoriasProductos">
+                                                    Consulta de productos por categoría
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                    asp-area=""
+                                                    asp-controller="ProveedoresProductos"
+                                                    asp-action="BuscarProveedoresProductos">
+                                                    Consulta de productos por proveedor
+                                                </a>
+                                            </li>
+
                                             <li><a class="dropdown-item" asp-page="/Productos/Consultas/ListadoAlfabeticoProductos">Consulta alfabética de productos</a></li>
                                             <li><a class="dropdown-item" asp-page="/CategoriasProductosComun/Consultas/ListadoCategoriasConProductos">Listado de categorías con productos</a></li>
                                             <li><a class="dropdown-item" asp-page="/Productos/Consultas/ProductosPorEncimaDelPrecioPromedio">Productos por encima del precio promedio</a></li>
