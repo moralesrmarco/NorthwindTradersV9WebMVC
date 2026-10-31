@@ -1,5 +1,6 @@
 ﻿using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
+using System.Data;
 
 namespace NorthwindTradersV9DAL
 {
@@ -14,5 +15,6 @@ namespace NorthwindTradersV9DAL
         int Insertar(Producto producto);
         int Actualizar(Producto producto);
         List<ProductoDto> ObtenerProductosRpt(ProductosBuscarDto criterios);
+        DataTable ObtenerProductosPorEncimaDelPrecioPromedio();
     }
 }

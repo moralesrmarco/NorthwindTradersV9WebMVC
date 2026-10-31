@@ -4,6 +4,7 @@ using NorthwindTradersV9DAL;
 using NorthwindTradersV9DAL.Helpers;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
+using System.Data;
 
 namespace NorthwindTradersV9BLL
 {
@@ -88,6 +89,12 @@ namespace NorthwindTradersV9BLL
             if (_appSettings.EjecutarTiempoDemora)
                 Thread.Sleep(_appSettings.TiempoDemora);
             return _productoDAL.ObtenerProductosRpt(criterios);
+        }
+        public DataTable ObtenerProductosPorEncimaDelPrecioPromedio()
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _productoDAL.ObtenerProductosPorEncimaDelPrecioPromedio();
         }
     }
 }

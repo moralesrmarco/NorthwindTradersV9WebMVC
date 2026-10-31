@@ -269,5 +269,22 @@ namespace NorthwindTradersV9DAL
             }
             return productos;
         }
+        public DataTable ObtenerProductosPorEncimaDelPrecioPromedio()
+        {
+            var dt = new DataTable();
+            try
+            {
+                using (var con = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("Select * from VwProductosPorEncimaDelPrecioPromedio", con))
+                using (var da = new SqlDataAdapter(cmd))
+                    da.Fill(dt);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Error al obtener los productos por encima del precio promedio: " + ex.Message);
+            }
+            return dt;
+        }
+
     }
 }

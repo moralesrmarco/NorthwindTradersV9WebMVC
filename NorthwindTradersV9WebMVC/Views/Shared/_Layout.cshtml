@@ -357,6 +357,7 @@
                                         <a class="dropdown-item dropdown-toggle" href="#">Consultas</a>
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="ListadoProductos">Listado de productos</a></li>
+                                            <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="ListadoAlfabeticoProductos">Consulta alfabética de productos</a></li>
                                             <li>
                                                 <a class="dropdown-item"
                                                     asp-area=""
@@ -372,11 +373,23 @@
                                                     asp-action="BuscarProveedoresProductos">
                                                     Consulta de productos por proveedor
                                                 </a>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                    asp-area=""
+                                                    asp-controller="CategoriasProductos"
+                                                    asp-action="ListadoCategoriasConProductos">
+                                                    Listado de categorías con productos
+                                                </a>
                                             </li>
 
-                                            <li><a class="dropdown-item" asp-page="/Productos/Consultas/ListadoAlfabeticoProductos">Consulta alfabética de productos</a></li>
-                                            <li><a class="dropdown-item" asp-page="/CategoriasProductosComun/Consultas/ListadoCategoriasConProductos">Listado de categorías con productos</a></li>
-                                            <li><a class="dropdown-item" asp-page="/Productos/Consultas/ProductosPorEncimaDelPrecioPromedio">Productos por encima del precio promedio</a></li>
+                                            <li>
+                                                <a class="dropdown-item" 
+                                                    asp-area=""
+                                                    asp-controller="Productos"
+                                                    asp-action="ProductosPorEncimaDelPrecioPromedio">
+                                                    Productos por encima del precio promedio
+                                                </a>
+                                            </li>
                                         </ul>
                                     </li>
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
+using NorthwindTradersV9DAL;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
 using NorthwindTradersV9WebMVC.Models.Categorias;
@@ -404,6 +405,29 @@ namespace NorthwindTradersV9WebMVC.Controllers
             model.Categorias = combos.Categorias;
             model.Proveedores = combos.Proveedores;
         }
-
+        public IActionResult ListadoAlfabeticoProductos()
+        {
+            var model = new ListadoAlfabeticoProductosViewModel
+            {
+                Filtro = new ProductosBuscarDto
+                {
+                    IdIni = null,
+                    IdFin = null,
+                    Producto = string.Empty,
+                    Categoria = 0,
+                    Proveedor = 0,
+                    OrdenadoPor = "ProductName",
+                    AscDesc = "ASC"
+                }
+            };
+            model.Productos = _productoBLL.ObtenerProductosRpt(model.Filtro);
+            return View(model);
+        }
+        public IActionResult ProductosPorEncimaDelPrecioPromedio()
+        {
+            var model = new ProductosPorEncimaDelPrecioPromedioViewModel(); 
+            model.Productos = _productoBLL.ObtenerProductosPorEncimaDelPrecioPromedio();
+            return View(model);
+        }
     }
 }

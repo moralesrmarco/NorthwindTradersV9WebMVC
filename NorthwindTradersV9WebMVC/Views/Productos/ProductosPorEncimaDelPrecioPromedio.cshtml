@@ -1,0 +1,40 @@
+﻿@using System.Data
+@model NorthwindTradersV9WebMVC.Models.Productos.ProductosPorEncimaDelPrecioPromedioViewModel
+@{
+    ViewData["Title"] = "Productos por encima del precio promedio";
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead class="encabezado-tabla">
+            <tr>
+                <th>Fila</th>
+                <th class="text-center">Producto</th>
+                <th class="text-center">Precio</th>
+                <th class="text-center">Precio promedio</th>
+                <th class="text-center">Diferencia con respecto al precio promedio</th>
+                <th class="text-center">Porcentaje sobre el precio promedio</th>
+                <th class="text-center">Categoría</th>
+                <th>Proveedor</th>      
+            </tr>
+        </thead>
+        <tbody> 
+            @foreach (DataRow producto in Model.Productos.Rows)
+            {
+                <tr>
+                    <td class="text-center">@producto["Fila"]</td>
+                    <td>@producto["Producto"]</td>
+                    <td class="text-center">@string.Format("{0:C4}", producto["Precio"])</td>
+                    <td class="text-center">@string.Format("{0:C4}", producto["PrecioPromedio"])</td>
+                    <td class="text-center">@string.Format("{0:C4}", producto["Diferencia"])</td>
+                    <td class="text-center">@string.Format("{0:P4}", producto["PorcentajeSobrePromedio"])</td>
+                    <td>@producto["Categoria"]</td>
+                    <td>@producto["Proveedor"]</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    <script src="~/js/loading-overlay.js"></script>
+}
