@@ -1,17 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
+using Microsoft.Reporting.NETCore;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
-using NorthwindTradersV9DAL;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
-using NorthwindTradersV9WebMVC.Models.Categorias;
 using NorthwindTradersV9WebMVC.Models.Common;
 using NorthwindTradersV9WebMVC.Models.Productos;
 
 namespace NorthwindTradersV9WebMVC.Controllers
 {
+    [Authorize(Policy = "PermisoProductos")]
     public class ProductosController : Controller
     {
         private readonly ProductoBLL _productoBLL;
@@ -366,7 +367,11 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 },
                 BuscarAbierto = false
             };
-            CargarCombosListadoProductos(model);
+            var combos = CargarCombosListadoProductos();
+            model.CamposOrden = combos.CamposOrden;
+            model.Direcciones = combos.Direcciones;
+            model.Categorias = combos.Categorias;
+            model.Proveedores = combos.Proveedores;
             model.Productos = _productoBLL.ObtenerProductosRpt(model.Filtro);
             return View(model);
         }
@@ -375,15 +380,23 @@ namespace NorthwindTradersV9WebMVC.Controllers
         public IActionResult ListadoProductos(ListadoProductosViewModel model)
         {
             model.BuscarAbierto = true;
-            CargarCombosListadoProductos(model);
+            var combos = CargarCombosListadoProductos();
+            model.CamposOrden = combos.CamposOrden;
+            model.Direcciones = combos.Direcciones;
+            model.Categorias = combos.Categorias;
+            model.Proveedores = combos.Proveedores;
             model.Productos = _productoBLL.ObtenerProductosRpt(model.Filtro);
             return View(model);
         }
 
-        private void CargarCombosListadoProductos(
-            ListadoProductosViewModel model)
+        private (
+            List<SelectListItem> CamposOrden,
+            List<SelectListItem> Direcciones,
+            List<SelectListItem> Categorias,
+            List<SelectListItem> Proveedores)
+        CargarCombosListadoProductos()
         {
-            model.CamposOrden = new List<SelectListItem>
+            var camposOrden = new List<SelectListItem>
             {
                 new("ID Producto", "ProductID"),
                 new("Producto", "ProductName"),
@@ -396,14 +409,18 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 new("Categoría", "CategoryName"),
                 new("Proveedor", "CompanyName")
             };
-            model.Direcciones = new List<SelectListItem>
+            var direcciones = new List<SelectListItem>
             {
                 new("Ascendente", "ASC"),
                 new("Descendente", "DESC")
             };
             var combos = CargarCombos();
-            model.Categorias = combos.Categorias;
-            model.Proveedores = combos.Proveedores;
+            return (
+                camposOrden,
+                direcciones,
+                combos.Categorias,
+                combos.Proveedores
+            );
         }
         public IActionResult ListadoAlfabeticoProductos()
         {
@@ -428,6 +445,164 @@ namespace NorthwindTradersV9WebMVC.Controllers
             var model = new ProductosPorEncimaDelPrecioPromedioViewModel(); 
             model.Productos = _productoBLL.ObtenerProductosPorEncimaDelPrecioPromedio();
             return View(model);
+        }
+        public IActionResult RptProductos()
+        {
+            var model = new RptProductosViewModel
+            {
+                Filtro = new ProductosBuscarDto
+                {
+                    IdIni = null,
+                    IdFin = null,
+                    Producto = string.Empty,
+                    Categoria = 0,
+                    Proveedor = 0,
+                    OrdenadoPor = "ProductName",
+                    AscDesc = "ASC"
+                }
+            };
+            var combos = CargarCombosListadoProductos();
+            model.CamposOrden = combos.CamposOrden;
+            model.Direcciones = combos.Direcciones;
+            model.Categorias = combos.Categorias;
+            model.Proveedores = combos.Proveedores;
+            return View(model);
+        }
+        private List<ProductoDto> ObtenerDatosRptProductos(
+            RptProductosViewModel model)
+        {
+            if (model.PestanaActiva == "#todos")
+            {
+                model.Filtro.IdIni = 0;
+                model.Filtro.IdFin = 0;
+                model.Filtro.Producto = string.Empty;
+                model.Filtro.Categoria = 0;
+                model.Filtro.Proveedor = 0;
+            }
+            return _productoBLL.ObtenerProductosRpt(model.Filtro);
+        }
+        private string ObtenerTextoOrden(RptProductosViewModel model)
+        {
+            return model.CamposOrden
+                .FirstOrDefault(x => x.Value == model.Filtro.OrdenadoPor)
+                ?.Text ?? "";
+        }
+        private string ObtenerTextoDireccion(RptProductosViewModel model)
+        {
+            return model.Direcciones
+                .FirstOrDefault(x => x.Value == model.Filtro.AscDesc)
+                ?.Text ?? "";
+        }
+        private (string Titulo, string Subtitulo) ConstruirTituloSubtitulo(RptProductosViewModel model)
+        {
+            string titulo = "» Reporte de todos los productos «";
+            string subtitulo = "";
+            if (model.PestanaActiva == "#todos")
+            {
+                subtitulo = $"Ordenado por: [ {ObtenerTextoOrden(model)} ] " +
+                            $"[ {ObtenerTextoDireccion(model)} ]";
+                return (titulo, subtitulo);
+            }
+            titulo = "» Reporte filtrado de productos «";
+            subtitulo = "Filtrado por: ";
+            if (model.Filtro.IdIni != null &&
+                model.Filtro.IdFin != null &&
+                model.Filtro.IdIni != 0 &&
+                model.Filtro.IdFin != 0)
+            {
+                subtitulo +=
+                    $" [ Id: {model.Filtro.IdIni?.ToString("N0")} " +
+                    $"al {model.Filtro.IdFin?.ToString("N0")} ] ";
+            }
+            if (!string.IsNullOrWhiteSpace(model.Filtro.Producto))
+            {
+                subtitulo += $" [ Producto: {model.Filtro.Producto} ] ";
+            }
+            if (model.Filtro.Categoria > 0)
+            {
+                var categoria = model.Categorias.FirstOrDefault(
+                    c => c.Value == model.Filtro.Categoria.ToString());
+                if (categoria != null)
+                    subtitulo += $" [ Categoría: {categoria.Text} ] ";
+            }
+            if (model.Filtro.Proveedor > 0)
+            {
+                var proveedor = model.Proveedores.FirstOrDefault(
+                    p => p.Value == model.Filtro.Proveedor.ToString());
+                if (proveedor != null)
+                    subtitulo += $" [ Proveedor: {proveedor.Text} ] ";
+            }
+            if (subtitulo == "Filtrado por: ")
+            {
+                titulo = "» Reporte de todos los productos «";
+                subtitulo = "";
+            }
+            subtitulo +=
+                $" Ordenado por: [ {ObtenerTextoOrden(model)} ] " +
+                $"[ {ObtenerTextoDireccion(model)} ]";
+            return (titulo, subtitulo);
+        }
+        private LocalReport CrearRptProductos(RptProductosViewModel model)
+        {
+            var (titulo, subtitulo) = ConstruirTituloSubtitulo(model);
+            LocalReport reporte = new LocalReport();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Productos",
+                "RptProductos.rdlc");
+            reporte.DataSources.Clear();
+            reporte.SetParameters(new[]
+            {
+                new ReportParameter("titulo", titulo),
+                new ReportParameter("subtitulo", subtitulo)
+            });
+            reporte.DataSources.Add(new ReportDataSource("DataSet1", ObtenerDatosRptProductos(model)));
+            return reporte;
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult VerPdfRptProductos(RptProductosViewModel model)
+        {
+            var combos = CargarCombosListadoProductos();
+            model.CamposOrden = combos.CamposOrden;
+            model.Direcciones = combos.Direcciones;
+            model.Categorias = combos.Categorias;
+            model.Proveedores = combos.Proveedores;
+            var reporte = CrearRptProductos(model);
+            return File(
+                reporte.Render("PDF"),
+                "application/pdf");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExportarExcelRptProductos(RptProductosViewModel model)
+        {
+            var combos = CargarCombosListadoProductos();
+            model.CamposOrden = combos.CamposOrden;
+            model.Direcciones = combos.Direcciones;
+            model.Categorias = combos.Categorias;
+            model.Proveedores = combos.Proveedores;
+            var reporte = CrearRptProductos(model);
+            return File(
+                reporte.Render("EXCELOPENXML"),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Productos.xlsx");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExportarWordRptProductos(RptProductosViewModel model)
+        {
+            var combos = CargarCombosListadoProductos();
+            model.CamposOrden = combos.CamposOrden;
+            model.Direcciones = combos.Direcciones;
+            model.Categorias = combos.Categorias;
+            model.Proveedores = combos.Proveedores;
+            var reporte = CrearRptProductos(model);
+            return File(
+                reporte.Render("WORDOPENXML"),
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "Productos.docx");
         }
     }
 }
