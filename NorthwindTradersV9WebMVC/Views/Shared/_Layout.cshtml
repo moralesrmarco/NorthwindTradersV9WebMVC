@@ -395,11 +395,11 @@
                                     <li class="dropdown-submenu">
                                         <a class="dropdown-item dropdown-toggle" href="#">Reportes</a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="RptProductos">Reporte de productos</a></li>
-                                            <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="RptProductosAlfabetico">Reporte de productos en orden alfabético</a></li>
-                                            <li><a class="dropdown-item" asp-page="/ProveedoresProductosComun/Reportes/ProductosPorProveedorRpt">Reporte de productos por proveedor</a></li>
-                                            <li><a class="dropdown-item" asp-page="/ProveedoresProductosComun/Reportes/ProductosPorProveedorConDetalleProveedorRpt">Reporte de productos por proveedor con detalle del proveedor</a></li>
-                                            <li><a class="dropdown-item" asp-page="/CategoriasProductosComun/Reportes/CategoriasConProductosRpt">Reporte de categorías con productos</a></li>
+                                            <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="RptProductos">Productos</a></li>
+                                            <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="RptProductosAlfabetico">Productos en orden alfabético</a></li>
+                                            <li><a class="dropdown-item" asp-area="" asp-controller="ProveedoresProductos" asp-action="RptProductosPorProveedor">Productos por proveedor</a></li>
+                                            <li><a class="dropdown-item" asp-area="" asp-controller="ProveedoresProductos" asp-action="RptProductosPorProveedorConDetalleProveedor">Productos por proveedor con detalle del proveedor</a></li>
+                                            <li><a class="dropdown-item" asp-area="" asp-controller="CategoriasProductos" asp-action="RptCategoriasConProductos">Categorías con productos</a></li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -410,6 +410,36 @@
                             <li class="nav-item">
                                 <span class="nav-link text-dark menu-deshabilitado">
                                     Productos
+                                </span>
+                            </li>
+                        }
+                        <!-- Menú Ventas con submenús -->
+                        @if (User.HasClaim("Permiso", Permisos.Ventas.ToString()))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="ventasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Ventas
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="ventasDropdown">
+                                    <!-- Gestión de ventas -->
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Ventas" asp-action="Index">Gestión de ventas</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+
+                                    <!-- Reportes con submenú -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item dropdown-toggle" href="#">Reportes</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" asp-page="/Ventas/Reportes/VentasRpt">Reporte de ventas</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-dark menu-deshabilitado">
+                                    Ventas
                                 </span>
                             </li>
                         }

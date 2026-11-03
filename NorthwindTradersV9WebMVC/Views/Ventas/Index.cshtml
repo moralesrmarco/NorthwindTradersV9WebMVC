@@ -1,0 +1,205 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Ventas.VentasIndexViewModel
+@{
+    ViewData["Title"] = "Gestión de ventas";
+    var returnUrl = Url.Action(
+        "Index",
+        "Ventas",
+        new
+        {
+            pageIndex = Model.Paginacion.PageIndex,
+            IdIni = Model.Filtro.IdIni,
+            IdFin = Model.Filtro.IdFin,
+            Cliente = Model.Filtro.Cliente,
+            FVenta = Model.Filtro.FVenta,
+            FVentaIni = Model.Filtro.FVentaIni,
+            FVentaFin = Model.Filtro.FVentaFin,
+            FVentaNull = Model.Filtro.FVentaNull,
+            FRequerido = Model.Filtro.FRequerido,
+            FRequeridoIni = Model.Filtro.FRequeridoIni,
+            FRequeridoFin = Model.Filtro.FRequeridoFin,
+            FRequeridoNull = Model.Filtro.FRequeridoNull,
+            FEnvio = Model.Filtro.FEnvio,
+            FEnvioIni = Model.Filtro.FEnvioIni,
+            FEnvioFin = Model.Filtro.FEnvioFin,
+            FEnvioNull = Model.Filtro.FEnvioNull,
+            Empleado = Model.Filtro.Empleado,
+            CompañiaT = Model.Filtro.CompañiaT,
+            DirigidoA = Model.Filtro.DirigidoA,
+            BuscarAbierto = Model.ParametrosPaginacion.BuscarAbierto
+        });
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<ul class="nav nav-tabs mb-0">
+    <li class="nav-item small">
+        <button type="button"
+                id="btnPestañaBuscar"
+                class="nav-link active pestaña-buscar"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelBusqueda"
+                aria-expanded="@(Model.ParametrosPaginacion.BuscarAbierto.ToString().ToLower())"
+                aria-controls="panelBusqueda">
+            <i class="bi bi-search"></i>
+            Buscar venta
+        </button>
+    </li>
+</ul>
+<div id="mensajeBusqueda"
+     class="border border-top-0 p-3 small text-muted @(Model.ParametrosPaginacion.BuscarAbierto ? "d-none" : "")">
+    Seleccione buscar venta para proporcionar los criterios de búsqueda
+</div>
+<div id="panelBusqueda"
+     class="collapse border border-top-0 @(Model.ParametrosPaginacion.BuscarAbierto ? "show" : "")">
+    <div class="p-3 small">
+        <form asp-controller="Ventas"
+            asp-action="Index"
+            method="get"
+            id="formBuscar"
+            onsubmit="return disableSearchButton();">
+            <input type="hidden"
+                    name="BuscarAbierto"
+                    value="true" />
+            <div class="row mb-2">
+                <div class="col-md-2">
+                    <label asp-for="Filtro.IdIni" class="form-label">Id inicial</label>
+                    <input type="number"
+                            name="Filtro.IdIni"
+                            id="txtIdIni"
+                            value="@Model.Filtro.IdIni"
+                            class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="Filtro.IdFin" class="form-label">Id final</label>
+                    <input type="number"
+                            name="Filtro.IdFin"
+                            id="txtIdFin"
+                            value="@Model.Filtro.IdFin"
+                            class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Filtro.Cliente" class="form-label">Cliente</label>
+                    <input type="text"
+                            name="Filtro.Cliente"
+                            value="@Model.Filtro.Cliente"
+                            class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Filtro.Empleado" class="form-label">Empleado</label>
+                    <input type="text"
+                            name="Filtro.Empleado"
+                            value="@Model.Filtro.Empleado"
+                            class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label asp-for="Filtro.CompañiaT" class="form-label">Compañía de transporte</label>
+                    <input type="text"
+                            name="Filtro.CompañiaT"
+                            value="@Model.Filtro.CompañiaT"
+                            class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Filtro.DirigidoA" class="form-label">Dirigido a</label>
+                    <input type="text"
+                            name="Filtro.DirigidoA"
+                            value="@Model.Filtro.DirigidoA"
+                            class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label asp-for="Filtro.FVentaIni" class="form-label">Fecha de venta inicial</label>
+                    <input type="date"
+                            name="Filtro.FVentaIni"
+                            value="@Model.Filtro.FVentaIni"
+                            class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Filtro.FVentaFin" class="form-label">Fecha de venta final</label>
+                    <input type="date"
+                            name="Filtro.FVentaFin"
+                            value="@Model.Filtro.FVentaFin"
+                            class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-4">
+                    <div class="mt-4">
+                        <label asp-for="Filtro.FVentaNull" class="me-2">
+                            Fecha de venta nula
+                        </label>
+                        <input asp-for="Filtro.FVentaNull"
+                               class="form-check-input " 
+                               style="transform: scale(1.5);"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label asp-for="Filtro.FRequeridoIni" class="form-label">Fecha de entrega inicial</label>
+                    <input type="date"
+                            name="Filtro.FRequeridoIni"
+                            value="@Model.Filtro.FRequeridoIni"
+                            class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Filtro.FRequeridoFin" class="form-label">Fecha de entrega final</label>
+                    <input type="date"
+                            name="Filtro.FRequeridoFin"
+                            value="@Model.Filtro.FRequeridoFin"
+                            class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-4">
+                    <div class="mt-4">
+                        <label asp-for="Filtro.FRequeridoNull" class="me-2">
+                            Fecha de entrega nula
+                        </label>
+                        <input asp-for="Filtro.FRequeridoNull"
+                               class="form-check-input " 
+                               style="transform: scale(1.5);"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label asp-for="Filtro.FEnvioIni" class="form-label">Fecha de envío inicial</label>
+                    <input type="date"
+                            name="Filtro.FEnvioIni"
+                            value="@Model.Filtro.FEnvioIni"
+                            class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Filtro.FEnvioFin" class="form-label">Fecha de envío final</label>
+                    <input type="date"
+                            name="Filtro.FEnvioFin"
+                            value="@Model.Filtro.FEnvioFin"
+                            class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-4">
+                    <div class="mt-4">
+                        <label asp-for="Filtro.FEnvioNull" class="me-2">
+                            Fecha de envío nula
+                        </label>
+                        <input asp-for="Filtro.FEnvioNull"
+                               class="form-check-input " 
+                               style="transform: scale(1.5);"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12"">
+                    <button type="submit"
+                            id="btnBuscar"
+                            class="btn btn-sm btn-buscar"
+                            onclick="return disableSearchButton();">
+                        <i class="bi bi-search"></i>
+                        <span class="d-none d-md-inline"> Buscar</span>
+                    </button>
+                    <a asp-controller="Ventas"
+                       asp-action="Index"
+                       class="btn btn-sm btn-primary navigation-btn">
+                        <i class="bi bi-eraser"></i>
+                        <span class="d-none d-md-inline"> Limpiar</span>
+                    </a>
+                </div>
+        </form>
+    </div>
+</div>
