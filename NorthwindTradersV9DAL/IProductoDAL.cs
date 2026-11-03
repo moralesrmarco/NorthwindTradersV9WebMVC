@@ -16,5 +16,6 @@ namespace NorthwindTradersV9DAL
         int Actualizar(Producto producto);
         List<ProductoDto> ObtenerProductosRpt(ProductosBuscarDto criterios);
         DataTable ObtenerProductosPorEncimaDelPrecioPromedio();
+        List<ProductoDto> ObtenerProductosAlfabeticoRpt();
     }
 }

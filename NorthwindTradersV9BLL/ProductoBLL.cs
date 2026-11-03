@@ -96,5 +96,12 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return _productoDAL.ObtenerProductosPorEncimaDelPrecioPromedio();
         }
+        public List<ProductoDto> ObtenerProductosAlfabeticoRpt()
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _productoDAL.ObtenerProductosAlfabeticoRpt();
+        }
+
     }
 }

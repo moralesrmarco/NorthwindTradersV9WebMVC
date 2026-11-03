@@ -604,5 +604,55 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 "Productos.docx");
         }
+        public IActionResult RptProductosAlfabetico()
+        {
+            return View();
+        }
+        private LocalReport CrearRptProductosAlfabetico()
+        {
+            string titulo = "» Reporte de productos en orden alfabético «";
+            string subtitulo = $"Ordenado por: [ Producto ] [ Ascendente ]";
+            LocalReport reporte = new();
+            reporte.ReportPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Productos",
+                "RptProductos.rdlc");
+            reporte.DataSources.Clear();
+            reporte.SetParameters(new[]
+            {
+                new ReportParameter("titulo", titulo),
+                new ReportParameter("subtitulo", subtitulo)
+            });
+            var productos = _productoBLL.ObtenerProductosAlfabeticoRpt();
+            reporte.DataSources.Add(new ReportDataSource("DataSet1", productos));
+            return reporte;
+        }
+        [HttpGet]
+        public IActionResult VerPdfRptProductosAlfabetico()
+        {
+            var reporte = CrearRptProductosAlfabetico();
+            return File(
+                reporte.Render("PDF"),
+                "application/pdf");
+        }
+        [HttpGet]
+        public IActionResult ExportarExcelRptProductosAlfabetico()
+        {
+            var reporte = CrearRptProductosAlfabetico();
+            return File(
+                reporte.Render("EXCELOPENXML"),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "ProductosAlfabetico.xlsx");
+        }
+        [HttpGet]
+        public IActionResult ExportarWordRptProductosAlfabetico()
+        {
+            var reporte = CrearRptProductosAlfabetico();
+            return File(
+                reporte.Render("WORDOPENXML"),
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "ProductosAlfabetico.docx");
+        }
     }
 }

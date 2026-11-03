@@ -285,6 +285,53 @@ namespace NorthwindTradersV9DAL
             }
             return dt;
         }
-
+        public List<ProductoDto> ObtenerProductosAlfabeticoRpt()
+        {
+            var productos = new List<ProductoDto>();
+            try
+            {
+                using (var con = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpProductoBuscarV4", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@IdIni", 0);
+                    cmd.Parameters.AddWithValue("@IdFin", 0);
+                    cmd.Parameters.AddWithValue("@Producto", "");
+                    cmd.Parameters.AddWithValue("@Categoria", 0);
+                    cmd.Parameters.AddWithValue("@Proveedor", 0);
+                    cmd.Parameters.AddWithValue("@OrdenadoPor", "ProductName");
+                    cmd.Parameters.AddWithValue("@AscDesc", "ASC");
+                    con.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var producto = new ProductoDto
+                            {
+                                ProductID = reader["ProductID"] != DBNull.Value ? Convert.ToInt32(reader["ProductID"]) : 0,
+                                ProductName = reader["ProductName"] != DBNull.Value ? reader["ProductName"].ToString() : null,
+                                QuantityPerUnit = reader["QuantityPerUnit"] != DBNull.Value ? reader["QuantityPerUnit"].ToString() : null,
+                                UnitPrice = reader["UnitPrice"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["UnitPrice"]) : null,
+                                UnitsInStock = reader["UnitsInStock"] != DBNull.Value ? (short?)Convert.ToInt16(reader["UnitsInStock"]) : null,
+                                UnitsOnOrder = reader["UnitsOnOrder"] != DBNull.Value ? (short?)Convert.ToInt16(reader["UnitsOnOrder"]) : null,
+                                ReorderLevel = reader["ReorderLevel"] != DBNull.Value ? (short?)Convert.ToInt16(reader["ReorderLevel"]) : null,
+                                Discontinued = reader["Discontinued"] != DBNull.Value && Convert.ToBoolean(reader["Discontinued"]),
+                                CategoryID = reader["CategoryID"] != DBNull.Value ? Convert.ToInt32(reader["CategoryID"]) : 0,
+                                CategoryName = reader["CategoryName"] != DBNull.Value ? reader["CategoryName"].ToString() : null,
+                                Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() : null,
+                                SupplierID = reader["SupplierID"] != DBNull.Value ? Convert.ToInt32(reader["SupplierID"]) : 0,
+                                CompanyName = reader["CompanyName"] != DBNull.Value ? reader["CompanyName"].ToString() : null
+                            };
+                            productos.Add(producto);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los productos para el reporte alfabético.", ex);
+            }
+            return productos;
+        }
     }
 }

@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Reporte de productos en orden alfabético";
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<a asp-controller="Productos"
+    asp-action="ExportarExcelRptProductosAlfabetico"
+    class="btn btn-sm btn-success"
+    data-no-overlay="true"
+    data-formato="excel">
+    <i class="bi bi-file-earmark-excel"></i> 
+    <span class="d-none d-md-inline"> Excel</span>
+</a>
+<a asp-controller="Productos"
+    asp-action="ExportarWordRptProductosAlfabetico"
+    class="btn btn-sm btn-primary"
+    data-no-overlay="true"
+    data-formato="word">
+    <i class="bi bi-file-earmark-word"></i>
+    <span class="d-none d-md-inline"> Word</span>
+</a>
+<iframe name="visorReporte" 
+    id="visorReporte" 
+    data-report-src="@Url.Action("VerPdfRptProductosAlfabetico", "Productos")"
+    class="w-100 mt-4" 
+    style="height: 600px; border: 1px solid #ccc;">
+</iframe>
+@section Scripts {
+    <script src="~/js/loading-overlay.js"></script>
+}
