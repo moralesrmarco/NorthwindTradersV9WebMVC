@@ -155,6 +155,9 @@ builder.Services.AddScoped<CategoriaBLL>();
 builder.Services.AddScoped<IProductoDAL, ProductoDAL>();
 builder.Services.AddScoped<ProductoBLL>();
 
+builder.Services.AddScoped<IVentaDAL, VentaDAL>();
+builder.Services.AddScoped<VentaBLL>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

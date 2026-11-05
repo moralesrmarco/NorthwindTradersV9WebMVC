@@ -83,7 +83,7 @@
                             class="form-control form-control-sm" />
                 </div>
                 <div class="col-md-4">
-                    <label asp-for="Filtro.Empleado" class="form-label">Empleado</label>
+                    <label asp-for="Filtro.Empleado" class="form-label">Vendedor</label>
                     <input type="text"
                             name="Filtro.Empleado"
                             value="@Model.Filtro.Empleado"
@@ -111,14 +111,14 @@
                     <label asp-for="Filtro.FVentaIni" class="form-label">Fecha de venta inicial</label>
                     <input type="date"
                             name="Filtro.FVentaIni"
-                            value="@Model.Filtro.FVentaIni"
+                            value="@Model.Filtro.FVentaIni?.ToString("yyyy-MM-dd")"
                             class="form-control form-control-sm" />
                 </div>
                 <div class="col-md-4">
                     <label asp-for="Filtro.FVentaFin" class="form-label">Fecha de venta final</label>
                     <input type="date"
                             name="Filtro.FVentaFin"
-                            value="@Model.Filtro.FVentaFin"
+                            value="@Model.Filtro.FVentaFin?.ToString("yyyy-MM-dd")"
                             class="form-control form-control-sm" />
                 </div>
                 <div class="col-md-4">
@@ -137,14 +137,14 @@
                     <label asp-for="Filtro.FRequeridoIni" class="form-label">Fecha de entrega inicial</label>
                     <input type="date"
                             name="Filtro.FRequeridoIni"
-                            value="@Model.Filtro.FRequeridoIni"
+                            value="@Model.Filtro.FRequeridoIni?.ToString("yyyy-MM-dd")"
                             class="form-control form-control-sm" />
                 </div>
                 <div class="col-md-4">
                     <label asp-for="Filtro.FRequeridoFin" class="form-label">Fecha de entrega final</label>
                     <input type="date"
                             name="Filtro.FRequeridoFin"
-                            value="@Model.Filtro.FRequeridoFin"
+                            value="@Model.Filtro.FRequeridoFin?.ToString("yyyy-MM-dd")"
                             class="form-control form-control-sm" />
                 </div>
                 <div class="col-md-4">
@@ -163,14 +163,14 @@
                     <label asp-for="Filtro.FEnvioIni" class="form-label">Fecha de envío inicial</label>
                     <input type="date"
                             name="Filtro.FEnvioIni"
-                            value="@Model.Filtro.FEnvioIni"
+                            value="@Model.Filtro.FEnvioIni?.ToString("yyyy-MM-dd")"
                             class="form-control form-control-sm" />
                 </div>
                 <div class="col-md-4">
                     <label asp-for="Filtro.FEnvioFin" class="form-label">Fecha de envío final</label>
                     <input type="date"
                             name="Filtro.FEnvioFin"
-                            value="@Model.Filtro.FEnvioFin"
+                            value="@Model.Filtro.FEnvioFin?.ToString("yyyy-MM-dd")"
                             class="form-control form-control-sm" />
                 </div>
                 <div class="col-md-4">
@@ -200,6 +200,247 @@
                         <span class="d-none d-md-inline"> Limpiar</span>
                     </a>
                 </div>
+            </div>
         </form>
     </div>
 </div>
+<br />
+<a asp-controller="Ventas"
+   asp-action="Insertar"
+   asp-route-returnUrl="@returnUrl"
+   class="btn btn-sm btn-primary mb-3 action-btn"
+   title="Nueva venta">
+    <i class="bi bi-plus-circle"></i>
+    <span class="d-none d-md-inline"> Nueva venta</span>
+</a>
+<partial name="_Paginacion"
+         model="Model.ParametrosPaginacion"
+         view-data='new ViewDataDictionary(ViewData)
+         {
+             ["PageIndex"] = Model.Paginacion.PageIndex,
+             ["TotalPages"] = Model.Paginacion.TotalPages,
+             ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+         }' />
+<br />
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead class="encabezado-tabla">
+            <tr>
+                <th class="text-center">Id</th>
+                <th>Cliente</th>
+                <th>Nombre de contacto</th>
+                <th class="text-center">Fecha de venta</th>
+                <th class="text-center">Fecha de entrega</th>
+                <th class="text-center">Fecha de envío</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var venta in Model.Ventas)
+            {
+                <tr>
+                    <td class="text-center">@venta.OrderID</td>
+                    <td>@venta.CustomerCompanyName</td>
+                    <td>@venta.CustomerContactName</td>
+                    <td class="text-end">
+                        @if (venta.OrderDate.HasValue)
+                        {
+                            @Html.Raw(venta.OrderDate.Value
+                                .ToString("ddd dd' de 'MMM' de 'yyyy<br/>hh:mm:ss tt"))
+                        }
+                    </td>
+                    <td class="text-end">
+                        @if (venta.RequiredDate.HasValue)
+                        {
+                            @Html.Raw(venta.RequiredDate.Value
+                                .ToString("ddd dd' de 'MMM' de 'yyyy<br/>hh:mm:ss tt"))
+                        }
+                    </td>
+                    <td class="text-end">
+                        @if (venta.ShippedDate.HasValue)
+                        {
+                            @Html.Raw(venta.ShippedDate.Value
+                                .ToString("ddd dd' de 'MMM' de 'yyyy<br/>hh:mm:ss tt"))
+                        }
+                    </td>
+                    <td class="text-center text-nowrap">
+                        <a asp-controller="Ventas" 
+                            asp-action="Consultar"
+                            asp-route-id="@venta.OrderID" 
+                            asp-route-returnUrl="@returnUrl"
+                            class="btn btn-sm btn-success me-1 action-btn"
+                            title="Consultar">
+                            <i class="bi bi-eye"></i>
+                            <span class="d-none d-md-inline"> Consultar</span>
+                        </a>
+                        <a asp-controller="Ventas"
+                            asp-action="Editar"
+                            asp-route-id="@venta.OrderID"
+                            asp-route-returnUrl="@returnUrl"
+                            class="btn btn-sm btn-warning me-1 action-btn"
+                            title="Editar">
+                            <i class="bi bi-pencil"></i>
+                            <span class="d-none d-md-inline"> Editar</span>
+                        </a>
+                        <a asp-controller="Ventas"
+                            asp-action="Eliminar"
+                            asp-route-id="@venta.OrderID"
+                            asp-route-returnUrl="@returnUrl"
+                            class="btn btn-sm btn-danger me-1 action-btn"
+                            title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                            <span class="d-none d-md-inline"> Eliminar</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<br />
+<partial name="_Paginacion"
+         model="Model.ParametrosPaginacion"
+         view-data='new ViewDataDictionary(ViewData)
+         {
+             ["PageIndex"] = Model.Paginacion.PageIndex,
+             ["TotalPages"] = Model.Paginacion.TotalPages,
+             ["TotalRegistros"] = Model.Paginacion.TotalRegistros
+         }' />
+@section Scripts {
+    <script src="~/js/navigation-actions.js"></script>
+    <script src="~/js/form-buscar.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            // =====================================================
+            // CONFIGURAR UN GRUPO DE FECHAS
+            // =====================================================
+            function configurarFechas(idFechaIni, idFechaFin, idFechaNull) {
+
+                const fechaIni = document.getElementById(idFechaIni);
+                const fechaFin = document.getElementById(idFechaFin);
+                const fechaNull = document.getElementById(idFechaNull);
+
+                if (!fechaIni || !fechaFin || !fechaNull) {
+                    return;
+                }
+
+                // =================================================
+                // ACTUALIZAR ESTADO CUANDO SE SELECCIONA
+                // "FECHA NULA"
+                // =================================================
+                function actualizarEstadoFecha() {
+
+                    if (fechaNull.checked) {
+
+                        // Borrar ambas fechas
+                        fechaIni.value = "";
+                        fechaFin.value = "";
+
+                        // Deshabilitar ambas fechas
+                        fechaIni.disabled = true;
+                        fechaFin.disabled = true;
+
+                    } else {
+
+                        // Habilitar ambas fechas
+                        fechaIni.disabled = false;
+                        fechaFin.disabled = false;
+                    }
+                }
+
+
+                // =================================================
+                // CAMBIO DE FECHA INICIAL
+                // =================================================
+                fechaIni.addEventListener("change", function() {
+
+                    if (!fechaIni.value) {
+                        return;
+                    }
+
+                    // Si la fecha final está vacía,
+                    // copiar la fecha inicial.
+                    if (!fechaFin.value) {
+                        fechaFin.value = fechaIni.value;
+                        return;
+                    }
+
+                    // Si la fecha inicial es mayor que la final,
+                    // igualar la final a la inicial.
+                    if (fechaIni.value > fechaFin.value) {
+                        fechaFin.value = fechaIni.value;
+                    }
+                });
+
+
+                // =================================================
+                // CAMBIO DE FECHA FINAL
+                // =================================================
+                fechaFin.addEventListener("change", function() {
+
+                    if (!fechaFin.value) {
+                        return;
+                    }
+
+                    // Si la fecha inicial está vacía,
+                    // copiar la fecha final.
+                    if (!fechaIni.value) {
+                        fechaIni.value = fechaFin.value;
+                        return;
+                    }
+
+                    // Si la fecha final es menor que la inicial,
+                    // igualar la inicial a la final.
+                    if (fechaFin.value < fechaIni.value) {
+                        fechaIni.value = fechaFin.value;
+                    }
+                });
+
+
+                // =================================================
+                // CAMBIO DEL CHECKBOX "FECHA NULA"
+                // =================================================
+                fechaNull.addEventListener("change", actualizarEstadoFecha);
+
+
+                // =================================================
+                // ESTADO INICIAL AL CARGAR LA PÁGINA
+                // =================================================
+                actualizarEstadoFecha();
+            }
+
+
+            // =====================================================
+            // FECHA DE VENTA
+            // =====================================================
+            configurarFechas(
+                "Filtro_FVentaIni",
+                "Filtro_FVentaFin",
+                "Filtro_FVentaNull"
+            );
+
+
+            // =====================================================
+            // FECHA DE ENTREGA
+            // =====================================================
+            configurarFechas(
+                "Filtro_FRequeridoIni",
+                "Filtro_FRequeridoFin",
+                "Filtro_FRequeridoNull"
+            );
+
+
+            // =====================================================
+            // FECHA DE ENVÍO
+            // =====================================================
+            configurarFechas(
+                "Filtro_FEnvioIni",
+                "Filtro_FEnvioFin",
+                "Filtro_FEnvioNull"
+            );
+
+        });
+
+    </script>
+}
