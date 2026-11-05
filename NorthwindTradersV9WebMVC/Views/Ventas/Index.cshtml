@@ -111,6 +111,8 @@
                     <label asp-for="Filtro.FVentaIni" class="form-label">Fecha de venta inicial</label>
                     <input type="date"
                             name="Filtro.FVentaIni"
+                            @* el id es necesario para que JavaScript identifique el control *@
+                            id="Filtro_FVentaIni" 
                             value="@Model.Filtro.FVentaIni?.ToString("yyyy-MM-dd")"
                             class="form-control form-control-sm" />
                 </div>
@@ -118,6 +120,8 @@
                     <label asp-for="Filtro.FVentaFin" class="form-label">Fecha de venta final</label>
                     <input type="date"
                             name="Filtro.FVentaFin"
+                            @* el id es necesario para que JavaScript identifique el control *@
+                            id="Filtro_FVentaFin"
                             value="@Model.Filtro.FVentaFin?.ToString("yyyy-MM-dd")"
                             class="form-control form-control-sm" />
                 </div>
@@ -137,6 +141,7 @@
                     <label asp-for="Filtro.FRequeridoIni" class="form-label">Fecha de entrega inicial</label>
                     <input type="date"
                             name="Filtro.FRequeridoIni"
+                            id="Filtro_FRequeridoIni"
                             value="@Model.Filtro.FRequeridoIni?.ToString("yyyy-MM-dd")"
                             class="form-control form-control-sm" />
                 </div>
@@ -144,6 +149,7 @@
                     <label asp-for="Filtro.FRequeridoFin" class="form-label">Fecha de entrega final</label>
                     <input type="date"
                             name="Filtro.FRequeridoFin"
+                            id="Filtro_FRequeridoFin"
                             value="@Model.Filtro.FRequeridoFin?.ToString("yyyy-MM-dd")"
                             class="form-control form-control-sm" />
                 </div>
@@ -163,6 +169,7 @@
                     <label asp-for="Filtro.FEnvioIni" class="form-label">Fecha de envío inicial</label>
                     <input type="date"
                             name="Filtro.FEnvioIni"
+                            id="Filtro_FEnvioIni"
                             value="@Model.Filtro.FEnvioIni?.ToString("yyyy-MM-dd")"
                             class="form-control form-control-sm" />
                 </div>
@@ -170,6 +177,7 @@
                     <label asp-for="Filtro.FEnvioFin" class="form-label">Fecha de envío final</label>
                     <input type="date"
                             name="Filtro.FEnvioFin"
+                            id="Filtro_FEnvioFin"
                             value="@Model.Filtro.FEnvioFin?.ToString("yyyy-MM-dd")"
                             class="form-control form-control-sm" />
                 </div>
