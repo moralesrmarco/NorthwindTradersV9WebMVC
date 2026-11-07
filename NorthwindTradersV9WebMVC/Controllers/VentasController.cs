@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NorthwindTradersV9BLL;
+using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
 using NorthwindTradersV9WebMVC.Models.Common;
@@ -13,10 +14,12 @@ namespace NorthwindTradersV9WebMVC.Controllers
     public class VentasController : Controller
     {
         private readonly VentaBLL _ventaBLL;
+        private readonly VentaDetalleBLL _ventaDetalleBLL;
         private readonly AppSettings _appSettings;
-        public VentasController(VentaBLL ventaBLL, IOptions<AppSettings> appSettings)
+        public VentasController(VentaBLL ventaBLL, VentaDetalleBLL ventaDetalleBLL, IOptions<AppSettings> appSettings)
         {
             _ventaBLL = ventaBLL;
+            _ventaDetalleBLL = ventaDetalleBLL;
             _appSettings = appSettings.Value;
         }
         public IActionResult Index(
@@ -117,6 +120,41 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 }
             };
             return View(model);
+        }
+        [HttpGet]
+        public IActionResult Consultar(int id, string? returnUrl = null)
+        {
+            var model = new VentasConsultarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            // Obtener la venta.
+            var venta = _ventaBLL.ObtenerVentaPorId(id);
+            if (venta == null)
+            {
+                TempData["Error"] = "<p>Venta no encontrada</p>" + StringsCommons.Nefep;
+                return View(model);
+            }
+            model.Venta = venta;
+            // Obtener los detalles de la venta.
+            model.VentaDetalle =
+                _ventaDetalleBLL.ObtenerVentaDetallePorVentaId(id);
+            // Calcular los totales.
+            CalcularTotales(model.Venta, model.VentaDetalle);
+            return View(model);
+        }
+        private void CalcularTotales(
+            VentaDto venta,
+            List<VentaDetalle> ventaDetalle)
+        {
+            venta.NumeroProductos = ventaDetalle.Count;
+            venta.TotalUnidades = ventaDetalle.Sum(d => d.Quantity);
+            venta.SubtotalImporte = ventaDetalle.Sum(d => d.SubtotalDelImporteConIVAIncluido);
+            venta.SubtotalImporteDescuento = ventaDetalle.Sum(d => d.SubtotalDelAhorroTotalDespuesDescuento);
+            venta.SubtotalImporteConDescuento = ventaDetalle.Sum(d => d.SubtotalDelImporteConIVAConDescuento);
+            venta.SubtotalImporteSinIVA = ventaDetalle.Sum(d => d.SubtotalDelImporteSinIVAConDescuento);
+            venta.SubtotalImporteConIVA = ventaDetalle.Sum(d => d.SubtotalIVADespuesDelDescuento);
+            venta.Total = ventaDetalle.Sum(d => d.Subtotal);
         }
     }
 }

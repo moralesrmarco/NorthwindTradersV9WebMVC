@@ -8,5 +8,6 @@ namespace NorthwindTradersV9DAL
             int pageIndex,
             int pageSize,
             VentasBuscarDto filtro);
+        VentaDto? ObtenerVentaPorId(int id);
     }
 }
