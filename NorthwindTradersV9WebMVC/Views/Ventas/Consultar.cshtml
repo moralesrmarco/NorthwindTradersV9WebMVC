@@ -238,7 +238,7 @@
 else
 {
     <a href="javascript:void(0)"
-       onclick="disableAndOpen(this, '@Url.Page("/Ventas/Reportes/NotaRemisionRpt", new { handler = "Pdf", orderId = Model.Venta!.OrderID })')"
+       onclick="disableAndOpen(this, '@Url.Action("NotaRemisionPdf", "Ventas", new { orderId = Model.Venta!.OrderID })')"
        class="btn btn-sm btn-primary me-1"
        title="Nota de remisión">
         <i class="bi bi-printer"></i>

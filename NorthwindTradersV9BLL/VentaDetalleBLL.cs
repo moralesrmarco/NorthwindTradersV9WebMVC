@@ -19,6 +19,5 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return _ventaDetalleDAL.ObtenerVentaDetallePorVentaId(orderId);
         }
-
     }
 }

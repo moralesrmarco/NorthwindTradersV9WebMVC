@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.Reporting.NETCore;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
 using NorthwindTradersV9Entities;
 using NorthwindTradersV9Entities.DTOs;
+using NorthwindTradersV9WebMVC.Helpers;
 using NorthwindTradersV9WebMVC.Models.Common;
 using NorthwindTradersV9WebMVC.Models.Ventas;
+using System.Data;
 
 namespace NorthwindTradersV9WebMVC.Controllers
 {
@@ -155,6 +158,81 @@ namespace NorthwindTradersV9WebMVC.Controllers
             venta.SubtotalImporteSinIVA = ventaDetalle.Sum(d => d.SubtotalDelImporteSinIVAConDescuento);
             venta.SubtotalImporteConIVA = ventaDetalle.Sum(d => d.SubtotalIVADespuesDelDescuento);
             venta.Total = ventaDetalle.Sum(d => d.Subtotal);
+        }
+
+        [HttpGet]
+        public IActionResult NotaRemisionPdf(int orderId)
+        {
+            if (orderId <= 0)
+                return BadRequest("OrderId inválido.");
+            // Fecha y hora del reporte.
+            string strFecha = DateTime.Now.ToString("dd/MMM/yyyy hh:mm:ss tt");
+            // Crear el reporte.
+            LocalReport report = new LocalReport();
+            string rutaReporte = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "Ventas",
+                "RptNotaRemision9.rdlc");
+            using (var stream = System.IO.File.OpenRead(rutaReporte))
+            {
+                report.LoadReportDefinition(stream);
+            }
+            //=========================================
+            // DATOS (se obtienen UNA sola vez)
+            //=========================================
+            DataTable dtDummy = new DataTable("DataSetDummy");
+            dtDummy.Columns.Add("Dummy_", typeof(int));
+            dtDummy.Rows.Add(1);
+            var venta = _ventaBLL.ObtenerVentaPorIdDt(orderId);
+            if (venta == null)
+                return NotFound($"No se encontró la venta con OrderID = {orderId}");
+            var detalle =
+                _ventaDetalleBLL.ObtenerVentaDetallePorVentaId(orderId);
+            //=========================================
+            // REPORTE CLIENTE
+            //=========================================
+            report.DataSources.Add(
+                new ReportDataSource("DataSetDummy", dtDummy));
+            report.DataSources.Add(
+                new ReportDataSource("DataSetVenta", venta));
+            report.DataSources.Add(
+                new ReportDataSource("DataSet1", detalle));
+            report.SetParameters(new[]
+            {
+                new ReportParameter("PedidoId", orderId.ToString()),
+                new ReportParameter("FechaHora", $"Fecha: {strFecha}"),
+                new ReportParameter("Para", "Para: Cliente.")
+            });
+            byte[] pdfCliente = report.Render("PDF");
+            //=========================================
+            // REPORTE CONTROL INTERNO
+            //=========================================
+            report.DataSources.Clear();
+            report.DataSources.Add(
+                new ReportDataSource("DataSetDummy", dtDummy));
+            report.DataSources.Add(
+                new ReportDataSource("DataSetVenta", venta));
+            report.DataSources.Add(
+                new ReportDataSource("DataSet1", detalle));
+            report.SetParameters(new[]
+            {
+                new ReportParameter("PedidoId", orderId.ToString()),
+                new ReportParameter("FechaHora", $"Fecha: {strFecha}"),
+                new ReportParameter("Para", "Para: Control interno.")
+            });
+            byte[] pdfControl = report.Render("PDF");
+            //=========================================
+            // COMBINAR LOS DOS PDF
+            //=========================================
+            var helper = new ReporteServicePdfHelper();
+            byte[] pdfFinal = helper.CombinarPDFs(
+                new[]
+                {
+                    pdfCliente,
+                    pdfControl
+                });
+            return File(pdfFinal, "application/pdf");
         }
     }
 }
