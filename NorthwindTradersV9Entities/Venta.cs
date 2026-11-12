@@ -43,13 +43,13 @@
 
         // del diagrama entidad-relación podemos ver que
         // una venta tiene muchos detalles de venta asociados
-        //public List<VentaDetalle> VentaDetalles { get; set; } = new List<VentaDetalle>();
+        public List<VentaDetalle> VentaDetalles { get; set; } = new List<VentaDetalle>();
 
-        //public Venta()
-        //{
-        //    Cliente = new Cliente();
-        //    Empleado = new Empleado();
-        //    Transportista = new Transportista();
-        //}
+        public Venta()
+        {
+            Cliente = new Cliente();
+            Empleado = new Empleado();
+            Transportista = new Transportista();
+        }
     }
 }

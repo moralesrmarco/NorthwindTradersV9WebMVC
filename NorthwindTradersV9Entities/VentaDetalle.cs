@@ -52,11 +52,11 @@
 
         public decimal PrecioPorUnidadConIVADespuesDescuento => Math.Round(UnitPrice * (1 - Discount), 2, MidpointRounding.AwayFromZero);
 
-        public decimal IVADelPrecioporUnidadDespuesDescuento => Math.Round(PrecioPorUnidadConIVADespuesDescuento - PrecioPorUnidadSinIVADepuesDescuento, 2, MidpointRounding.AwayFromZero);
+        public decimal IVADelPrecioporUnidadDespuesDescuento => Math.Round(PrecioPorUnidadConIVADespuesDescuento - PrecioPorUnidadSinIVADespuesDescuento, 2, MidpointRounding.AwayFromZero);
 
-        public decimal PrecioPorUnidadSinIVADepuesDescuento => Math.Round(PrecioPorUnidadConIVADespuesDescuento / (1 + TasaIVA), 2, MidpointRounding.AwayFromZero);
+        public decimal PrecioPorUnidadSinIVADespuesDescuento => Math.Round(PrecioPorUnidadConIVADespuesDescuento / (1 + TasaIVA), 2, MidpointRounding.AwayFromZero);
 
-        public decimal AhorroPorUnidadSinIVA => Math.Round(PrecioPorUnidadSinIVASinDescuento - PrecioPorUnidadSinIVADepuesDescuento, 2, MidpointRounding.AwayFromZero);
+        public decimal AhorroPorUnidadSinIVA => Math.Round(PrecioPorUnidadSinIVASinDescuento - PrecioPorUnidadSinIVADespuesDescuento, 2, MidpointRounding.AwayFromZero);
 
         public decimal AhorroEnIVAPorUnidadDespuesDescuento => Math.Round(IVADelPrecioPorUnidadSinDescuento - IVADelPrecioporUnidadDespuesDescuento, 2, MidpointRounding.AwayFromZero);
 

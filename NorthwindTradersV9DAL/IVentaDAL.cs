@@ -12,5 +12,9 @@ namespace NorthwindTradersV9DAL
         VentaDto? ObtenerVentaPorId(int id);
         Venta ObtenerVentaPorIdRpt(int orderId);
         int Eliminar(VentaDto venta, out string productoExcede);
+        decimal? ObtenerTasaVigente(DateTime fecha);
+        EnvioInformacionDto? ObtenerUltimaInformacionDeEnvio(string customerId);
+        List<EnvioInformacionDto> ObtenerFormasEnvio(string customerID);
+        int InsertarVentaCompleta(Venta venta, out int orderId, out byte[] rowVersion);
     }
 }

@@ -17,5 +17,6 @@ namespace NorthwindTradersV9DAL
         List<ProductoDto> ObtenerProductosRpt(ProductosBuscarDto criterios);
         DataTable ObtenerProductosPorEncimaDelPrecioPromedio();
         List<ProductoDto> ObtenerProductosAlfabeticoRpt();
+        ProductoCostoEInventarioDto? ObtenerProductoCostoEInventario(int productId);
     }
 }

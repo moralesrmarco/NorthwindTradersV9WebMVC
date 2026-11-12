@@ -333,5 +333,34 @@ namespace NorthwindTradersV9DAL
             }
             return productos;
         }
+        public ProductoCostoEInventarioDto? ObtenerProductoCostoEInventario(int productId)
+        {
+            ProductoCostoEInventarioDto? dtoProductoCostoEInventario = null;
+            try
+            {
+                using (var con = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpProductoObtenerCostoEInventario", con))
+                using (var da = new SqlDataAdapter(cmd))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("ProductID", productId);
+                    var dt = new DataTable();
+                    da.Fill(dt);
+                    if (dt.Rows.Count == 0)
+                        return null;
+                    DataRow dr = dt.Rows[0];
+                    dtoProductoCostoEInventario = new ProductoCostoEInventarioDto
+                    {
+                        UnitPrice = dr["UnitPrice"] == DBNull.Value ? 0 : Convert.ToDecimal(dr["UnitPrice"]),
+                        UnitsInStock = dr["UnitsInStock"] == DBNull.Value ? (short)0 : Convert.ToInt16(dr["UnitsInStock"])
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el costo e inventario del producto: " + ex.Message);
+            }
+            return dtoProductoCostoEInventario;
+        }
     }
 }

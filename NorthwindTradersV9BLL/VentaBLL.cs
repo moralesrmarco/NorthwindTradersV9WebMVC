@@ -92,5 +92,31 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return resultado;
         }
+        public decimal? ObtenerTasaVigente(DateTime fecha)
+        {
+            return _ventaDAL.ObtenerTasaVigente(fecha);
+        }
+        public EnvioInformacionDto? ObtenerUltimaInformacionDeEnvio(string customerId)
+        {
+            return _ventaDAL.ObtenerUltimaInformacionDeEnvio(customerId);
+        }
+        public List<EnvioInformacionDto> ObtenerFormasEnvio(string customerId)
+        {
+            return _ventaDAL.ObtenerFormasEnvio(customerId);
+        }
+        public ResultadoOperacion InsertarVentaCompleta(Venta venta, out int orderId, out byte[] rowVersion)
+        {
+            var resultado = new ResultadoOperacion();
+            int numRegs = _ventaDAL.InsertarVentaCompleta(venta, out orderId, out rowVersion);
+            resultado.Codigo = numRegs;
+            if (numRegs > 0)
+                resultado.Exito = true;
+            else
+                resultado.Mensaje = StringsCommons.Nfrs;
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return resultado;
+        }
+
     }
 }

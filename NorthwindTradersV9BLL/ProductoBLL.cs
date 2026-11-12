@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
 using NorthwindTradersV9Common;
 using NorthwindTradersV9DAL;
 using NorthwindTradersV9DAL.Helpers;
@@ -12,10 +13,12 @@ namespace NorthwindTradersV9BLL
     {
         private readonly IProductoDAL _productoDAL;
         private readonly AppSettings _appSettings;
-        public ProductoBLL(IProductoDAL productoDAL, IOptions<AppSettings> appSettings)
+        private readonly ComboDataHelper _comboDataHelper;
+        public ProductoBLL(IProductoDAL productoDAL, IOptions<AppSettings> appSettings, ComboDataHelper comboDataHelper)
         {
             _productoDAL = productoDAL;
             _appSettings = appSettings.Value;
+            _comboDataHelper = comboDataHelper;
         }
         public ProductoPaginadoDto ObtenerProductosPaginadosConBusqueda(
             int pageIndex,
@@ -102,6 +105,16 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return _productoDAL.ObtenerProductosAlfabeticoRpt();
         }
-
+        public List<ComboItemDto> ObtenerProductosPorCategoriaCbo(int categoriaId)
+        {
+            return _comboDataHelper.LlenarCbo(
+                "SpProductosObtenerPorCategoriaCbo",
+                new SqlParameter("@Categoria", categoriaId)
+            );
+        }
+        public ProductoCostoEInventarioDto? ObtenerProductoCostoEInventario(int productId)
+        {
+            return _productoDAL.ObtenerProductoCostoEInventario(productId);
+        }
     }
 }
