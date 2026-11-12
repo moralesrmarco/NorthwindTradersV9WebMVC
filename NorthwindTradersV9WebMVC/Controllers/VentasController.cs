@@ -159,7 +159,6 @@ namespace NorthwindTradersV9WebMVC.Controllers
             venta.SubtotalImporteConIVA = ventaDetalle.Sum(d => d.SubtotalIVADespuesDelDescuento);
             venta.Total = ventaDetalle.Sum(d => d.Subtotal);
         }
-
         [HttpGet]
         public IActionResult NotaRemisionPdf(int orderId)
         {
@@ -233,6 +232,59 @@ namespace NorthwindTradersV9WebMVC.Controllers
                     pdfControl
                 });
             return File(pdfFinal, "application/pdf");
+        }
+        public IActionResult Eliminar(int id, string? returnUrl = null)
+        {
+            var model = new VentasEliminarViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            var venta = _ventaBLL.ObtenerVentaPorId(id);
+            if (venta == null)
+            {
+                TempData["Error"] = "<p>Venta no encontrada</p>" + StringsCommons.Nefep;
+                return View(model);
+            }
+            model.Venta = venta;
+            // Obtener los detalles de la venta.
+            model.VentaDetalle = _ventaDetalleBLL.ObtenerVentaDetallePorVentaId(id);
+            // Calcular los totales.
+            CalcularTotales(model.Venta, model.VentaDetalle);
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Eliminar(VentasEliminarViewModel model)
+        {
+            if (model.Venta != null)
+            {
+                var resultado = _ventaBLL.Eliminar(model.Venta);
+                if (resultado.Exito)
+                {
+                    if (!string.IsNullOrEmpty(model.ReturnUrl))
+                        return LocalRedirect(model.ReturnUrl);
+                    return RedirectToAction("Index", "Ventas");
+                }
+                else
+                {
+                    TempData["Error"] = $"<p>La venta con Id: <strong>{model.Venta.OrderID}</strong> del cliente: <strong>{model.Venta?.CustomerCompanyName}</strong>:</p>{resultado.Mensaje}";
+                    if (resultado.Codigo < 0)
+                        model.BloquearEliminacion = true;
+                    // Recargar los datos cuando el resultado sea -2 o -7.
+                    if (resultado.Codigo == -2 || resultado.Codigo == -7)
+                    {
+                        var venta = _ventaBLL.ObtenerVentaPorId(model.Venta.OrderID);
+                        if (venta != null)
+                        {
+                            model.Venta = venta;
+                            model.VentaDetalle =
+                                _ventaDetalleBLL.ObtenerVentaDetallePorVentaId(model.Venta.OrderID);
+                            CalcularTotales(model.Venta, model.VentaDetalle);
+                        }
+                    }
+                }
+            }
+            return View(model);
         }
     }
 }

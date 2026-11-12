@@ -4,6 +4,10 @@
     ViewData["Title"] = "Consulta de venta";
 }
 <h2 class="mb-4">Detalle de la venta</h2>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@Html.Raw(TempData["Error"])</div>
+}
 <ul class="nav nav-tabs" id="tabs">
     <li class="nav-item">
         <button type="button"
@@ -22,10 +26,6 @@
         </button>
     </li>
 </ul>
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@Html.Raw(TempData["Error"])</div>
-}
 <div class="tab-content border border-top-0 p-3">
     @* Pestaña: Consulta de la venta *@
     <div class="tab-pane fade show active small pt-0" id="consulta">

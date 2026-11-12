@@ -8,5 +8,6 @@ namespace NorthwindTradersV9WebMVC.Models.Ventas
         public VentaDto? Venta { get; set; } = new();
         public List<VentaDetalle> VentaDetalle { get; set; } = new List<VentaDetalle>();
         public string? ReturnUrl { get; set; }
+        public bool BloquearEliminacion { get; set; }
     }
 }

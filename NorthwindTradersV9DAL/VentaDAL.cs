@@ -272,5 +272,33 @@ namespace NorthwindTradersV9DAL
             }
             return venta;
         }
+        public int Eliminar(VentaDto venta, out string productoExcede)
+        {
+            int numRegs = 0;
+            try
+            {
+                using (var con = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpVentaEliminar", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@OrderID", venta.OrderID);
+                    cmd.Parameters.AddWithValue("@RowVersion", venta.RowVersion ?? (object)DBNull.Value);
+                    var paramProductoExcede = cmd.Parameters.Add("@ProductoExcede", SqlDbType.VarChar, 40);
+                    paramProductoExcede.Direction = ParameterDirection.Output;
+                    var returnParameter = cmd.Parameters.Add("@ReturnVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    paramProductoExcede.Value = paramProductoExcede.Value == DBNull.Value ? string.Empty : paramProductoExcede.Value;
+                    numRegs = (int)returnParameter.Value;
+                    productoExcede = paramProductoExcede.Value.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar la venta " + ex.Message);
+            }
+            return numRegs;
+        }
     }
 }
