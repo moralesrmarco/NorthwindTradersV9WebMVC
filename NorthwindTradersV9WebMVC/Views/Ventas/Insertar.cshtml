@@ -1,6 +1,6 @@
 ﻿@model NorthwindTradersV9WebMVC.Models.Ventas.VentasInsertarViewModel
 @{
-    ViewData["Title"] = "Insertar venta";
+    ViewData["Title"] = "Nueva venta";
 }
 <h2 class="mb-4">Nueva venta</h2>
 @if (!ViewData.ModelState.IsValid)
@@ -22,18 +22,16 @@
     {
         <div class="alert alert-danger">@Html.Raw(TempData["Error"])</div>
     }
-@*     @Html.AntiForgeryToken()
- *@
     <fieldset class="border rounded p-3 mb-3">
         <legend class="float-none w-auto px-2 fs-6">
             <strong>Registro de la venta</strong>
         </legend>
-        <div class="row mb-3">
+        <div class="row mb-3 small">
             <div class="col-md-6">
                 <label asp-for="VentaVM.CustomerID" class="form-label">Cliente</label>
                 <select id="cboCliente" asp-for="VentaVM.CustomerID"
                         asp-items="Model.Clientes"
-                        class="form-select" disabled="@(Model.VentaGuardada)">
+                        class="form-select form-select-sm" disabled="@(Model.VentaGuardada)">
                 </select>
                 <span asp-validation-for="VentaVM.CustomerID" class="text-danger"></span>
             </div>
@@ -41,15 +39,15 @@
                 <label asp-for="VentaVM.EmployeeID" class="form-label">Vendedor</label>
                 <select id="cboVendedor" asp-for="VentaVM.EmployeeID"
                         asp-items="Model.Vendedores"
-                        class="form-select" disabled="@(Model.VentaGuardada)">
+                        class="form-select form-select-sm" disabled="@(Model.VentaGuardada)">
                 </select>
                 <span asp-validation-for="VentaVM.EmployeeID" class="text-danger"></span>
             </div>
         </div>
-        <div class="row mb-3">
+        <div class="row mb-3 small">
             <div class="col-md-2">
                 <label>Fecha de venta</label>
-                <input asp-for="VentaVM.OrderDate" type="date" class="form-control" disabled="@(Model.VentaTieneDetalles || Model.VentaGuardada)"/>
+                <input asp-for="VentaVM.OrderDate" type="date" class="form-control form-control-sm" disabled="@(Model.VentaTieneDetalles || Model.VentaGuardada)"/>
             </div>
             <div class="col-md-2">
                 <label>Hora</label>
@@ -58,12 +56,12 @@
                        name="VentaVM.OrderTime"
                        value="@(Model.VentaVM.OrderTime?.ToString(@"hh\:mm"))"
                        step="60"
-                       class="form-control" 
+                       class="form-control form-control-sm"
                        disabled="@(Model.VentaTieneDetalles || Model.VentaGuardada)" />
             </div>
             <div class="col-md-2">
                 <label>Fecha requerido</label>
-                <input asp-for="VentaVM.RequiredDate" type="date" class="form-control" disabled="@(Model.VentaGuardada)" />
+                <input asp-for="VentaVM.RequiredDate" type="date" class="form-control form-control-sm" disabled="@(Model.VentaGuardada)" />
             </div>
             <div class="col-md-2">
                 <label>Hora</label>
@@ -72,11 +70,11 @@
                        name="VentaVM.RequiredTime"
                        value="@(Model.VentaVM.RequiredTime?.ToString(@"hh\:mm"))"
                        step="60"
-                       class="form-control" disabled="@(Model.VentaGuardada)" />
+                       class="form-control form-control-sm" disabled="@(Model.VentaGuardada)" />
             </div>            
             <div class="col-md-2">
                 <label>Fecha de envío</label>
-                <input asp-for="VentaVM.ShippedDate" type="date" class="form-control" disabled="@(Model.VentaGuardada)" />
+                <input asp-for="VentaVM.ShippedDate" type="date" class="form-control form-control-sm" disabled="@(Model.VentaGuardada)" />
             </div>
             <div class="col-md-2">
                 <label>Hora</label>
@@ -85,53 +83,53 @@
                        name="VentaVM.ShippedTime"
                        value="@(Model.VentaVM.ShippedTime?.ToString(@"hh\:mm"))"
                        step="60"
-                       class="form-control" disabled="@(Model.VentaGuardada)" />
+                       class="form-control form-control-sm" disabled="@(Model.VentaGuardada)" />
             </div>
         </div>
         <fieldset class="border rounded p-3 mb-3">
             <legend class="float-none w-auto px-2 fs-6">
                 <strong>Forma de envío:</strong>
             </legend>
-            <div class="row mb-3">
+            <div class="row mb-3 small">
                 <div class="col-md-4">
                     <label asp-for="VentaVM.ShipVia" class="form-label">Compañía transportista</label>
                     <select id="cboCompañia" asp-for="VentaVM.ShipVia"
                             asp-items="Model.Transportistas"
-                            class="form-select" disabled="@(Model.VentaGuardada)">
+                            class="form-select form-select-sm" disabled="@(Model.VentaGuardada)">
                     </select>
                 </div>
                 <div class="col-md-4">
                     <label asp-for="VentaVM.ShipName" class="form-label">Enviar a</label>
-                    <input asp-for="VentaVM.ShipName" class="form-control" disabled="@(Model.VentaGuardada)" />
+                    <input asp-for="VentaVM.ShipName" class="form-control form-control-sm" disabled="@(Model.VentaGuardada)" />
                 </div>
                 <div class="col-md-4">
                     <label asp-for="VentaVM.ShipAddress" class="form-label">Domicilio</label>
-                    <input asp-for="VentaVM.ShipAddress" class="form-control" disabled="@(Model.VentaGuardada)" />
+                    <input asp-for="VentaVM.ShipAddress" class="form-control form-control-sm" disabled="@(Model.VentaGuardada)" />
                 </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 small">
                 <div class="col-md-4">
                     <label asp-for="VentaVM.ShipCity" class="form-label">Ciudad</label>
-                    <input asp-for="VentaVM.ShipCity" class="form-control" disabled="@(Model.VentaGuardada)" />
+                    <input asp-for="VentaVM.ShipCity" class="form-control form-control-sm" disabled="@(Model.VentaGuardada)" />
                 </div>
                 <div class="col-md-4">
                     <label asp-for="VentaVM.ShipRegion" class="form-label">Región</label>
-                    <input asp-for="VentaVM.ShipRegion" class="form-control" disabled="@(Model.VentaGuardada)" />
+                    <input asp-for="VentaVM.ShipRegion" class="form-control form-control-sm" disabled="@(Model.VentaGuardada)" />
                 </div>
                 <div class="col-md-4">
                     <label asp-for="VentaVM.ShipPostalCode" class="form-label">Código postal</label>
-                    <input asp-for="VentaVM.ShipPostalCode" class="form-control" disabled="@(Model.VentaGuardada)" />
+                    <input asp-for="VentaVM.ShipPostalCode" class="form-control form-control-sm" disabled="@(Model.VentaGuardada)" />
                 </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 small">
                 <div class="col-md-4">
                     <label asp-for="VentaVM.ShipCountry" class="form-label">País</label>
-                    <input asp-for="VentaVM.ShipCountry" class="form-control" disabled="@(Model.VentaGuardada)" />
+                    <input asp-for="VentaVM.ShipCountry" class="form-control form-control-sm" disabled="@(Model.VentaGuardada)" />
                 </div>
                 <div class="col-md-4">
                     <label asp-for="VentaVM.Freight" class="form-label">Cargo por envío $</label>
                     <input asp-for="VentaVM.Freight"
-                           class="form-control"
+                           class="form-control form-control-sm"
                            type="number"
                            step="1"
                            min="0" disabled="@(Model.VentaGuardada)" />
@@ -159,39 +157,39 @@
             <legend class="float-none w-auto px-2 fs-6">
                 <strong>Agregar producto a la venta:</strong>
             </legend>
-            <div class="row mb-3">
+            <div class="row mb-3 small">
                 <div class="col-md-6">
                     <label asp-for="Detalle.CategoriaID" class="form-label">Categoría</label>
                     <select id="cboCategoria" asp-for="Detalle.CategoriaID"
                             asp-items="Model.Categorias"
-                            class="form-select" disabled="@(Model.VentaGuardada)">
+                            class="form-select form-select-sm" disabled="@(Model.VentaGuardada)">
                     </select>
                 </div>
                 <div class="col-md-6">
                     <label asp-for="Detalle.ProductID" class="form-label">Producto</label>
                     <select id="cboProducto" asp-for="Detalle.ProductID"
                             asp-items="Model.Productos"
-                            class="form-select" disabled="@(Model.VentaGuardada)">
+                            class="form-select form-select-sm" disabled="@(Model.VentaGuardada)">
                     </select>
                 </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 small">
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.UnitPrice" class="form-label flex-grow-1"><strong>Precio $</strong><br /><small class="text-muted">(con IVA incluido)</small></label>
-                    <input asp-for="Detalle.UnitPrice" class="form-control" readonly />
+                    <input asp-for="Detalle.UnitPrice" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.UnitsInStock" class="form-label flex-grow-1"><strong>Unidades en inventario</strong></label>
-                    <input asp-for="Detalle.UnitsInStock" class="form-control" readonly />
+                    <input asp-for="Detalle.UnitsInStock" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-2 d-flex flex-column">
                     <label asp-for="Detalle.Quantity" class="form-label flex-grow-1">Cantidad</label>
-                    <input asp-for="Detalle.Quantity" class="form-control" disabled="@(Model.VentaGuardada)" />
+                    <input asp-for="Detalle.Quantity" class="form-control form-control-sm" disabled="@(Model.VentaGuardada)" />
                 </div>
                 <div class="col-md-2 d-flex flex-column">
                     <label asp-for="Detalle.Discount" class="form-label flex-grow-1">Descuento (%)</label>
                     <input asp-for="Detalle.Discount"
-                           class="form-control"
+                           class="form-control form-control-sm"
                            type="number"
                            step="1"
                            min="0" 
@@ -207,83 +205,83 @@
                     </button>
                 </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 small">
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.PrecioPorUnidadSinIVASinDescuento" class="form-label flex-grow-1">Precio p/u $<br /><small class="text-muted">(sin IVA incluido antes del descuento)</small></label>
-                    <input asp-for="Detalle.PrecioPorUnidadSinIVASinDescuento" class="form-control" readonly />
+                    <input asp-for="Detalle.PrecioPorUnidadSinIVASinDescuento" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.IVADelPrecioPorUnidadSinDescuento" class="form-label flex-grow-1">IVA incluido p/u $ <br /><small class="text-muted">(antes del descuento)</small></label>
-                    <input asp-for="Detalle.IVADelPrecioPorUnidadSinDescuento" class="form-control" readonly />
+                    <input asp-for="Detalle.IVADelPrecioPorUnidadSinDescuento" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.PrecioPorUnidadSinIVADespuesDescuento" class="form-label flex-grow-1">Precio p/u $ <br /><small class="text-muted">(sin IVA incluido despues del descuento)</small></label>
-                    <input asp-for="Detalle.PrecioPorUnidadSinIVADespuesDescuento" class="form-control" readonly />
+                    <input asp-for="Detalle.PrecioPorUnidadSinIVADespuesDescuento" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.IVADelPrecioporUnidadDespuesDescuento" class="form-label flex-grow-1">IVA p/u $ <br /><small class="text-muted">(despues del descuento)</small></label>
-                    <input asp-for="Detalle.IVADelPrecioporUnidadDespuesDescuento" class="form-control" readonly />
+                    <input asp-for="Detalle.IVADelPrecioporUnidadDespuesDescuento" class="form-control form-control-sm" readonly />
                 </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 small">
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.AhorroPorUnidadSinIVA" class="form-label flex-grow-1">Ahorro p/u $ <br /><small class="text-muted">(Sin IVA despues del descuento)</small></label>
-                    <input asp-for="Detalle.AhorroPorUnidadSinIVA" class="form-control" readonly />
+                    <input asp-for="Detalle.AhorroPorUnidadSinIVA" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.AhorroEnIVAPorUnidadDespuesDescuento" class="form-label flex-grow-1">Ahorro en IVA p/u $ <br /><small class="text-muted">(despues del descuento)</small></label>
-                    <input asp-for="Detalle.AhorroEnIVAPorUnidadDespuesDescuento" class="form-control" readonly />
+                    <input asp-for="Detalle.AhorroEnIVAPorUnidadDespuesDescuento" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.AhorroTotalPorUnidadConIVA" class="form-label flex-grow-1">Ahorro total p/u $ <br /><small class="text-muted">(con IVA despues del descuento)</small></label>
-                    <input asp-for="Detalle.AhorroTotalPorUnidadConIVA" class="form-control" readonly />
+                    <input asp-for="Detalle.AhorroTotalPorUnidadConIVA" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.PrecioPorUnidadConIVADespuesDescuento" class="form-label flex-grow-1">Precio p/u $ <br /><small class="text-muted">(con IVA incluido despues del descuento)</small></label>
-                    <input asp-for="Detalle.PrecioPorUnidadConIVADespuesDescuento" class="form-control" readonly />
+                    <input asp-for="Detalle.PrecioPorUnidadConIVADespuesDescuento" class="form-control form-control-sm" readonly />
                 </div>
             </div>
             <fieldset class="border rounded p-3 mb-3">
                 <legend class="float-none w-auto px-2 fs-6">
                     <strong>Subtotales de la venta del producto:</strong>
                 </legend>
-                <div class="row mb-3">
+                <div class="row mb-3 small">
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelImporteConIVAIncluido" class="form-label flex-grow-1">Subtotal del importe $ <br /><small class="text-muted">(Precio con IVA incluido)</small></label>
-                        <input asp-for="Detalle.SubtotalDelImporteConIVAIncluido" class="form-control" readonly />
+                        <input asp-for="Detalle.SubtotalDelImporteConIVAIncluido" class="form-control form-control-sm" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelImporteSinIVASinDescuento" class="form-label flex-grow-1">Subtotal del importe sin IVA antes del descuento $ <br /><small class="text-muted">(Precio sin IVA incluido antes del descuento)</small></label>
-                        <input asp-for="Detalle.SubtotalDelImporteSinIVASinDescuento" class="form-control" readonly />
+                        <input asp-for="Detalle.SubtotalDelImporteSinIVASinDescuento" class="form-control form-control-sm" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelImporteDelIVASinDescuento" class="form-label flex-grow-1">Subtotal del IVA incluido $ <br /><small class="text-muted">(Antes del descuento)</small></label>
-                        <input asp-for="Detalle.SubtotalDelImporteDelIVASinDescuento" class="form-control" readonly />
+                        <input asp-for="Detalle.SubtotalDelImporteDelIVASinDescuento" class="form-control form-control-sm" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelImporteSinIVAConDescuento" class="form-label flex-grow-1">Subtotal del importe sin IVA despues del descuento $ <br /><small class="text-muted">(Precio sin IVA incluido despues del descuento)</small></label>
-                        <input asp-for="Detalle.SubtotalDelImporteSinIVAConDescuento" class="form-control" readonly />
+                        <input asp-for="Detalle.SubtotalDelImporteSinIVAConDescuento" class="form-control form-control-sm" readonly />
                     </div>
                 </div>
-                <div class="row mb-3">
+                <div class="row mb-3 small">
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalIVADespuesDelDescuento" class="form-label flex-grow-1">Subtotal del IVA despues del descuento $</label>
-                        <input asp-for="Detalle.SubtotalIVADespuesDelDescuento" class="form-control" readonly />
+                        <input asp-for="Detalle.SubtotalIVADespuesDelDescuento" class="form-control form-control-sm" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelAhorroSinIvaDespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro sin IVA $ <br /><small class="text-muted">(despues del descuento)</small></label>
-                        <input asp-for="Detalle.SubtotalDelAhorroSinIvaDespuesDescuento" class="form-control" readonly />
+                        <input asp-for="Detalle.SubtotalDelAhorroSinIvaDespuesDescuento" class="form-control form-control-sm" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelAhorroEnIVADespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro en IVA $ <br /><small class="text-muted">(despues del descuento)</small></label>
-                        <input asp-for="Detalle.SubtotalDelAhorroEnIVADespuesDescuento" class="form-control" readonly />
+                        <input asp-for="Detalle.SubtotalDelAhorroEnIVADespuesDescuento" class="form-control form-control-sm" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelAhorroTotalDespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro total $ <br /><small class="text-muted">(despues del descuento)</small></label>
-                        <input asp-for="Detalle.SubtotalDelAhorroTotalDespuesDescuento" class="form-control" readonly />
+                        <input asp-for="Detalle.SubtotalDelAhorroTotalDespuesDescuento" class="form-control form-control-sm" readonly />
                     </div>
                 </div>
-                <div class="row mb-3">
+                <div class="row mb-3 small">
                     <div class="col-md-3 d-flex flex-column">
                     </div>
                     <div class="col-md-3 d-flex flex-column">
@@ -292,7 +290,7 @@
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.Subtotal" class="form-label flex-grow-1"><strong>Total del producto $</strong></label>
-                        <input asp-for="Detalle.Subtotal" class="form-control" readonly />
+                        <input asp-for="Detalle.Subtotal" class="form-control form-control-sm" readonly />
                     </div>
                 </div>
             </fieldset>
@@ -331,40 +329,40 @@
             <legend class="float-none w-auto px-2 fs-6">
                 <strong>Totales de la venta:</strong>
             </legend>
-            <div class="row mb-3">
+            <div class="row mb-3 small">
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.NumeroProductos" class="form-label flex-grow-1">Número de productos</label>
-                    <input asp-for="Totales.NumeroProductos" class="form-control" readonly />
+                    <input asp-for="Totales.NumeroProductos" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.TotalUnidades" class="form-label flex-grow-1">Total de unidades</label>
-                    <input asp-for="Totales.TotalUnidades" class="form-control" readonly />
+                    <input asp-for="Totales.TotalUnidades" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.TotalImporteConIVA" class="form-label flex-grow-1">Subtotal del importe $ <br /><small class="text-muted">(precio con IVA incluido)</small></label>
-                    <input asp-for="Totales.TotalImporteConIVA" class="form-control" readonly />
+                    <input asp-for="Totales.TotalImporteConIVA" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.TotalDescuento" class="form-label flex-grow-1">Subtotal del importe del descuento $</label>
-                    <input asp-for="Totales.TotalDescuento" class="form-control" readonly />
+                    <input asp-for="Totales.TotalDescuento" class="form-control form-control-sm" readonly />
                 </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 small">
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.TotalImporteConDescuento" class="form-label flex-grow-1">Subtotal del importe con descuento $</label>
-                    <input asp-for="Totales.TotalImporteConDescuento" class="form-control" readonly />
+                    <input asp-for="Totales.TotalImporteConDescuento" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.TotalImporteSinIVA" class="form-label flex-grow-1">Subtotal del importe sin IVA $</label>
-                    <input asp-for="Totales.TotalImporteSinIVA" class="form-control" readonly />
+                    <input asp-for="Totales.TotalImporteSinIVA" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.TotalIVA" class="form-label flex-grow-1">Subtotal del importe del IVA $ <br /><small class="text-muted">(incluido)</small></label>
-                    <input asp-for="Totales.TotalIVA" class="form-control" readonly />
+                    <input asp-for="Totales.TotalIVA" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.Total" class="form-label flex-grow-1"><strong>Total</strong></label>
-                    <input asp-for="Totales.Total" class="form-control" readonly />
+                    <input asp-for="Totales.Total" class="form-control form-control-sm" readonly />
                 </div>
             </div>
         </fieldset>
@@ -452,9 +450,13 @@
             </div>
             <div class="modal-footer">
                 <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-                    Cerrar
+                        class="btn btn-warning btn-sm"
+                        data-bs-dismiss="modal"
+                        title="Cerrar">
+                    <i class="bi bi-x-circle"></i>
+                    <span class="d-none d-md-inline">
+                        &nbsp;Cerrar
+                    </span>
                 </button>
             </div>
         </div>
@@ -603,7 +605,7 @@
                 return;
             }
             $.getJSON(
-                '@Url.Action("UltimaInformacionEnvio", "Ventas")'
+                '@Url.Action("UltimaInformacionEnvio", "Ventas")',
                 { customerId: customerId },
                 function(data) {
                     if (data == null)
@@ -618,6 +620,36 @@
                 });
         }
 
+        function limpiarCalculosDetalle() {
+
+            // Limpiar precios por unidad
+            $("#Detalle_PrecioPorUnidadSinIVASinDescuento").val(0);
+            $("#Detalle_IVADelPrecioPorUnidadSinDescuento").val(0);
+            $("#Detalle_PrecioPorUnidadSinIVADespuesDescuento").val(0);
+            $("#Detalle_IVADelPrecioporUnidadDespuesDescuento").val(0);
+
+            // Limpiar ahorros por unidad
+            $("#Detalle_AhorroPorUnidadSinIVA").val(0);
+            $("#Detalle_AhorroEnIVAPorUnidadDespuesDescuento").val(0);
+            $("#Detalle_AhorroTotalPorUnidadConIVA").val(0);
+            $("#Detalle_PrecioPorUnidadConIVADespuesDescuento").val(0);
+
+            // Limpiar subtotales del producto
+            $("#Detalle_SubtotalDelImporteConIVAIncluido").val(0);
+            $("#Detalle_SubtotalDelImporteSinIVASinDescuento").val(0);
+            $("#Detalle_SubtotalDelImporteDelIVASinDescuento").val(0);
+            $("#Detalle_SubtotalDelImporteSinIVAConDescuento").val(0);
+            $("#Detalle_SubtotalIVADespuesDelDescuento").val(0);
+
+            // Limpiar ahorros de los subtotales
+            $("#Detalle_SubtotalDelAhorroSinIvaDespuesDescuento").val(0);
+            $("#Detalle_SubtotalDelAhorroEnIVADespuesDescuento").val(0);
+            $("#Detalle_SubtotalDelAhorroTotalDespuesDescuento").val(0);
+
+            // Limpiar total del producto
+            $("#Detalle_Subtotal").val(0);
+        }
+
         function cargarInformacionProducto(productId) {
             if (productId == "") {
                 $("#Detalle_UnitPrice").val("");
@@ -625,7 +657,7 @@
                 return;
             }
             $.getJSON(
-                '@Url.Action("ProductoCostoEInventario", "Ventas")'
+                '@Url.Action("ProductoCostoEInventario", "Ventas")',
                 { productId: productId },
                 function(data) {
                     if (data == null)
@@ -977,7 +1009,7 @@
                 return;
             }
             $.getJSON(
-                '@Url.Action("FormasEnvioCliente", "Ventas")'
+                '@Url.Action("FormasEnvioCliente", "Ventas")',
                 { customerId: customerId },
                 function(lista) {
                     llenarTablaFormasEnvio(lista);
@@ -1004,15 +1036,20 @@
                     <td class="text-center">
                         <button
                             type="button"
-                            class="btn btn-sm btn-primary btnSeleccionar"
-                            data-index="${indice}">
-                            Seleccionar
+                            class="btn btn-sm btn-success btnSeleccionar text-no-wrap d-inline-flex align-items-center gap-1"
+                            data-index="${indice}"
+                            title="Seleccionar">
+                            <i class="bi bi-check-square"></i>
+                            <span class="d-none d-md-inline">
+                            &nbsp;Seleccionar
+                            </span>
                         </button>
                     </td>
                 </tr>`;
             });
             $("#tbodyFormasEnvio").html(html);
         }
+
         $(document).on("click", ".btnSeleccionar", function() {
             let indice = $(this).data("index");
             let fila = $("#tbodyFormasEnvio tr")
@@ -1060,6 +1097,12 @@
         });
 
         $("#cboProducto").change(function() {
+            // Reiniciar cantidad y descuento
+            $("#Detalle_Quantity").val(0);
+            $("#Detalle_Discount").val(0);
+            // Limpiar cálculos del producto anterior
+            limpiarCalculosDetalle();
+            // Cargar precio e inventario del nuevo producto
             cargarInformacionProducto($(this).val());
         });
 
