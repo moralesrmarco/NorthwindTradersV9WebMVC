@@ -1,0 +1,1629 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Ventas.VentasEditarViewModel
+@{
+    ViewData["Title"] = "Editar Venta";
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div asp-validation-summary="All" class="alert alert-danger"></div>
+}
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
+<form asp-controller="Ventas"
+        asp-action="Editar"
+        method="post"
+        id="frmVenta"
+        class="form">
+    <div id="validationSummary"
+         class="alert alert-danger"
+         style="display:none">
+    </div>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@Html.Raw(TempData["Error"])</div>
+    }
+    <fieldset class="border rounded p-3 mb-3">
+        <legend class="float-none w-auto px-2 fs-6">
+            <strong>Edición de la venta</strong>
+        </legend>
+        <div class="row mb-3 small">
+            <div class="col-md-2">
+                <label asp-for="VentaVM.OrderID" class="form-label">ID de la venta</label>
+                <input asp-for="VentaVM.OrderID" class="form-control" readonly />
+            </div>
+            <div class="col-md-5">
+                <label asp-for="VentaVM.CustomerID" class="form-label">Cliente</label>
+                <select id="cboCliente" asp-for="VentaVM.CustomerID"
+                        asp-items="Model.Clientes"
+                        class="form-select form-select-sm" disabled="@(Model.BloquearEdicion)">
+                </select>
+                <span asp-validation-for="VentaVM.CustomerID" class="text-danger"></span>
+            </div>
+            <div class="col-md-5">
+                <label asp-for="VentaVM.EmployeeID" class="form-label">Vendedor</label>
+                <select id="cboVendedor" asp-for="VentaVM.EmployeeID"
+                        asp-items="Model.Vendedores"
+                        class="form-select form-select-sm" disabled="@(Model.BloquearEdicion)">
+                </select>
+                <span asp-validation-for="VentaVM.EmployeeID" class="text-danger"></span>
+            </div>
+        </div>
+        @if (Model.VentaTieneDetalles)
+        {
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i>
+                <strong>Fecha de venta bloqueada.</strong>
+                La fecha y hora de la venta no pueden modificarse porque ya existen
+                detalles asociados. La fecha de la venta determina la tasa de impuesto
+                aplicada a los productos.
+            </div>
+        }
+        <div class="row mb-3 small">
+            <div class="col-md-2">
+                <label>Fecha de venta</label>
+                <input asp-for="VentaVM.OrderDate" type="date" class="form-control form-control-sm" disabled="@(Model.BloquearEdicion || Model.VentaTieneDetalles)"/>
+            </div>
+            <div class="col-md-2">
+                <label>Hora</label>
+                <input type="time"
+                       id="VentaVM_OrderTime"
+                       name="VentaVM.OrderTime"
+                       value="@(Model.VentaVM.OrderTime?.ToString(@"hh\:mm"))"
+                       step="60"
+                       class="form-control form-control-sm"
+                       disabled="@(Model.BloquearEdicion || Model.VentaTieneDetalles)" />
+            </div>
+            <div class="col-md-2">
+                <label>Fecha requerido</label>
+                <input asp-for="VentaVM.RequiredDate" type="date" class="form-control form-control-sm" disabled="@(Model.BloquearEdicion)" />
+            </div>
+            <div class="col-md-2">
+                <label>Hora</label>
+                <input type="time"
+                       id="VentaVM_RequiredTime"
+                       name="VentaVM.RequiredTime"
+                       value="@(Model.VentaVM.RequiredTime?.ToString(@"hh\:mm"))"
+                       step="60"
+                       class="form-control form-control-sm" disabled="@(Model.BloquearEdicion)" />
+            </div>            
+            <div class="col-md-2">
+                <label>Fecha de envío</label>
+                <input asp-for="VentaVM.ShippedDate" type="date" class="form-control form-control-sm" disabled="@(Model.BloquearEdicion)" />
+            </div>
+            <div class="col-md-2">
+                <label>Hora</label>
+                <input type="time"
+                       id="VentaVM_ShippedTime"
+                       name="VentaVM.ShippedTime"
+                       value="@(Model.VentaVM.ShippedTime?.ToString(@"hh\:mm"))"
+                       step="60"
+                       class="form-control form-control-sm" disabled="@(Model.BloquearEdicion)" />
+            </div>
+        </div>
+        <fieldset class="border rounded p-3 mb-3">
+            <legend class="float-none w-auto px-2 fs-6">
+                <strong>Forma de envío:</strong>
+            </legend>
+            <div class="row mb-3 small">
+                <div class="col-md-4">
+                    <label asp-for="VentaVM.ShipVia" class="form-label">Compañía transportista</label>
+                    <select id="cboCompañia" asp-for="VentaVM.ShipVia"
+                            asp-items="Model.Transportistas"
+                            class="form-select form-select-sm" disabled="@(Model.BloquearEdicion)">
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="VentaVM.ShipName" class="form-label">Enviar a</label>
+                    <input asp-for="VentaVM.ShipName" class="form-control form-control-sm" disabled="@(Model.BloquearEdicion)" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="VentaVM.ShipAddress" class="form-label">Domicilio</label>
+                    <input asp-for="VentaVM.ShipAddress" class="form-control form-control-sm" disabled="@(Model.BloquearEdicion)" />
+                </div>
+            </div>
+            <div class="row mb-3 small">
+                <div class="col-md-4">
+                    <label asp-for="VentaVM.ShipCity" class="form-label">Ciudad</label>
+                    <input asp-for="VentaVM.ShipCity" class="form-control form-control-sm" disabled="@(Model.BloquearEdicion)" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="VentaVM.ShipRegion" class="form-label">Región</label>
+                    <input asp-for="VentaVM.ShipRegion" class="form-control form-control-sm" disabled="@(Model.BloquearEdicion)" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="VentaVM.ShipPostalCode" class="form-label">Código postal</label>
+                    <input asp-for="VentaVM.ShipPostalCode" class="form-control form-control-sm" disabled="@(Model.BloquearEdicion)" />
+                </div>
+            </div>
+            <div class="row mb-3 small">
+                <div class="col-md-4">
+                    <label asp-for="VentaVM.ShipCountry" class="form-label">País</label>
+                    <input asp-for="VentaVM.ShipCountry" class="form-control form-control-sm" disabled="@(Model.BloquearEdicion)" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="VentaVM.Freight" class="form-label">Cargo por envío $</label>
+                    <input asp-for="VentaVM.Freight"
+                           class="form-control form-control-sm"
+                           type="number"
+                           step="1"
+                           min="0" disabled="@(Model.BloquearEdicion)" />
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="button"
+                            id="btnLimpiarEnvio"
+                            class="btn btn-sm btn-warning"
+                            title="Limpiar forma de envío" disabled="@(Model.BloquearEdicion)">
+                        <i class="bi bi-eraser"></i>
+                        <span class="d-none d-md-inline">Limpiar forma de envío</span>
+                    </button>
+                    &nbsp;&nbsp;
+                    <button type="button"
+                            id="btnSeleccionarEnvio"
+                            class="btn btn-sm btn-primary"
+                            title="Seleccionar forma de envío" disabled="@(Model.BloquearEdicion)">
+                        <i class="bi bi-check-square"></i>
+                        <span class="d-none d-md-inline">Seleccionar forma de envío</span>
+                    </button>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="border rounded p-3 mb-3">
+            <legend class="float-none w-auto px-2 fs-6">
+                <strong>Agregar producto a la venta:</strong>
+            </legend>
+            <div class="row mb-3 small">
+                <div class="col-md-6">
+                    <label asp-for="Detalle.CategoriaID" class="form-label">Categoría</label>
+                    <select id="cboCategoria" asp-for="Detalle.CategoriaID"
+                            asp-items="Model.Categorias"
+                            class="form-select form-select-sm" disabled="@(Model.BloquearEdicion)">
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Detalle.ProductID" class="form-label">Producto</label>
+                    <select id="cboProducto" asp-for="Detalle.ProductID"
+                            asp-items="Model.Productos"
+                            class="form-select form-select-sm" disabled="@(Model.BloquearEdicion)">
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3 small">
+                <div class="col-md-2 d-flex flex-column">
+                    <label asp-for="Detalle.UnitPrice" class="form-label flex-grow-1"><strong>Precio $</strong><br /><small class="text-muted">(con impuesto incluido)</small></label>
+                    <input asp-for="Detalle.UnitPrice" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-2 d-flex flex-column">
+                    <label asp-for="Detalle.UnitsInStock" class="form-label flex-grow-1"><strong>Unidades en inventario</strong></label>
+                    <input asp-for="Detalle.UnitsInStock" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-2 d-flex flex-column">
+                    <label asp-for="Detalle.Quantity" class="form-label flex-grow-1">Cantidad</label>
+                    <input asp-for="Detalle.Quantity" class="form-control form-control-sm" disabled="@(Model.BloquearEdicion)" />
+                </div>
+                <div class="col-md-2 d-flex flex-column">
+                    <label asp-for="Detalle.Discount" class="form-label flex-grow-1">Descuento (%)</label>
+                    <input asp-for="Detalle.Discount"
+                           class="form-control form-control-sm"
+                           type="number"
+                           step="1"
+                           min="0" 
+                           max="95.00" disabled="@(Model.BloquearEdicion)" />
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="button"
+                            id="btnAgregarProducto"
+                            class="btn btn-sm btn-primary"
+                            title="Agregar" disabled="@(Model.BloquearEdicion)">
+                        <i class="bi bi-plus-lg"></i>
+                        <span class="d-none d-md-inline"> Agregar</span>
+                    </button>
+                    <button type="button"
+                            id="btnCancelarEdicion"
+                            class="btn btn-sm btn-danger ms-2 d-none"
+                            title="Cancelar edición"
+                            disabled="@Model.BloquearEdicion">
+                        <i class="bi bi-x-circle"></i>
+                        <span class="d-none d-md-inline"> Cancelar edición</span>
+                    </button>
+                </div>
+            </div>
+            <div class="row mb-3 small">
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Detalle.PrecioPorUnidadSinIVASinDescuento" class="form-label flex-grow-1">Precio p/u $<br /><small class="text-muted">(sin impuesto incluido antes del descuento)</small></label>
+                    <input asp-for="Detalle.PrecioPorUnidadSinIVASinDescuento" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Detalle.IVADelPrecioPorUnidadSinDescuento" class="form-label flex-grow-1">Impuesto incluido p/u $ <br /><small class="text-muted">(antes del descuento)</small></label>
+                    <input asp-for="Detalle.IVADelPrecioPorUnidadSinDescuento" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Detalle.PrecioPorUnidadSinIVADespuesDescuento" class="form-label flex-grow-1">Precio p/u $ <br /><small class="text-muted">(sin impuesto incluido despues del descuento)</small></label>
+                    <input asp-for="Detalle.PrecioPorUnidadSinIVADespuesDescuento" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Detalle.IVADelPrecioporUnidadDespuesDescuento" class="form-label flex-grow-1">Impuesto p/u $ <br /><small class="text-muted">(despues del descuento)</small></label>
+                    <input asp-for="Detalle.IVADelPrecioporUnidadDespuesDescuento" class="form-control form-control-sm" readonly />
+                </div>
+            </div>
+            <div class="row mb-3 small">
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Detalle.AhorroPorUnidadSinIVA" class="form-label flex-grow-1">Ahorro p/u $ <br /><small class="text-muted">(Sin impuesto despues del descuento)</small></label>
+                    <input asp-for="Detalle.AhorroPorUnidadSinIVA" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Detalle.AhorroEnIVAPorUnidadDespuesDescuento" class="form-label flex-grow-1">Ahorro en impuesto p/u $ <br /><small class="text-muted">(despues del descuento)</small></label>
+                    <input asp-for="Detalle.AhorroEnIVAPorUnidadDespuesDescuento" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Detalle.AhorroTotalPorUnidadConIVA" class="form-label flex-grow-1">Ahorro total p/u $ <br /><small class="text-muted">(con impuesto despues del descuento)</small></label>
+                    <input asp-for="Detalle.AhorroTotalPorUnidadConIVA" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Detalle.PrecioPorUnidadConIVADespuesDescuento" class="form-label flex-grow-1">Precio p/u $ <br /><small class="text-muted">(con impuesto incluido despues del descuento)</small></label>
+                    <input asp-for="Detalle.PrecioPorUnidadConIVADespuesDescuento" class="form-control form-control-sm" readonly />
+                </div>
+            </div>
+            <fieldset class="border rounded p-3 mb-3">
+                <legend class="float-none w-auto px-2 fs-6">
+                    <strong>Subtotales de la venta del producto:</strong>
+                </legend>
+                <div class="row mb-3 small">
+                    <div class="col-md-3 d-flex flex-column">
+                        <label asp-for="Detalle.SubtotalDelImporteConIVAIncluido" class="form-label flex-grow-1">Subtotal del importe $ <br /><small class="text-muted">(Precio con impuesto incluido)</small></label>
+                        <input asp-for="Detalle.SubtotalDelImporteConIVAIncluido" class="form-control form-control-sm" readonly />
+                    </div>
+                    <div class="col-md-3 d-flex flex-column">
+                        <label asp-for="Detalle.SubtotalDelImporteSinIVASinDescuento" class="form-label flex-grow-1">Subtotal del importe sin impuesto antes del descuento $ <br /><small class="text-muted">(Precio sin impuesto incluido antes del descuento)</small></label>
+                        <input asp-for="Detalle.SubtotalDelImporteSinIVASinDescuento" class="form-control form-control-sm" readonly />
+                    </div>
+                    <div class="col-md-3 d-flex flex-column">
+                        <label asp-for="Detalle.SubtotalDelImporteDelIVASinDescuento" class="form-label flex-grow-1">Subtotal del impuesto incluido $ <br /><small class="text-muted">(Antes del descuento)</small></label>
+                        <input asp-for="Detalle.SubtotalDelImporteDelIVASinDescuento" class="form-control form-control-sm" readonly />
+                    </div>
+                    <div class="col-md-3 d-flex flex-column">
+                        <label asp-for="Detalle.SubtotalDelImporteSinIVAConDescuento" class="form-label flex-grow-1">Subtotal del importe sin impuesto despues del descuento $ <br /><small class="text-muted">(Precio sin impuesto incluido despues del descuento)</small></label>
+                        <input asp-for="Detalle.SubtotalDelImporteSinIVAConDescuento" class="form-control form-control-sm" readonly />
+                    </div>
+                </div>
+                <div class="row mb-3 small">
+                    <div class="col-md-3 d-flex flex-column">
+                        <label asp-for="Detalle.SubtotalIVADespuesDelDescuento" class="form-label flex-grow-1">Subtotal del impuesto despues del descuento $</label>
+                        <input asp-for="Detalle.SubtotalIVADespuesDelDescuento" class="form-control form-control-sm" readonly />
+                    </div>
+                    <div class="col-md-3 d-flex flex-column">
+                        <label asp-for="Detalle.SubtotalDelAhorroSinIvaDespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro sin impuesto $ <br /><small class="text-muted">(despues del descuento)</small></label>
+                        <input asp-for="Detalle.SubtotalDelAhorroSinIvaDespuesDescuento" class="form-control form-control-sm" readonly />
+                    </div>
+                    <div class="col-md-3 d-flex flex-column">
+                        <label asp-for="Detalle.SubtotalDelAhorroEnIVADespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro en impuesto $ <br /><small class="text-muted">(despues del descuento)</small></label>
+                        <input asp-for="Detalle.SubtotalDelAhorroEnIVADespuesDescuento" class="form-control form-control-sm" readonly />
+                    </div>
+                    <div class="col-md-3 d-flex flex-column">
+                        <label asp-for="Detalle.SubtotalDelAhorroTotalDespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro total $ <br /><small class="text-muted">(despues del descuento)</small></label>
+                        <input asp-for="Detalle.SubtotalDelAhorroTotalDespuesDescuento" class="form-control form-control-sm" readonly />
+                    </div>
+                </div>
+                <div class="row mb-3 small">
+                    <div class="col-md-3 d-flex flex-column">
+                    </div>
+                    <div class="col-md-3 d-flex flex-column">
+                    </div>
+                    <div class="col-md-3 d-flex flex-column">
+                    </div>
+                    <div class="col-md-3 d-flex flex-column">
+                        <label asp-for="Detalle.Subtotal" class="form-label flex-grow-1"><strong>Total del producto $</strong></label>
+                        <input asp-for="Detalle.Subtotal" class="form-control form-control-sm" readonly />
+                    </div>
+                </div>
+            </fieldset>
+        </fieldset>
+        <fieldset class="border rounded p-3 mb-3">
+            <legend class="float-none w-auto px-2 fs-6">
+                <strong>Detalle de la venta:</strong>
+            </legend>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped align-middle" style="font-size:0.75rem;">
+                    <thead class="table-light">
+                        <tr>
+                            <th class ="text-center">N°</th>
+                            <th class="text-center">Producto</th>
+                            <th class="text-center">Precio <br /><small class="text-muted">(con impuesto incluido)</small></th>
+                            <th class="text-center">Cantidad</th>
+                            <th class="text-center">Importe</th>
+                            <th class="text-center">Desc.</th>
+                            <th class="text-center">Importe del descuento</th>
+                            <th class="text-center">Importe con descuento</th>
+                            <th class="text-center">Tasa impuesto</th>
+                            <th class="text-center">Importe sin impuesto</th>
+                            <th class="text-center">Importe del impuesto <br /><small class="text-muted">(incluido)</small></th>
+                            <th class="text-center">Subtotal</th>
+                            <th class="text-center" width="120">Acciones</th>
+                            <th class="d-none"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblDetalle">
+
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+        <fieldset class="border rounded p-3 mb-3">
+            <legend class="float-none w-auto px-2 fs-6">
+                <strong>Totales de la venta:</strong>
+            </legend>
+            <div class="row mb-3 small">
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Totales.NumeroProductos" class="form-label flex-grow-1">Número de productos</label>
+                    <input asp-for="Totales.NumeroProductos" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Totales.TotalUnidades" class="form-label flex-grow-1">Total de unidades</label>
+                    <input asp-for="Totales.TotalUnidades" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Totales.TotalImporteConIVA" class="form-label flex-grow-1">Subtotal del importe $ <br /><small class="text-muted">(precio con impuesto incluido)</small></label>
+                    <input asp-for="Totales.TotalImporteConIVA" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Totales.TotalDescuento" class="form-label flex-grow-1">Subtotal del importe del descuento $</label>
+                    <input asp-for="Totales.TotalDescuento" class="form-control form-control-sm" readonly />
+                </div>
+            </div>
+            <div class="row mb-3 small">
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Totales.TotalImporteConDescuento" class="form-label flex-grow-1">Subtotal del importe con descuento $</label>
+                    <input asp-for="Totales.TotalImporteConDescuento" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Totales.TotalImporteSinIVA" class="form-label flex-grow-1">Subtotal del importe sin impuesto $</label>
+                    <input asp-for="Totales.TotalImporteSinIVA" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Totales.TotalIVA" class="form-label flex-grow-1">Subtotal del importe del impuesto $ <br /><small class="text-muted">(incluido)</small></label>
+                    <input asp-for="Totales.TotalIVA" class="form-control form-control-sm" readonly />
+                </div>
+                <div class="col-md-3 d-flex flex-column">
+                    <label asp-for="Totales.Total" class="form-label flex-grow-1"><strong>Total</strong></label>
+                    <input asp-for="Totales.Total" class="form-control form-control-sm" readonly />
+                </div>
+            </div>
+        </fieldset>
+        <div class="d-flex justify-content-end gap-2 mb-3">
+            <a asp-controller="Ventas"
+                asp-action="Insertar"
+                asp-route-nueva="true"
+                asp-route-returnUrl="@Model.ReturnUrl"
+               id="btnNuevaVenta"
+               class="btn btn-sm btn-primary"
+               title="Nueva venta">
+                <i class="bi bi-file-earmark-plus"></i>
+                <span class="d-none d-md-inline"> Nueva venta</span>
+            </a>
+            <button type="button"
+                    id="btnNotaRemision"                    
+                    class="btn btn-sm btn-warning"
+                    title="Nota de remisión"
+                    disabled="@(!Model.VentaGuardada)"
+                    data-url="@Url.Action(
+                    "NotaRemisionPdf",
+                    "Ventas",
+                    new { orderId = Model.OrderID })">
+                <i class="bi bi-printer"></i>
+                <span class="d-none d-md-inline">Nota de remisión</span>
+            </button>
+            <a href="@(Model.ReturnUrl ?? Url.Action("Index", "Ventas"))"
+               class="btn btn-sm btn-cancelar"
+               title="Cancelar">
+                <i class="bi bi-x-circle"></i>
+                <span class="d-none d-md-inline"> Cancelar</span>
+            </a>
+        </div>
+    </fieldset>
+    <input asp-for="OrderID" type="hidden" />
+    <input asp-for="VentaVM.RowVersion" type="hidden" />
+    <input type="hidden"
+           asp-for="VentaVM.TasaIVA"
+           id="VentaVM_TasaIVA" />
+</form>
+<div class="modal fade"
+     id="modalFormasEnvio"
+     tabindex="-1"
+     aria-labelledby="modalFormasEnvioLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFormasEnvioLabel">
+                    Seleccionar forma de envío
+                </h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="tblFormasEnvio"
+                        class="table table-bordered table-hover table-striped align-middle"
+                        style="font-size:0.65rem;">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center">Compañía transportista</th>
+                                <th class="text-center">Enviar a</th>
+                                <th class="text-center">Domicilio</th>
+                                <th class="text-center">Ciudad</th>
+                                <th class="text-center">Región</th>
+                                <th class="text-center">Código postal</th>
+                                <th class="text-center">País</th>
+                                <th class="d-none"></th>
+                                <th class="text-center" width="100">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyFormasEnvio">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-warning btn-sm"
+                        data-bs-dismiss="modal"
+                        title="Cerrar">
+                    <i class="bi bi-x-circle"></i>
+                    <span class="d-none d-md-inline">
+                        &nbsp;Cerrar
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        function activarNotaRemision() {
+            $("#btnNotaRemision").prop("disabled", false);
+        }
+
+        function mostrarErrorValidacion(mensaje) {
+            const summary = $("#validationSummary");
+            summary
+                .html("<ul><li>" + mensaje + "</li></ul>")
+                .show();
+            // Desplazar la página hacia el elemento de resumen de validación
+            try {
+                var top = summary.offset() ? summary.offset().top : 0;
+                // Dejar un pequeño espacio por encima
+                $("html, body").animate({ scrollTop: Math.max(top - 10, 0) }, 400);
+            } catch (e) {
+                // En caso de error (ej. summary no existe), hacer scroll al inicio
+                $("html, body").animate({ scrollTop: 0 }, 400);
+            }
+        }
+
+        function limpiarErrorValidacion() {
+            const summary = $("#validationSummary");
+            summary
+                .html("")
+                .hide();
+        }
+
+        function bloquearEdicionPorConcurrencia() {
+            ventaBloqueada = true;
+            detalleEnEdicion = null;
+
+            // Encabezado de la venta
+            $("#cboCliente").prop("disabled", true);
+            $("#cboVendedor").prop("disabled", true);
+
+            $("#VentaVM_OrderDate").prop("disabled", true);
+            $("#VentaVM_OrderTime").prop("disabled", true);
+
+            $("#VentaVM_RequiredDate").prop("disabled", true);
+            $("#VentaVM_RequiredTime").prop("disabled", true);
+
+            $("#VentaVM_ShippedDate").prop("disabled", true);
+            $("#VentaVM_ShippedTime").prop("disabled", true);
+
+            // Forma de envío
+            $("#cboCompañia").prop("disabled", true);
+
+            $("#VentaVM_ShipName").prop("disabled", true);
+            $("#VentaVM_ShipAddress").prop("disabled", true);
+            $("#VentaVM_ShipCity").prop("disabled", true);
+            $("#VentaVM_ShipRegion").prop("disabled", true);
+            $("#VentaVM_ShipPostalCode").prop("disabled", true);
+            $("#VentaVM_ShipCountry").prop("disabled", true);
+            $("#VentaVM_Freight").prop("disabled", true);
+
+            $("#btnLimpiarEnvio").prop("disabled", true);
+            $("#btnSeleccionarEnvio").prop("disabled", true);
+
+            // Captura de producto
+            $("#cboCategoria").prop("disabled", true);
+            $("#cboProducto").prop("disabled", true);
+
+            $("#Detalle_Quantity").prop("disabled", true);
+            $("#Detalle_Discount").prop("disabled", true);
+
+            $("#btnAgregarProducto").prop("disabled", true);
+            $("#btnCancelarEdicion").prop("disabled", true);
+
+            // Detalles existentes
+            $(".btnEditar").prop("disabled", true);
+            $(".btnEliminar").prop("disabled", true);
+        }
+
+        function actualizarEncabezado(alTerminar) {
+            const request = {
+                OrderID: parseInt($("#VentaVM_OrderID").val()),
+                CustomerID: $("#cboCliente").val(),
+                EmployeeID: parseInt($("#cboVendedor").val()),
+                OrderDate: $("#VentaVM_OrderDate").val() || null,
+                OrderTime: $("#VentaVM_OrderTime").val() || null,
+                RequiredDate: $("#VentaVM_RequiredDate").val() || null,
+                RequiredTime: $("#VentaVM_RequiredTime").val() || null,
+                ShippedDate: $("#VentaVM_ShippedDate").val() || null,
+                ShippedTime: $("#VentaVM_ShippedTime").val() || null,
+                RowVersion: $("#VentaVM_RowVersion").val()
+            };
+            $.ajax({
+                url: "?handler=ActualizarEncabezado",
+                type: "POST",
+                contentType: "application/json",
+                headers: {
+                    "RequestVerificationToken":
+                        $('input[name="__RequestVerificationToken"]').val()
+                },
+                data: JSON.stringify(request),
+                success: function(response) {
+                    if (response.ok) {
+                        limpiarErrorValidacion();
+                        //Actualizar la nueva RowVersion
+                        $("#VentaVM_RowVersion").val(response.rowVersion);
+                        activarNotaRemision();
+                        if (alTerminar) {
+                            alTerminar();
+                        }
+                    } else {
+                        mostrarErrorValidacion(response.mensaje);
+                        if (
+                            response.codigo === -1 ||
+                            response.codigo === -2 ||
+                            response.codigo === -99
+                        ) {
+                            bloquearEdicionPorConcurrencia();
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    mostrarErrorValidacion("Error al actualizar el encabezado.");
+                    console.error(xhr);
+                }
+            });
+        }
+
+        function llenarTabla(lista) {
+            let html = "";
+            lista.forEach(function(item, indice) {
+                html += `
+                                    <tr>
+                                        <td class="text-center">${indice + 1}</td>
+                                        <td>${item.productName}</td>
+                                        <td class="text-center">
+                                            ${Number(item.unitPrice).toLocaleString('es-MX',
+                    { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </td>
+                                        <td class="text-center">
+                                            ${item.quantity}
+                                        </td>
+                                        <td class="text-end">
+                                            ${Number(item.subtotalDelImporteConIVAIncluido).toLocaleString('es-MX',
+                        { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </td>
+                                        <td class="text-center">
+                                            <nobr>
+                                                ${(item.discount * 100).toFixed(2)} %
+                                            </nobr>
+                                        </td>
+                                        <td class="text-end">
+                                            ${Number(item.subtotalDelAhorroTotalDespuesDescuento).toLocaleString('es-MX',
+                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </td>
+                                        <td class="text-end">
+                                            ${Number(item.subtotalDelImporteConIVAConDescuento).toLocaleString('es-MX',
+                                { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </td>
+                                        <td class="text-center">
+                                            <nobr>
+                                                ${(item.tasaIVA * 100).toFixed(2)} %
+                                            </nobr>
+                                        </td>
+                                        <td class="text-end">
+                                            ${Number(item.subtotalDelImporteSinIVAConDescuento).toLocaleString('es-MX',
+                                    { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </td>
+                                        <td class="text-end">
+                                            ${Number(item.subtotalIVADespuesDelDescuento).toLocaleString('es-MX',
+                                        { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </td>
+                                        <td class="text-end fw-bold">
+                                            ${Number(item.subtotal).toLocaleString('es-MX',
+                                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-warning btnEditar"
+                                                    data-product-id="${item.productID}"
+                                                    data-row-version="${item.rowVersion}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-sm btn-danger btnEliminar"
+                                                    data-index="${indice}"
+                                                    data-product-id="${item.productID}"
+                                                    data-row-version="${item.rowVersion}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                        <td class="d-none">
+                                            ${item.productID}
+                                        </td>
+                                    </tr>`;
+            });
+            $("#tblDetalle").html(html);
+        }
+
+        function actualizarEnvio() {
+            const request = {
+                OrderID: parseInt($("#VentaVM_OrderID").val()),
+                ShipName: $("#VentaVM_ShipName").val(),
+                ShipAddress: $("#VentaVM_ShipAddress").val(),
+                ShipCity: $("#VentaVM_ShipCity").val(),
+                ShipRegion: $("#VentaVM_ShipRegion").val(),
+                ShipPostalCode: $("#VentaVM_ShipPostalCode").val(),
+                ShipCountry: $("#VentaVM_ShipCountry").val(),
+                ShipVia: $("#cboCompañia").val() || null,
+                Freight: $("#VentaVM_Freight").val() || null,
+                RowVersion: $("#VentaVM_RowVersion").val()
+            };
+            $.ajax({
+                url: "?handler=ActualizarEnvio",
+                type: "POST",
+                contentType: "application/json",
+                headers: {
+                    "RequestVerificationToken":
+                        $('input[name="__RequestVerificationToken"]').val()
+                },
+                data: JSON.stringify(request),
+                success: function(response) {
+                    if (response.ok) {
+                        limpiarErrorValidacion();
+                        $("#VentaVM_RowVersion").val(response.rowVersion);
+                        activarNotaRemision();
+                    }
+                    else {
+                        mostrarErrorValidacion(response.mensaje);
+                        if (
+                            response.codigo === -1 ||
+                            response.codigo === -2 ||
+                            response.codigo === -99
+                        ) {
+                            bloquearEdicionPorConcurrencia();
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    mostrarErrorValidacion("Error al actualizar el encabezado.");
+                    console.error(xhr);
+                }
+            });
+        }
+
+        function openCenteredPopup(url, title, w, h) {
+            const dualScreenLeft =
+                window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+            const dualScreenTop =
+                window.screenTop !== undefined ? window.screenTop : window.screenY;
+            const width =
+                window.innerWidth ||
+                document.documentElement.clientWidth ||
+                screen.width;
+            const height =
+                window.innerHeight ||
+                document.documentElement.clientHeight ||
+                screen.height;
+            const left = ((width / 2) - (w / 2)) + dualScreenLeft;
+            const top = ((height / 2) - (h / 2)) + dualScreenTop;
+            const newWindow = window.open(
+                url,
+                title,
+                'scrollbars=yes,resizable=yes,toolbar=no,location=no,status=no,menubar=no,width='
+                + w +
+                ',height='
+                + h +
+                ',top='
+                + top +
+                ',left='
+                + left
+            );
+            if (window.focus && newWindow) {
+                newWindow.focus();
+            }
+        }
+
+        $(function() {
+            // Mostrar overlay al cancelar
+            $('.btn-cancelar').on('click', function() {
+                mostrarLoadingOverlay();
+            });
+            // Ocultar overlay cuando la página se muestra nuevamente
+            window.addEventListener('pageshow', function() {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.style.display = 'none';
+                }
+            });
+        });
+
+        function obtenerUltimaInformacionEnvio(customerId, alTerminar) {
+            if (customerId == "") {
+                alTerminar(null);
+                return;
+            }
+
+            $.getJSON(
+                "?handler=UltimaInformacionEnvio",
+                { customerId: customerId },
+                function(data) {
+                    alTerminar(data);
+                }
+            ).fail(function(xhr) {
+                mostrarErrorValidacion(
+                    "No se pudo obtener la última información de envío."
+                );
+                console.error(xhr);
+            });
+        }
+
+        function aplicarInformacionEnvio(data) {
+            $("#VentaVM_ShipName").val("");
+            $("#VentaVM_ShipAddress").val("");
+            $("#VentaVM_ShipCity").val("");
+            $("#VentaVM_ShipRegion").val("");
+            $("#VentaVM_ShipPostalCode").val("");
+            $("#VentaVM_ShipCountry").val("");
+            $("#cboCompañia").val("");
+            $("#VentaVM_Freight").val(0);
+
+            if (data != null) {
+                $("#VentaVM_ShipName").val(data.shipName);
+                $("#VentaVM_ShipAddress").val(data.shipAddress);
+                $("#VentaVM_ShipCity").val(data.shipCity);
+                $("#VentaVM_ShipRegion").val(data.shipRegion);
+                $("#VentaVM_ShipPostalCode").val(data.shipPostalCode);
+                $("#VentaVM_ShipCountry").val(data.shipCountry);
+                $("#cboCompañia").val(String(data.shipVia));
+            }
+
+            actualizarEnvio();
+        }
+
+        function cargarFormasEnvio() {
+            let customerId = $("#cboCliente").val();
+            if (customerId == "") {
+                alert("Debe seleccionar un cliente.");
+                return;
+            }
+            $.getJSON(
+                "?handler=FormasEnvioCliente",
+                { customerId: customerId },
+                function(lista) {
+                    llenarTablaFormasEnvio(lista);
+                    new bootstrap.Modal(
+                        document.getElementById("modalFormasEnvio")
+                    ).show();
+                }
+            );
+        }
+
+        function llenarTablaFormasEnvio(lista) {
+            let html = "";
+            lista.forEach(function(item, indice) {
+                html += `
+                                <tr>
+                                    <td>${item.companyName ?? ""}</td>
+                                    <td>${item.shipName ?? ""}</td>
+                                    <td>${item.shipAddress ?? ""}</td>
+                                    <td>${item.shipCity ?? ""}</td>
+                                    <td>${item.shipRegion ?? ""}</td>
+                                    <td>${item.shipPostalCode ?? ""}</td>
+                                    <td>${item.shipCountry ?? ""}</td>
+                                    <td class="d-none">${item.shipVia}</td>
+                                    <td class="text-center">
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-success btnSeleccionar text-no-wrap d-inline-flex align-items-center gap-1"
+                                            data-index="${indice}"
+                                            title="Seleccionar forma de envío">
+                                            <i class="bi bi-check-square"></i>
+                                            <span class="d-none d-md-inline">
+                                            &nbsp;Seleccionar
+                                            </span>
+                                        </button>
+                                    </td>
+                                </tr>`;
+            });
+            $("#tbodyFormasEnvio").html(html);
+        }
+
+        function cargarProductos(categoriaId, productoSeleccionado, alTerminar) {
+            $("#cboProducto").empty();
+            // Si el usuario volvió a seleccionar "Seleccione"
+            if (categoriaId == "") {
+                $("#cboProducto").append(
+                    $("<option>")
+                        .val("")
+                        .text("»--- Seleccione una categoría ---«")
+                );
+                if (alTerminar)
+                    alTerminar();
+                return;
+            }
+            $.getJSON(
+                "?handler=ProductosPorCategoria",
+                { categoriaId: categoriaId },
+                function(data) {
+                    $.each(data, function(i, item) {
+                        $("#cboProducto").append(
+                            $("<option>")
+                                .val(item.value)
+                                .text(item.text)
+                        );
+                    });
+                    if (productoSeleccionado)
+                        $("#cboProducto").val(productoSeleccionado);
+                    if (alTerminar)
+                        alTerminar();
+                });
+        }
+
+        let detalleEnEdicion = null;
+        let ventaBloqueada = false;
+
+        function agregarProducto() {
+            if ($("#cboCategoria").val() == "") {
+                alert("Debe seleccionar una categoría.");
+                $("#cboCategoria").focus();
+                return;
+            }
+            if ($("#cboProducto").val() == "") {
+                alert("Debe seleccionar un producto.");
+                $("#cboProducto").focus();
+                return;
+            }
+            if (Number($("#Detalle_Quantity").val()) <= 0) {
+                alert("La cantidad debe ser mayor que 0.");
+                $("#Detalle_Quantity").focus().select();
+                return;
+            }
+            if (Number($("#Detalle_Quantity").val()) >
+                Number($("#Detalle_UnitsInStock").val())) {
+                alert("La cantidad no puede ser mayor que las unidades en inventario.");
+                $("#Detalle_Quantity").focus().select();
+                return;
+            }
+            let descuento = Number($("#Detalle_Discount").val());
+            if (descuento < 0 || descuento > 95.00) {
+                alert("El descuento debe estar entre 0 y 95.00%.");
+                $("#Detalle_Discount").focus().select();
+                return;
+            }
+            // ===== VALIDAR PRODUCTO DUPLICADO =====
+            let productoId = Number($("#cboProducto").val());
+            let repetido = false;
+            $("#tblDetalle tr").each(function() {
+                let id = Number($(this).find("td:last").text().trim());
+
+                if (id === productoId) {
+                    repetido = true;
+                    return false; // break
+                }
+            });
+            if (repetido) {
+                alert("No se puede agregar un mismo producto más de una vez a la venta.");
+                $("#cboProducto").focus();
+                return;
+            }
+            // ===== FIN VALIDACIÓN =====
+            // ===== CREAR REQUEST PARA EL BACKEND =====
+            let request = {
+                OrderID: Number($("#VentaVM_OrderID").val()),
+                RowVersion: $("#VentaVM_RowVersion").val(),
+                Detalle: {
+                    CategoriaID: Number($("#cboCategoria").val()),
+                    ProductID: Number($("#cboProducto").val()),
+                    ProductName: $("#cboProducto option:selected").text(),
+                    UnitPrice: Number($("#Detalle_UnitPrice").val()),
+                    UnitsInStock: Number($("#Detalle_UnitsInStock").val()),
+                    Quantity: Number($("#Detalle_Quantity").val()),
+                    Discount: Number($("#Detalle_Discount").val()) / 100,
+                    TasaIVA: Number($("#VentaVM_TasaIVA").val())
+                }
+            };
+
+            $.ajax({
+                url: "?handler=AgregarDetalle",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                headers: {
+                    "RequestVerificationToken":
+                        $('input[name="__RequestVerificationToken"]').val()
+                },
+                data: JSON.stringify(request),
+
+                success: function(r) {
+                    if (r.ok) {
+                        limpiarErrorValidacion();
+                        // Actualizar RowVersion de la venta
+                        $("#VentaVM_RowVersion").val(r.rowVersion);
+                        // Actualizar tabla con los datos reales de la BD
+                        llenarTabla(r.lista);
+                        // Actualizar totales
+                        mostrarTotales(r.totales);
+                        // Limpiar captura del producto
+                        limpiarCapturaProducto();
+                        activarNotaRemision();
+                    }
+                    else {
+                        mostrarErrorValidacion(r.mensaje);
+                        if (
+                            r.codigo === -3 ||
+                            r.codigo === -4 ||
+                            r.codigo === -10 ||
+                            r.codigo === -99
+                        ) {
+                            bloquearEdicionPorConcurrencia();
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    mostrarErrorValidacion(
+                        xhr.responseJSON?.mensaje ||
+                        "Ocurrió un error al insertar el detalle."
+                    );
+                    console.error(xhr);
+                }
+            });
+        }
+
+        function mostrarTotales(t) {
+            $("#Totales_NumeroProductos")
+                .val(t.numeroProductos);
+            $("#Totales_TotalUnidades")
+                .val(t.totalUnidades);
+            $("#Totales_TotalImporteConIVA")
+                .val(t.totalImporteConIVA);
+            $("#Totales_TotalDescuento")
+                .val(t.totalDescuento);
+            $("#Totales_TotalImporteConDescuento")
+                .val(t.totalImporteConDescuento);
+            $("#Totales_TotalImporteSinIVA")
+                .val(t.totalImporteSinIVA);
+            $("#Totales_TotalIVA")
+                .val(t.totalIVA);
+            $("#Totales_Total")
+                .val(t.total);
+        }
+
+        function limpiarCapturaProducto() {
+
+            // Regresar el producto a "Seleccione"
+            $("#cboProducto").val("");
+
+            // Limpiar datos del producto
+            $("#Detalle_UnitPrice").val(0);
+            $("#Detalle_UnitsInStock").val(0);
+
+            // Valores por defecto
+            $("#Detalle_Quantity").val(0);
+            $("#Detalle_Discount").val(0);
+
+            // Limpiar cálculos
+            $("#Detalle_PrecioPorUnidadSinIVASinDescuento").val(0);
+            $("#Detalle_IVADelPrecioPorUnidadSinDescuento").val(0);
+            $("#Detalle_PrecioPorUnidadSinIVADespuesDescuento").val(0);
+            $("#Detalle_IVADelPrecioporUnidadDespuesDescuento").val(0);
+
+            $("#Detalle_AhorroPorUnidadSinIVA").val(0);
+            $("#Detalle_AhorroEnIVAPorUnidadDespuesDescuento").val(0);
+            $("#Detalle_AhorroTotalPorUnidadConIVA").val(0);
+            $("#Detalle_PrecioPorUnidadConIVADespuesDescuento").val(0);
+
+            $("#Detalle_SubtotalDelImporteConIVAIncluido").val(0);
+            $("#Detalle_SubtotalDelImporteSinIVASinDescuento").val(0);
+            $("#Detalle_SubtotalDelImporteDelIVASinDescuento").val(0);
+            $("#Detalle_SubtotalDelImporteSinIVAConDescuento").val(0);
+            $("#Detalle_SubtotalIVADespuesDelDescuento").val(0);
+
+            $("#Detalle_SubtotalDelAhorroSinIvaDespuesDescuento").val(0);
+            $("#Detalle_SubtotalDelAhorroEnIVADespuesDescuento").val(0);
+            $("#Detalle_SubtotalDelAhorroTotalDespuesDescuento").val(0);
+
+            $("#Detalle_Subtotal").val(0);
+
+            // Dejar el foco en Producto
+            if (!ventaBloqueada) {
+                $("#cboProducto").focus();
+            }
+        }
+
+        function cargarInformacionProducto(productId) {
+            if (productId == "") {
+                $("#Detalle_UnitPrice").val("");
+                $("#Detalle_UnitsInStock").val("");
+                calcularDetalle();
+                return;
+            }
+            $.getJSON(
+                "?handler=ProductoCostoEInventario",
+                { productId: productId },
+                function(data) {
+                    if (data == null)
+                        return;
+                    $("#Detalle_UnitPrice").val(data.unitPrice);
+                    $("#Detalle_UnitsInStock").val(data.unitsInStock);
+                    calcularDetalle();
+                });
+        }
+
+        function calcularDetalle() {
+            const tasaIVA = parseFloat(
+                $("#VentaVM_TasaIVA").val()
+            ) || 0;
+            let detalle = {
+                unitPrice: Number($("#Detalle_UnitPrice").val()),
+                unitsInStock: Number($("#Detalle_UnitsInStock").val()),
+                quantity: Number($("#Detalle_Quantity").val()),
+                discount: Number($("#Detalle_Discount").val()) / 100,
+                tasaIVA: tasaIVA
+            };
+            $.ajax({
+                url: "?handler=CalcularDetalle",
+                type: "POST",
+                contentType: "application/json",
+                headers: {
+                    "RequestVerificationToken":
+                        $('input[name="__RequestVerificationToken"]').val()
+                },
+                data: JSON.stringify(detalle),
+                success: function(r) {
+                    // Datos básicos
+                    $("#Detalle_PrecioPorUnidadSinIVASinDescuento")
+                        .val(r.precioPorUnidadSinIVASinDescuento);
+                    $("#Detalle_IVADelPrecioPorUnidadSinDescuento")
+                        .val(r.ivaDelPrecioPorUnidadSinDescuento);
+                    $("#Detalle_PrecioPorUnidadSinIVADespuesDescuento")
+                        .val(r.precioPorUnidadSinIVADespuesDescuento);
+                    $("#Detalle_IVADelPrecioporUnidadDespuesDescuento")
+                        .val(r.ivaDelPrecioporUnidadDespuesDescuento);
+                    // Ahorros por unidad
+                    $("#Detalle_AhorroPorUnidadSinIVA")
+                        .val(r.ahorroPorUnidadSinIVA);
+                    $("#Detalle_AhorroEnIVAPorUnidadDespuesDescuento")
+                        .val(r.ahorroEnIVAPorUnidadDespuesDescuento);
+                    $("#Detalle_AhorroTotalPorUnidadConIVA")
+                        .val(r.ahorroTotalPorUnidadConIVA);
+                    $("#Detalle_PrecioPorUnidadConIVADespuesDescuento")
+                        .val(r.precioPorUnidadConIVADespuesDescuento);
+                    // Subtotales del producto
+                    $("#Detalle_SubtotalDelImporteConIVAIncluido")
+                        .val(r.subtotalDelImporteConIVAIncluido);
+                    $("#Detalle_SubtotalDelImporteSinIVASinDescuento")
+                        .val(r.subtotalDelImporteSinIVASinDescuento);
+                    $("#Detalle_SubtotalDelImporteDelIVASinDescuento")
+                        .val(r.subtotalDelImporteDelIVASinDescuento);
+                    $("#Detalle_SubtotalDelImporteSinIVAConDescuento")
+                        .val(r.subtotalDelImporteSinIVAConDescuento);
+                    $("#Detalle_SubtotalIVADespuesDelDescuento")
+                        .val(r.subtotalIVADespuesDelDescuento);
+                    // Ahorros subtotal
+                    $("#Detalle_SubtotalDelAhorroSinIvaDespuesDescuento")
+                        .val(r.subtotalDelAhorroSinIvaDespuesDescuento);
+                    $("#Detalle_SubtotalDelAhorroEnIVADespuesDescuento")
+                        .val(r.subtotalDelAhorroEnIVADespuesDescuento);
+                    $("#Detalle_SubtotalDelAhorroTotalDespuesDescuento")
+                        .val(r.subtotalDelAhorroTotalDespuesDescuento);
+                    // Total del producto
+                    $("#Detalle_Subtotal")
+                        .val(r.subtotal);
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+
+        function actualizarDetalle() {
+            const quantity = Number($("#Detalle_Quantity").val());
+            const discount = Number($("#Detalle_Discount").val()) / 100;
+            if (quantity <= 0) {
+                alert("La cantidad debe ser mayor que 0.");
+                $("#Detalle_Quantity").focus().select();
+                return;
+            }
+            if (discount < 0 || discount > 0.95) {
+                alert("El descuento debe estar entre 0 y 95.00%.");
+                $("#Detalle_Discount").focus().select();
+                return;
+            }
+            const request = {
+                OrderID: Number($("#VentaVM_OrderID").val()),
+                ProductID: detalleEnEdicion.productID,
+                Quantity: quantity,
+                Discount: discount,
+                VentaDetalleRowVersion: detalleEnEdicion.rowVersion,
+                VentaRowVersion: $("#VentaVM_RowVersion").val()
+            };
+            $("#btnAgregarProducto").prop("disabled", true);
+            $.ajax({
+                url: "?handler=ActualizarDetalle",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                headers: {
+                    "RequestVerificationToken":
+                        $('input[name="__RequestVerificationToken"]').val()
+                },
+                data: JSON.stringify(request),
+                success: function(r) {
+                    if (r.ok) {
+                        limpiarErrorValidacion();
+                        // Actualizar RowVersion de la venta
+                        $("#VentaVM_RowVersion").val(r.rowVersion);
+                        // Actualizar tabla
+                        llenarTabla(r.lista);
+                        // Actualizar totales
+                        mostrarTotales(r.totales);
+                        activarNotaRemision();
+                        // Salir del modo edición
+                        salirModoEdicion();
+                    }
+                    else {
+                        mostrarErrorValidacion(r.mensaje);
+                        /*
+                         * Estos códigos corresponden a problemas
+                         * de la venta que impiden seguir editando.
+                         */
+                        if (
+                            r.codigo === -1 ||
+                            r.codigo === -2 ||
+                            r.codigo === -3 ||
+                            r.codigo === -4 ||
+                            r.codigo === -99
+                        ) {
+                            salirModoEdicion();
+                            bloquearEdicionPorConcurrencia();
+                        }
+                        else {
+                            $("#btnAgregarProducto")
+                                .prop("disabled", false);
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    mostrarErrorValidacion(
+                        xhr.responseJSON?.mensaje ||
+                        "Ocurrió un error al actualizar el detalle."
+                    );
+                    console.error(xhr);
+                    $("#btnAgregarProducto")
+                        .prop("disabled", false);
+                }
+            });
+        }
+
+        function salirModoEdicion() {
+
+            detalleEnEdicion = null;
+
+            if (!ventaBloqueada) {
+
+                $("#cboCategoria, #cboProducto")
+                    .prop("disabled", false);
+
+                $("#Detalle_Quantity")
+                    .prop("disabled", false);
+
+                $("#Detalle_Discount")
+                    .prop("disabled", false);
+
+                $(".btnEditar, .btnEliminar")
+                    .prop("disabled", false);
+            }
+
+            $("#btnAgregarProducto")
+                .prop("disabled", ventaBloqueada)
+                .attr("title", "Agregar")
+                .find("span")
+                .text(" Agregar");
+
+            $("#btnAgregarProducto i")
+                .attr("class", "bi bi-plus-lg");
+
+            $("#btnCancelarEdicion")
+                .addClass("d-none");
+
+            $("#cboCategoria").val("");
+
+            cargarProductos("");
+
+            limpiarCapturaProducto();
+        }
+
+        function eliminarProducto(productID, rowVersion) {
+            if (!confirm("¿Está seguro de eliminar este producto?")) {
+                return;
+            }
+            let request = {
+                OrderID: Number($("#VentaVM_OrderID").val()),
+                ProductID: productID,
+                RowVersion: rowVersion,
+                VentaRowVersion: $("#VentaVM_RowVersion").val()
+            };
+            $.ajax({
+                type: "POST",
+                url: "?handler=EliminarDetalle",
+                contentType: "application/json; charset=utf-8",
+                headers: {
+                    "RequestVerificationToken":
+                        $('input[name="__RequestVerificationToken"]').val()
+                },
+                data: JSON.stringify(request),
+                success: function(r) {
+                    if (r.ok) {
+                        limpiarErrorValidacion();
+                        // Actualizar RowVersion de Orders
+                        $("#VentaVM_RowVersion")
+                            .val(r.rowVersion);
+                        // Actualizar tabla
+                        llenarTabla(r.lista);
+                        // Actualizar totales
+                        mostrarTotales(r.totales);
+                        activarNotaRemision();
+                    }
+                    else {
+                        mostrarErrorValidacion(
+                            r.mensaje ||
+                            "No se pudo eliminar el detalle."
+                        );
+
+                        if (
+                            r.codigo === -1 ||
+                            r.codigo === -2 ||
+                            r.codigo === -3 ||
+                            r.codigo === -4 ||
+                            r.codigo === -99
+                        ) {
+                            bloquearEdicionPorConcurrencia();
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    console.error(xhr);
+                    alert(
+                        "Ocurrió un error al eliminar el detalle."
+                    );
+                }
+            });
+        }
+
+        function editarProducto(productID, rowVersion) {
+
+            if (ventaBloqueada) {
+                return;
+            }
+
+            const request = {
+                OrderID: Number($("#VentaVM_OrderID").val()),
+                ProductID: productID,
+                RowVersion: rowVersion
+            };
+
+            $.ajax({
+                url: "?handler=ObtenerDetalleEditar",
+                type: "POST",
+                contentType: "application/json",
+
+                headers: {
+                    "RequestVerificationToken":
+                        $('input[name="__RequestVerificationToken"]').val()
+                },
+
+                data: JSON.stringify(request),
+
+                success: function(r) {
+
+                    if (r.success) {
+
+                        detalleEnEdicion = {
+                            productID: r.detalle.productID,
+                            rowVersion: r.detalle.rowVersion
+                        };
+
+                        $("#cboCategoria")
+                            .val(r.detalle.categoriaID);
+
+                        cargarProductos(
+                            r.detalle.categoriaID,
+                            r.detalle.productID,
+                            function() {
+
+                                $("#Detalle_UnitPrice")
+                                    .val(r.detalle.unitPrice);
+
+                                $("#Detalle_UnitsInStock")
+                                    .val(r.detalle.unitsInStock);
+
+                                $("#Detalle_Quantity")
+                                    .val(r.detalle.quantity);
+
+                                $("#Detalle_Discount")
+                                    .val(r.detalle.discount * 100);
+
+                                // No permitir cambiar el producto
+                                $("#cboCategoria, #cboProducto")
+                                    .prop("disabled", true);
+
+                                // Evitar editar/eliminar otro detalle
+                                $(".btnEditar, .btnEliminar")
+                                    .prop("disabled", true);
+
+                                // Cambiar botón Agregar por Guardar
+                                $("#btnAgregarProducto")
+                                    .prop("disabled", false)
+                                    .attr("title", "Guardar cambios")
+                                    .find("span")
+                                    .text(" Guardar cambios");
+
+                                $("#btnAgregarProducto i")
+                                    .attr("class", "bi bi-floppy");
+
+                                $("#btnCancelarEdicion")
+                                    .removeClass("d-none")
+                                    .prop("disabled", false);
+
+                                calcularDetalle();
+
+                                $("#Detalle_Quantity")
+                                    .focus()
+                                    .select();
+                            }
+                        );
+                    }
+                    else {
+
+                        mostrarErrorValidacion(
+                            r.message ||
+                            "No se pudo obtener el detalle para editar."
+                        );
+
+                        if (
+                            r.bloquearEdicionPorConcurrencia === true
+                        ) {
+                            bloquearEdicionPorConcurrencia();
+                        }
+                    }
+                },
+
+                error: function(xhr) {
+
+                    console.error(xhr);
+
+                    mostrarErrorValidacion(
+                        xhr.responseJSON?.message ||
+                        "Ocurrió un error al obtener el detalle."
+                    );
+                }
+            });
+        }
+
+        // ===== EVENTOS =====
+        $(document).on("click", ".btnSeleccionar", function() {
+            let indice = $(this).data("index");
+            let fila = $("#tbodyFormasEnvio tr")
+                .eq(indice);
+            $("#VentaVM_ShipName")
+                .val(fila.find("td:eq(1)").text());
+            $("#VentaVM_ShipAddress")
+                .val(fila.find("td:eq(2)").text());
+            $("#VentaVM_ShipCity")
+                .val(fila.find("td:eq(3)").text());
+            $("#VentaVM_ShipRegion")
+                .val(fila.find("td:eq(4)").text());
+            $("#VentaVM_ShipPostalCode")
+                .val(fila.find("td:eq(5)").text());
+            $("#VentaVM_ShipCountry")
+                .val(fila.find("td:eq(6)").text());
+            // Seleccionar compañía transportista
+            let shipVia = fila.find("td:eq(7)").text();
+            $("#cboCompañia")
+                .val(shipVia)
+                .trigger("change");
+            let modal = bootstrap.Modal.getInstance(
+                document.getElementById("modalFormasEnvio")
+            );
+            modal.hide();
+        });
+
+        $("#btnLimpiarEnvio").click(function() {
+            $("#cboCompañia").val("");
+            $("#VentaVM_ShipName").val("");
+            $("#VentaVM_ShipAddress").val("");
+            $("#VentaVM_ShipCity").val("");
+            $("#VentaVM_ShipRegion").val("");
+            $("#VentaVM_ShipPostalCode").val("");
+            $("#VentaVM_ShipCountry").val("");
+            $("#VentaVM_Freight").val(0);
+            // Guardar inmediatamente los cambios en la BD
+            actualizarEnvio();
+        });
+
+        $(
+            "#cboVendedor," +
+            "#VentaVM_OrderDate," +
+            "#VentaVM_OrderTime," +
+            "#VentaVM_RequiredDate," +
+            "#VentaVM_RequiredTime," +
+            "#VentaVM_ShippedDate," +
+            "#VentaVM_ShippedTime"
+        ).on("change", actualizarEncabezado);
+
+        $(
+            "#VentaVM_ShipName," +
+            "#VentaVM_ShipAddress," +
+            "#VentaVM_ShipCity," +
+            "#VentaVM_ShipRegion," +
+            "#VentaVM_ShipPostalCode," +
+            "#VentaVM_ShipCountry," +
+            "#cboCompañia," +
+            "#VentaVM_Freight"
+        ).on("change", actualizarEnvio);
+
+        $("#btnSeleccionarEnvio").click(function() {
+            cargarFormasEnvio();
+        });
+
+        $("#cboCategoria").change(function() {
+            cargarProductos($(this).val());
+        });
+
+        $("#cboProducto").change(function() {
+            cargarInformacionProducto($(this).val());
+        });
+
+        $("#Detalle_Quantity").on("input", calcularDetalle);
+
+        $("#Detalle_Discount").on("input", calcularDetalle);
+
+        $("#Detalle_Quantity").focus(function() {
+            $(this).select();
+        });
+
+        $("#Detalle_Discount").focus(function() {
+            $(this).select();
+        });
+
+        $("#btnAgregarProducto").click(function() {
+            if (detalleEnEdicion) {
+                actualizarDetalle();
+            }
+            else {
+                agregarProducto();
+            }
+        });
+
+        $("#cboCliente").change(function() {
+            const customerId = $(this).val();
+            obtenerUltimaInformacionEnvio(customerId, function(data) {
+                actualizarEncabezado(function() {
+                    aplicarInformacionEnvio(data);
+                });
+            });
+        });
+
+        $(document).on("click", ".btnEliminar", function() {
+            const productID = Number($(this).data("product-id"));
+            const rowVersion = $(this).data("row-version");
+            eliminarProducto(productID, rowVersion);
+        });
+
+        $(document).on("click", ".btnEditar", function() {
+            const productID =
+                Number($(this).data("product-id"));
+            const rowVersion =
+                $(this).data("row-version");
+            editarProducto(
+                productID,
+                rowVersion
+            );
+        });
+
+        $("#btnCancelarEdicion").click(function() {
+            salirModoEdicion();
+        });
+
+        $("#frmVenta").on("submit", function(e) {
+            // Existe un producto seleccionado que no se ha agregado
+            if ($("#cboProducto").val() != "") {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                alert("Se ha seleccionado un producto y no lo ha agregado a la venta.");
+                $("#Detalle_Quantity").focus();
+                return false;
+            }
+            // Validaciones de jQuery Validate
+            if (!$(this).valid()) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                return false;
+            }
+            // Debe existir al menos un producto
+            if ($("#tblDetalle tr").length === 0) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                alert("Debe agregar al menos un producto.");
+                return false;
+            }
+            // Mostrar overlay solamente para Generar venta y Nota remisión
+            if (botonSubmit === "btnGenerarVenta" ||
+                botonSubmit === "btnNotaRemision") {
+                mostrarLoadingOverlay();
+            }            // Todas las validaciones pasaron
+            return true;
+        });
+
+        $("#btnNotaRemision").on("click", function () {
+
+            const url = $(this).data("url");
+
+            if (!url) {
+                mostrarErrorValidacion(
+                    "No se pudo obtener la ruta de la nota de remisión."
+                );
+                return;
+            }
+
+            openCenteredPopup(
+                url,
+                "NotaRemision",
+                900,
+                700
+            );
+        });
+
+        $("#VentaVM_Freight").focus(function() {
+            $(this).select();
+        });
+
+
+        // Registrar qué botón envió el formulario
+        let botonSubmit = null;
+
+        $("#btnGenerarVenta, #btnNotaRemision, #btnNuevaVenta").on("click", function() {
+            botonSubmit = this.id;
+        });
+
+
+        var detalleVenta = @Html.Raw(Model.DetallesJson);
+        if (detalleVenta.length > 0) {
+            llenarTabla(detalleVenta);
+        }
+        mostrarTotales(@Html.Raw(Model.TotalesJson));
+
+    </script>
+}

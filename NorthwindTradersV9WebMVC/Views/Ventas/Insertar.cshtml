@@ -175,7 +175,7 @@
             </div>
             <div class="row mb-3 small">
                 <div class="col-md-3 d-flex flex-column">
-                    <label asp-for="Detalle.UnitPrice" class="form-label flex-grow-1"><strong>Precio $</strong><br /><small class="text-muted">(con IVA incluido)</small></label>
+                    <label asp-for="Detalle.UnitPrice" class="form-label flex-grow-1"><strong>Precio $</strong><br /><small class="text-muted">(con impuesto incluido)</small></label>
                     <input asp-for="Detalle.UnitPrice" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
@@ -207,37 +207,37 @@
             </div>
             <div class="row mb-3 small">
                 <div class="col-md-3 d-flex flex-column">
-                    <label asp-for="Detalle.PrecioPorUnidadSinIVASinDescuento" class="form-label flex-grow-1">Precio p/u $<br /><small class="text-muted">(sin IVA incluido antes del descuento)</small></label>
+                    <label asp-for="Detalle.PrecioPorUnidadSinIVASinDescuento" class="form-label flex-grow-1">Precio p/u $<br /><small class="text-muted">(sin impuesto incluido antes del descuento)</small></label>
                     <input asp-for="Detalle.PrecioPorUnidadSinIVASinDescuento" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
-                    <label asp-for="Detalle.IVADelPrecioPorUnidadSinDescuento" class="form-label flex-grow-1">IVA incluido p/u $ <br /><small class="text-muted">(antes del descuento)</small></label>
+                    <label asp-for="Detalle.IVADelPrecioPorUnidadSinDescuento" class="form-label flex-grow-1">Impuesto incluido p/u $ <br /><small class="text-muted">(antes del descuento)</small></label>
                     <input asp-for="Detalle.IVADelPrecioPorUnidadSinDescuento" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
-                    <label asp-for="Detalle.PrecioPorUnidadSinIVADespuesDescuento" class="form-label flex-grow-1">Precio p/u $ <br /><small class="text-muted">(sin IVA incluido despues del descuento)</small></label>
+                    <label asp-for="Detalle.PrecioPorUnidadSinIVADespuesDescuento" class="form-label flex-grow-1">Precio p/u $ <br /><small class="text-muted">(sin impuesto incluido despues del descuento)</small></label>
                     <input asp-for="Detalle.PrecioPorUnidadSinIVADespuesDescuento" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
-                    <label asp-for="Detalle.IVADelPrecioporUnidadDespuesDescuento" class="form-label flex-grow-1">IVA p/u $ <br /><small class="text-muted">(despues del descuento)</small></label>
+                    <label asp-for="Detalle.IVADelPrecioporUnidadDespuesDescuento" class="form-label flex-grow-1">Impuesto p/u $ <br /><small class="text-muted">(despues del descuento)</small></label>
                     <input asp-for="Detalle.IVADelPrecioporUnidadDespuesDescuento" class="form-control form-control-sm" readonly />
                 </div>
             </div>
             <div class="row mb-3 small">
                 <div class="col-md-3 d-flex flex-column">
-                    <label asp-for="Detalle.AhorroPorUnidadSinIVA" class="form-label flex-grow-1">Ahorro p/u $ <br /><small class="text-muted">(Sin IVA despues del descuento)</small></label>
+                    <label asp-for="Detalle.AhorroPorUnidadSinIVA" class="form-label flex-grow-1">Ahorro p/u $ <br /><small class="text-muted">(Sin impuesto despues del descuento)</small></label>
                     <input asp-for="Detalle.AhorroPorUnidadSinIVA" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
-                    <label asp-for="Detalle.AhorroEnIVAPorUnidadDespuesDescuento" class="form-label flex-grow-1">Ahorro en IVA p/u $ <br /><small class="text-muted">(despues del descuento)</small></label>
+                    <label asp-for="Detalle.AhorroEnIVAPorUnidadDespuesDescuento" class="form-label flex-grow-1">Ahorro en impuesto p/u $ <br /><small class="text-muted">(despues del descuento)</small></label>
                     <input asp-for="Detalle.AhorroEnIVAPorUnidadDespuesDescuento" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
-                    <label asp-for="Detalle.AhorroTotalPorUnidadConIVA" class="form-label flex-grow-1">Ahorro total p/u $ <br /><small class="text-muted">(con IVA despues del descuento)</small></label>
+                    <label asp-for="Detalle.AhorroTotalPorUnidadConIVA" class="form-label flex-grow-1">Ahorro total p/u $ <br /><small class="text-muted">(con impuesto incluido despues del descuento)</small></label>
                     <input asp-for="Detalle.AhorroTotalPorUnidadConIVA" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
-                    <label asp-for="Detalle.PrecioPorUnidadConIVADespuesDescuento" class="form-label flex-grow-1">Precio p/u $ <br /><small class="text-muted">(con IVA incluido despues del descuento)</small></label>
+                    <label asp-for="Detalle.PrecioPorUnidadConIVADespuesDescuento" class="form-label flex-grow-1">Precio p/u $ <br /><small class="text-muted">(con impuesto incluido despues del descuento)</small></label>
                     <input asp-for="Detalle.PrecioPorUnidadConIVADespuesDescuento" class="form-control form-control-sm" readonly />
                 </div>
             </div>
@@ -247,33 +247,33 @@
                 </legend>
                 <div class="row mb-3 small">
                     <div class="col-md-3 d-flex flex-column">
-                        <label asp-for="Detalle.SubtotalDelImporteConIVAIncluido" class="form-label flex-grow-1">Subtotal del importe $ <br /><small class="text-muted">(Precio con IVA incluido)</small></label>
+                        <label asp-for="Detalle.SubtotalDelImporteConIVAIncluido" class="form-label flex-grow-1">Subtotal del importe $ <br /><small class="text-muted">(Precio con impuesto incluido)</small></label>
                         <input asp-for="Detalle.SubtotalDelImporteConIVAIncluido" class="form-control form-control-sm" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
-                        <label asp-for="Detalle.SubtotalDelImporteSinIVASinDescuento" class="form-label flex-grow-1">Subtotal del importe sin IVA antes del descuento $ <br /><small class="text-muted">(Precio sin IVA incluido antes del descuento)</small></label>
+                        <label asp-for="Detalle.SubtotalDelImporteSinIVASinDescuento" class="form-label flex-grow-1">Subtotal del importe sin impuesto antes del descuento $ <br /><small class="text-muted">(Precio sin impuesto incluido antes del descuento)</small></label>
                         <input asp-for="Detalle.SubtotalDelImporteSinIVASinDescuento" class="form-control form-control-sm" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
-                        <label asp-for="Detalle.SubtotalDelImporteDelIVASinDescuento" class="form-label flex-grow-1">Subtotal del IVA incluido $ <br /><small class="text-muted">(Antes del descuento)</small></label>
+                        <label asp-for="Detalle.SubtotalDelImporteDelIVASinDescuento" class="form-label flex-grow-1">Subtotal del impuesto incluido $ <br /><small class="text-muted">(Antes del descuento)</small></label>
                         <input asp-for="Detalle.SubtotalDelImporteDelIVASinDescuento" class="form-control form-control-sm" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
-                        <label asp-for="Detalle.SubtotalDelImporteSinIVAConDescuento" class="form-label flex-grow-1">Subtotal del importe sin IVA despues del descuento $ <br /><small class="text-muted">(Precio sin IVA incluido despues del descuento)</small></label>
+                        <label asp-for="Detalle.SubtotalDelImporteSinIVAConDescuento" class="form-label flex-grow-1">Subtotal del importe sin impuesto despues del descuento $ <br /><small class="text-muted">(Precio sin impuesto incluido despues del descuento)</small></label>
                         <input asp-for="Detalle.SubtotalDelImporteSinIVAConDescuento" class="form-control form-control-sm" readonly />
                     </div>
                 </div>
                 <div class="row mb-3 small">
                     <div class="col-md-3 d-flex flex-column">
-                        <label asp-for="Detalle.SubtotalIVADespuesDelDescuento" class="form-label flex-grow-1">Subtotal del IVA despues del descuento $</label>
+                        <label asp-for="Detalle.SubtotalIVADespuesDelDescuento" class="form-label flex-grow-1">Subtotal del impuesto despues del descuento $</label>
                         <input asp-for="Detalle.SubtotalIVADespuesDelDescuento" class="form-control form-control-sm" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
-                        <label asp-for="Detalle.SubtotalDelAhorroSinIvaDespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro sin IVA $ <br /><small class="text-muted">(despues del descuento)</small></label>
+                        <label asp-for="Detalle.SubtotalDelAhorroSinIvaDespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro sin impuesto $ <br /><small class="text-muted">(despues del descuento)</small></label>
                         <input asp-for="Detalle.SubtotalDelAhorroSinIvaDespuesDescuento" class="form-control form-control-sm" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
-                        <label asp-for="Detalle.SubtotalDelAhorroEnIVADespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro en IVA $ <br /><small class="text-muted">(despues del descuento)</small></label>
+                        <label asp-for="Detalle.SubtotalDelAhorroEnIVADespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro en impuesto $ <br /><small class="text-muted">(despues del descuento)</small></label>
                         <input asp-for="Detalle.SubtotalDelAhorroEnIVADespuesDescuento" class="form-control form-control-sm" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
@@ -305,15 +305,15 @@
                         <tr>
                             <th class ="text-center">N°</th>
                             <th class="text-center">Producto</th>
-                            <th class="text-center">Precio <br /><small class="text-muted">(con IVA incluido)</small></th>
+                            <th class="text-center">Precio <br /><small class="text-muted">(con impuesto incluido)</small></th>
                             <th class="text-center">Cantidad</th>
                             <th class="text-center">Importe</th>
                             <th class="text-center">Desc.</th>
                             <th class="text-center">Importe del descuento</th>
                             <th class="text-center">Importe con descuento</th>
-                            <th class="text-center">Tasa IVA</th>
-                            <th class="text-center">Importe sin IVA</th>
-                            <th class="text-center">Importe del IVA <br /><small class="text-muted">(incluido)</small></th>
+                            <th class="text-center">Tasa impuesto</th>
+                            <th class="text-center">Importe sin impuesto</th>
+                            <th class="text-center">Importe del impuesto <br /><small class="text-muted">(incluido)</small></th>
                             <th class="text-center">Subtotal</th>
                             <th class="text-center" width="120">Acciones</th>
                             <th class="d-none"></th>
@@ -339,7 +339,7 @@
                     <input asp-for="Totales.TotalUnidades" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
-                    <label asp-for="Totales.TotalImporteConIVA" class="form-label flex-grow-1">Subtotal del importe $ <br /><small class="text-muted">(precio con IVA incluido)</small></label>
+                    <label asp-for="Totales.TotalImporteConIVA" class="form-label flex-grow-1">Subtotal del importe $ <br /><small class="text-muted">(precio con impuesto incluido)</small></label>
                     <input asp-for="Totales.TotalImporteConIVA" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
@@ -353,11 +353,11 @@
                     <input asp-for="Totales.TotalImporteConDescuento" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
-                    <label asp-for="Totales.TotalImporteSinIVA" class="form-label flex-grow-1">Subtotal del importe sin IVA $</label>
+                    <label asp-for="Totales.TotalImporteSinIVA" class="form-label flex-grow-1">Subtotal del importe sin impuesto $</label>
                     <input asp-for="Totales.TotalImporteSinIVA" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
-                    <label asp-for="Totales.TotalIVA" class="form-label flex-grow-1">Subtotal del importe del IVA $ <br /><small class="text-muted">(incluido)</small></label>
+                    <label asp-for="Totales.TotalIVA" class="form-label flex-grow-1">Subtotal del importe del impuesto $ <br /><small class="text-muted">(incluido)</small></label>
                     <input asp-for="Totales.TotalIVA" class="form-control form-control-sm" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
@@ -1038,7 +1038,7 @@
                             type="button"
                             class="btn btn-sm btn-success btnSeleccionar text-no-wrap d-inline-flex align-items-center gap-1"
                             data-index="${indice}"
-                            title="Seleccionar">
+                            title="Seleccionar forma de envío">
                             <i class="bi bi-check-square"></i>
                             <span class="d-none d-md-inline">
                             &nbsp;Seleccionar
