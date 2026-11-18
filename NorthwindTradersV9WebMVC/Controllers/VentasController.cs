@@ -814,6 +814,689 @@ namespace NorthwindTradersV9WebMVC.Controllers
 
             return View("Insertar", model);
         }
+        [HttpGet]
+        public IActionResult Editar(int id, string? returnUrl = null)
+        {
+            var model = new VentasEditarViewModel
+            {
+                OrderID = id,
+                ReturnUrl = returnUrl
+            };
+            // Cargar los combos necesarios para la vista.
+            var combos = CargarCombos();
+            model.Clientes = combos.Clientes;
+            model.Vendedores = combos.Vendedores;
+            model.Transportistas = combos.Transportistas;
+            model.Categorias = combos.Categorias;
+            model.Productos = combos.Productos;
+            // 1. Obtener la venta.
+            var venta = _ventaBLL.ObtenerVentaPorId2(id);
+            if (venta == null)
+            {
+                TempData["Error"] =
+                    "<p>Venta no encontrada</p>" + StringsCommons.Nefep;
+                model.BloquearEdicion = true;
+                return View(model);
+            }
+            // 3. Obtener la tasa de IVA vigente para la fecha de la venta.
+            decimal tasaIVA = 0m;
+            if (venta.OrderDate.HasValue)
+            {
+                tasaIVA = _ventaBLL.ObtenerTasaVigente(
+                    venta.OrderDate.Value) ?? 0m;
+            }
+            // 4. Construir el ViewModel del encabezado.
+            model.VentaVM = new VentaInsertarViewModel
+            {
+                OrderID = venta.OrderID,
+                CustomerID = venta.Cliente.CustomerID,
+                EmployeeID = venta.Empleado.EmployeeID,
 
+                OrderDate = venta.OrderDate,
+                OrderTime = venta.OrderDate?.TimeOfDay,
+
+                RequiredDate = venta.RequiredDate,
+                RequiredTime = venta.RequiredDate?.TimeOfDay,
+
+                ShippedDate = venta.ShippedDate,
+                ShippedTime = venta.ShippedDate?.TimeOfDay,
+
+                ShipVia = venta.Transportista.ShipperID,
+
+                ShipName = venta.ShipName,
+                ShipAddress = venta.ShipAddress,
+                ShipCity = venta.ShipCity,
+                ShipRegion = venta.ShipRegion,
+                ShipPostalCode = venta.ShipPostalCode,
+                ShipCountry = venta.ShipCountry,
+
+                Freight = venta.Freight ?? 0m,
+                RowVersion = venta.RowVersion,
+                TasaIVA = tasaIVA
+            };
+
+            // 5. Obtener los detalles de la venta.
+            var detalles = _ventaDetalleBLL.ObtenerDetallesPorVentaId(id);
+
+            model.VentaTieneDetalles = detalles.Any();
+
+            // 6. Convertir los detalles a ViewModels.
+            model.Detalles = CrearListaViewModel(detalles);
+
+            // 7. Calcular los totales.
+            model.Totales = CalcularTotalesVenta(model.Detalles);
+            model.VentaGuardada = true;
+
+            return View(model);
+        }
+
+        private static List<VentaDetalleViewModel> CrearListaViewModel(
+            List<VentaDetalle> lista)
+        {
+            return lista.Select(x => new VentaDetalleViewModel
+            {
+                // DATOS BASE
+                CategoriaID = x.Producto.Categoria?.CategoryID,
+                ProductID = x.Producto.ProductID,
+                ProductName = x.Producto.ProductName,
+                Quantity = x.Quantity,
+                UnitPrice = x.UnitPrice,
+                Discount = x.Discount,
+                TasaIVA = x.TasaIVA,
+
+                RowVersion = x.RowVersion == null
+                    ? null
+                    : Convert.ToBase64String(x.RowVersion),
+
+                // RESULTADOS CALCULADOS
+                PrecioBaseSinIva = x.PrecioBaseSinIva,
+
+                PrecioPorUnidadSinIVASinDescuento =
+                    x.PrecioPorUnidadSinIVASinDescuento,
+
+                IVADelPrecioPorUnidadSinDescuento =
+                    x.IVADelPrecioPorUnidadSinDescuento,
+
+                PrecioPorUnidadConIVADespuesDescuento =
+                    x.PrecioPorUnidadConIVADespuesDescuento,
+
+                IVADelPrecioporUnidadDespuesDescuento =
+                    x.IVADelPrecioporUnidadDespuesDescuento,
+
+                PrecioPorUnidadSinIVADespuesDescuento =
+                    x.PrecioPorUnidadSinIVADespuesDescuento,
+
+                AhorroPorUnidadSinIVA =
+                    x.AhorroPorUnidadSinIVA,
+
+                AhorroEnIVAPorUnidadDespuesDescuento =
+                    x.AhorroEnIVAPorUnidadDespuesDescuento,
+
+                AhorroTotalPorUnidadConIVA =
+                    x.AhorroTotalPorUnidadConIVA,
+
+                TasaDescuentoPorcentaje =
+                    x.TasaDescuentoPorcentaje,
+
+                TasaIVAPorcentaje =
+                    x.TasaIVAPorcentaje,
+
+                // SUBTOTALES
+                SubtotalDelImporteConIVAIncluido =
+                    x.SubtotalDelImporteConIVAIncluido,
+
+                SubtotalDelImporteSinIVASinDescuento =
+                    x.SubtotalDelImporteSinIVASinDescuento,
+
+                SubtotalDelImporteDelIVASinDescuento =
+                    x.SubtotalDelImporteDelIVASinDescuento,
+
+                SubtotalDelImporteConIVAConDescuento =
+                    x.SubtotalDelImporteConIVAConDescuento,
+
+                SubtotalDelImporteSinIVAConDescuento =
+                    x.SubtotalDelImporteSinIVAConDescuento,
+
+                SubtotalIVADespuesDelDescuento =
+                    x.SubtotalIVADespuesDelDescuento,
+
+                SubtotalDelAhorroSinIvaDespuesDescuento =
+                    x.SubtotalDelAhorroSinIvaDespuesDescuento,
+
+                SubtotalDelAhorroEnIVADespuesDescuento =
+                    x.SubtotalDelAhorroEnIVADespuesDescuento,
+
+                SubtotalDelAhorroTotalDespuesDescuento =
+                    x.SubtotalDelAhorroTotalDespuesDescuento,
+
+                Subtotal = x.Subtotal
+
+            }).ToList();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ActualizarEncabezado(
+            [FromBody] ActualizarEncabezadoRequest request)
+        {
+            try
+            {
+                var resultado =
+                    _ventaBLL.ActualizarEncabezado2(request);
+
+                switch (resultado.Codigo)
+                {
+                    case 1:
+                        return Json(new
+                        {
+                            ok = true,
+                            rowVersion = resultado.RowVersion == null
+                                ? null
+                                : Convert.ToBase64String(resultado.RowVersion)
+                        });
+
+                    case -1:
+                        return Json(new
+                        {
+                            ok = false,
+                            codigo = -1,
+                            mensaje = "La venta fue eliminada previamente por otro usuario."
+                        });
+
+                    case -2:
+                        return Json(new
+                        {
+                            ok = false,
+                            codigo = -2,
+                            mensaje = "La venta fue modificada previamente por otro usuario."
+                        });
+
+                    case -10:
+                        return Json(new
+                        {
+                            ok = false,
+                            codigo = -10,
+                            mensaje = "No se puede modificar la fecha de la venta porque ya existen detalles asociados. La fecha determina la tasa de IVA aplicada a la venta."
+                        });
+
+                    case -11:
+                        return Json(new
+                        {
+                            ok = false,
+                            codigo = -11,
+                            mensaje = "No existe una tasa de IVA vigente para la fecha de la venta indicada."
+                        });
+
+                    case -99:
+                        return Json(new
+                        {
+                            ok = false,
+                            codigo = -99,
+                            mensaje = "Ocurrió un error al actualizar la venta."
+                        });
+
+                    default:
+                        return Json(new
+                        {
+                            ok = false,
+                            codigo = resultado.Codigo,
+                            mensaje = "No se pudo actualizar la venta."
+                        });
+                }
+            }
+            catch
+            {
+                Response.StatusCode = 500;
+
+                return Json(new
+                {
+                    ok = false,
+                    mensaje = "Ocurrió un error inesperado al actualizar el encabezado."
+                });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ActualizarEnvio(
+            [FromBody] ActualizarEnvioRequest request)
+        {
+            try
+            {
+                var resultado =
+                    _ventaBLL.ActualizarEnvio2(request);
+
+                switch (resultado.Codigo)
+                {
+                    case 1:
+                        return Json(new
+                        {
+                            ok = true,
+                            rowVersion = resultado.RowVersion == null
+                                ? null
+                                : Convert.ToBase64String(resultado.RowVersion)
+                        });
+
+                    case -1:
+                        return Json(new
+                        {
+                            ok = false,
+                            codigo = -1,
+                            mensaje = "La venta fue eliminada previamente por otro usuario."
+                        });
+
+                    case -2:
+                        return Json(new
+                        {
+                            ok = false,
+                            codigo = -2,
+                            mensaje = "La venta fue modificada previamente por otro usuario."
+                        });
+
+                    case -99:
+                        return Json(new
+                        {
+                            ok = false,
+                            codigo = -99,
+                            mensaje = "Ocurrió un error al actualizar la información de envío."
+                        });
+
+                    default:
+                        return Json(new
+                        {
+                            ok = false,
+                            codigo = resultado.Codigo,
+                            mensaje = "No se pudo actualizar la información de envío."
+                        });
+                }
+            }
+            catch
+            {
+                Response.StatusCode = 500;
+
+                return Json(new
+                {
+                    ok = false,
+                    mensaje = "Ocurrió un error inesperado al actualizar el envío."
+                });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AgregarDetalleEditar(
+            [FromBody] AgregarDetalleRequest request)
+        {
+            try
+            {
+                if (request == null || request.Detalle == null ||
+                    !request.Detalle.ProductID.HasValue)
+                {
+                    return new JsonResult(new
+                    {
+                        ok = false,
+                        codigo = 0,
+                        mensaje = "Debe seleccionar un producto."
+                    });
+                }
+
+                var detalle = new VentaDetalle
+                {
+                    Venta = new Venta
+                    {
+                        OrderID = request.OrderID,
+                        RowVersion = string.IsNullOrEmpty(request.RowVersion)
+                            ? null
+                            : Convert.FromBase64String(request.RowVersion)
+                    },
+                    Producto = new Producto
+                    {
+                        ProductID = request.Detalle.ProductID.Value
+                    },
+                    UnitPrice = request.Detalle.UnitPrice,
+                    Quantity = request.Detalle.Quantity,
+                    Discount = request.Detalle.Discount,
+                    TasaIVA = request.Detalle.TasaIVA
+                };
+
+                var resultado = _ventaDetalleBLL.InsertarDetalle(detalle);
+
+                if (resultado.Codigo != 1)
+                    return ResultadoAgregarDetalleError(resultado.Codigo);
+
+                var lista = _ventaDetalleBLL
+                    .ObtenerDetallesPorVentaId(request.OrderID);
+
+                var listaViewModel = CrearListaViewModel(lista);
+
+                var totales = CalcularTotalesVenta(listaViewModel);
+
+                return new JsonResult(new
+                {
+                    ok = true,
+                    rowVersion = Convert.ToBase64String(
+                        resultado.RowVersion!),
+                    lista = listaViewModel,
+                    totales
+                });
+            }
+            catch
+            {
+                return new JsonResult(new
+                {
+                    ok = false,
+                    codigo = -99,
+                    mensaje = "Ocurrió un error inesperado al insertar el detalle."
+                });
+            }
+        }
+        private JsonResult ResultadoAgregarDetalleError(int codigo)
+        {
+            string mensaje = codigo switch
+            {
+                -1 => "El producto ya existe en el detalle de la venta.",
+                -3 => "La venta fue eliminada por otro usuario.",
+                -4 => "La venta fue modificada previamente por otro usuario. Recargue la venta para actualizar los datos.",
+                -5 => "No se pudo insertar el detalle de la venta.",
+                -6 => "No hay existencias suficientes para agregar la cantidad solicitada.",
+                -7 => "El inventario resultante excede el límite permitido.",
+                -8 => "El inventario resultante no puede ser negativo.",
+                -10 => "No existe tasa de IVA para la fecha de la venta.",
+                -99 => "Ocurrió un error inesperado al insertar el detalle.",
+                _ => "No se pudo insertar el detalle de la venta."
+            };
+
+            return new JsonResult(new
+            {
+                ok = false,
+                codigo,
+                mensaje
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ObtenerDetalleEditar(
+            [FromBody] ObtenerDetalleEditarRequest request)
+        {
+            try
+            {
+                if (request == null ||
+                    request.OrderID <= 0 ||
+                    request.ProductID <= 0)
+                {
+                    return new JsonResult(new
+                    {
+                        success = false,
+                        message = "Los datos del detalle no son válidos."
+                    });
+                }
+
+                if (string.IsNullOrWhiteSpace(request.RowVersion))
+                {
+                    return new JsonResult(new
+                    {
+                        success = false,
+                        message = "No se recibió la RowVersion del detalle."
+                    });
+                }
+
+                var rowVersion = Convert.FromBase64String(request.RowVersion);
+
+                var detalle = _ventaDetalleBLL
+                    .ObtenerDetallesPorVentaId(request.OrderID)
+                    .FirstOrDefault(d =>
+                        d.Producto.ProductID == request.ProductID);
+
+                if (detalle == null)
+                {
+                    return new JsonResult(new
+                    {
+                        success = false,
+                        bloquearEdicionPorConcurrencia = true,
+                        message = "El detalle fue eliminado por otro usuario. Recargue la venta para actualizar los datos."
+                    });
+                }
+
+                if (detalle.RowVersion == null ||
+                    !detalle.RowVersion.SequenceEqual(rowVersion))
+                {
+                    return new JsonResult(new
+                    {
+                        success = false,
+                        bloquearEdicionPorConcurrencia = true,
+                        message = "El detalle fue modificado por otro usuario. Recargue la venta para actualizar los datos."
+                    });
+                }
+
+                var producto = _productoBLL
+                    .ObtenerProductoCostoEInventario(request.ProductID);
+
+                if (producto == null)
+                {
+                    return new JsonResult(new
+                    {
+                        success = false,
+                        bloquearEdicionPorConcurrencia = true,
+                        message = "El producto ya no existe."
+                    });
+                }
+
+                return new JsonResult(new
+                {
+                    success = true,
+                    detalle = new VentaDetalleViewModel
+                    {
+                        CategoriaID = detalle.Producto.Categoria?.CategoryID,
+                        ProductID = detalle.Producto.ProductID,
+                        ProductName = detalle.Producto.ProductName,
+                        UnitPrice = detalle.UnitPrice,
+                        UnitsInStock = producto.UnitsInStock,
+                        Quantity = detalle.Quantity,
+                        Discount = detalle.Discount,
+                        TasaIVA = detalle.TasaIVA,
+                        RowVersion = Convert.ToBase64String(detalle.RowVersion)
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ActualizarDetalle(
+            [FromBody] ActualizarDetalleRequest request)
+        {
+            try
+            {
+                if (request == null || request.OrderID <= 0)
+                    return ErrorDetalle("El OrderID no es válido.");
+
+                if (request.ProductID <= 0)
+                    return ErrorDetalle("El ProductID no es válido.");
+
+                if (request.Quantity <= 0)
+                    return ErrorDetalle("La cantidad debe ser mayor que cero.");
+
+                if (request.Discount < 0 || request.Discount > 0.95m)
+                    return ErrorDetalle("El descuento debe estar entre 0 y 95.00%.");
+
+                if (string.IsNullOrWhiteSpace(request.VentaDetalleRowVersion))
+                    return ErrorDetalle("No se recibió la RowVersion del detalle.");
+
+                if (string.IsNullOrWhiteSpace(request.VentaRowVersion))
+                    return ErrorDetalle("No se recibió la RowVersion de la venta.");
+
+                var detalle = new VentaDetalle
+                {
+                    Venta = new Venta
+                    {
+                        OrderID = request.OrderID,
+                        RowVersion = Convert.FromBase64String(
+                            request.VentaRowVersion)
+                    },
+                    Producto = new Producto
+                    {
+                        ProductID = request.ProductID
+                    },
+                    Quantity = request.Quantity,
+                    Discount = request.Discount,
+                    RowVersion = Convert.FromBase64String(
+                        request.VentaDetalleRowVersion)
+                };
+
+                var resultado = _ventaDetalleBLL.ActualizarDetalle(detalle);
+
+                if (resultado.Codigo != 1)
+                    return ResultadoActualizarDetalleError(resultado.Codigo);
+
+                var lista = _ventaDetalleBLL
+                    .ObtenerDetallesPorVentaId(request.OrderID);
+
+                var listaViewModel = CrearListaViewModel(lista);
+
+                var totales = CalcularTotalesVenta(listaViewModel);
+
+                return new JsonResult(new
+                {
+                    ok = true,
+                    rowVersion = Convert.ToBase64String(
+                        resultado.RowVersion!),
+                    lista = listaViewModel,
+                    totales
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorDetalle(ex.Message);
+            }
+        }
+        private JsonResult ResultadoActualizarDetalleError(int codigo)
+        {
+            string mensaje = codigo switch
+            {
+                -1 => "El detalle fue eliminado por otro usuario. Recargue la venta para actualizar los datos.",
+                -2 => "El detalle fue modificado por otro usuario. Recargue la venta para actualizar los datos.",
+                -3 => "La venta fue eliminada por otro usuario.",
+                -4 => "La venta fue modificada previamente por otro usuario. Recargue la venta para actualizar los datos.",
+                -5 => "La cantidad del detalle no es válida.",
+                -6 => "No hay inventario suficiente para actualizar el detalle.",
+                -7 => "El inventario resultante excede el límite permitido.",
+                -8 => "El inventario resultaría negativo.",
+                -99 => "Ocurrió un error inesperado al actualizar el detalle.",
+                _ => "No se pudo actualizar el detalle de la venta."
+            };
+            return new JsonResult(new
+            {
+                ok = false,
+                codigo,
+                mensaje
+            });
+        }
+        private JsonResult ErrorDetalle(
+            string mensaje,
+            int codigo = -99)
+        {
+            return new JsonResult(new
+            {
+                ok = false,
+                codigo,
+                mensaje
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EliminarDetalle(
+            [FromBody] EliminarDetalleRequest request)
+        {
+            try
+            {
+                if (request == null)
+                    return ErrorDetalle("Datos inválidos.");
+
+                if (request.OrderID <= 0)
+                    return ErrorDetalle("El OrderID no es válido.");
+
+                if (request.ProductID <= 0)
+                    return ErrorDetalle("El ProductID no es válido.");
+
+                if (string.IsNullOrWhiteSpace(request.RowVersion))
+                    return ErrorDetalle("No se recibió la RowVersion del detalle.");
+
+                if (string.IsNullOrWhiteSpace(request.VentaRowVersion))
+                    return ErrorDetalle("No se recibió la RowVersion de la venta.");
+
+                var detalle = new VentaDetalle
+                {
+                    Venta = new Venta
+                    {
+                        OrderID = request.OrderID,
+                        RowVersion = Convert.FromBase64String(
+                            request.VentaRowVersion)
+                    },
+                    Producto = new Producto
+                    {
+                        ProductID = request.ProductID
+                    },
+                    RowVersion = Convert.FromBase64String(
+                        request.RowVersion)
+                };
+
+                var resultado = _ventaDetalleBLL.EliminarDetalle(detalle);
+
+                if (resultado.Codigo != 1)
+                    return ResultadoEliminarDetalleError(resultado.Codigo);
+
+                var lista = _ventaDetalleBLL
+                    .ObtenerDetallesPorVentaId(request.OrderID);
+
+                var listaViewModel = CrearListaViewModel(lista);
+
+                var totales = CalcularTotalesVenta(listaViewModel);
+
+                return new JsonResult(new
+                {
+                    ok = true,
+                    rowVersion = Convert.ToBase64String(
+                        resultado.RowVersion!),
+                    lista = listaViewModel,
+                    totales
+                });
+            }
+            catch (Exception ex)
+            {
+                return ErrorDetalle(ex.Message);
+            }
+        }
+        private JsonResult ResultadoEliminarDetalleError(
+            int codigo)
+        {
+            string mensaje = codigo switch
+            {
+                -1 => "El detalle fue eliminado por otro usuario. Recargue la venta para actualizar los datos.",
+                -2 => "El detalle fue modificado por otro usuario. Recargue la venta para actualizar los datos.",
+                -3 => "La venta fue eliminada por otro usuario.",
+                -4 => "La venta fue modificada previamente por otro usuario. Recargue la venta para actualizar los datos.",
+                -5 => "La cantidad del detalle no es válida.",
+                -7 => "El inventario resultante excede el límite permitido.",
+                -8 => "El inventario resultaría negativo.",
+                -99 => "Ocurrió un error inesperado al eliminar el detalle.",
+                _ => "No se pudo eliminar el detalle de la venta."
+            };
+
+            return new JsonResult(new
+            {
+                ok = false,
+                codigo,
+                mensaje
+            });
+        }
     }
 }

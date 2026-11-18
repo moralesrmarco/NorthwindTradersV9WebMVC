@@ -117,6 +117,62 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return resultado;
         }
+        public Venta? ObtenerVentaPorId2(int orderId)
+        {
+            if (_appSettings.EjecutarTiempoDemora)
+                Thread.Sleep(_appSettings.TiempoDemora);
+            return _ventaDAL.ObtenerVentaPorId2(orderId);
+        }
+        public (int Codigo, byte[]? RowVersion) ActualizarEncabezado2(ActualizarEncabezadoRequest request)
+        {
+            var rowVersion = Convert.FromBase64String(request.RowVersion);
+            DateTime? orderDate = CombinarFechaHora(
+                request.OrderDate,
+                request.OrderTime);
+            DateTime? requiredDate = CombinarFechaHora(
+                request.RequiredDate,
+                request.RequiredTime);
+            DateTime? shippedDate = CombinarFechaHora(
+                request.ShippedDate,
+                request.ShippedTime);
+            return _ventaDAL.ActualizarEncabezado2(
+                request.OrderID,
+                request.CustomerID,
+                request.EmployeeID,
+                orderDate,
+                requiredDate,
+                shippedDate,
+                rowVersion);
+        }
+        private DateTime? CombinarFechaHora(
+            DateTime? fecha,
+            string? hora)
+        {
+            if (!fecha.HasValue)
+                return null;
+            if (TimeSpan.TryParse(hora, out TimeSpan tiempo))
+            {
+                return fecha.Value.Date.Add(tiempo);
+            }
+            return fecha.Value.Date;
+        }
+        public (int Codigo, byte[]? RowVersion) ActualizarEnvio2(
+            ActualizarEnvioRequest request)
+        {
+            var rowVersion =
+                Convert.FromBase64String(request.RowVersion);
+            return _ventaDAL.ActualizarEnvio2(
+                request.OrderID,
+                request.ShipName,
+                request.ShipAddress,
+                request.ShipCity,
+                request.ShipRegion,
+                request.ShipPostalCode,
+                request.ShipCountry,
+                request.ShipVia,
+                request.Freight,
+                rowVersion);
+        }
 
     }
 }

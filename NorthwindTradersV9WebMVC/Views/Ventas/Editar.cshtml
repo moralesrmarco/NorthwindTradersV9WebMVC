@@ -234,37 +234,37 @@
             <div class="row mb-3 small">
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.PrecioPorUnidadSinIVASinDescuento" class="form-label flex-grow-1">Precio p/u $<br /><small class="text-muted">(sin impuesto incluido antes del descuento)</small></label>
-                    <input asp-for="Detalle.PrecioPorUnidadSinIVASinDescuento" class="form-control form-control-sm" readonly />
+                    <input asp-for="Detalle.PrecioPorUnidadSinIVASinDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.IVADelPrecioPorUnidadSinDescuento" class="form-label flex-grow-1">Impuesto incluido p/u $ <br /><small class="text-muted">(antes del descuento)</small></label>
-                    <input asp-for="Detalle.IVADelPrecioPorUnidadSinDescuento" class="form-control form-control-sm" readonly />
+                    <input asp-for="Detalle.IVADelPrecioPorUnidadSinDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.PrecioPorUnidadSinIVADespuesDescuento" class="form-label flex-grow-1">Precio p/u $ <br /><small class="text-muted">(sin impuesto incluido despues del descuento)</small></label>
-                    <input asp-for="Detalle.PrecioPorUnidadSinIVADespuesDescuento" class="form-control form-control-sm" readonly />
+                    <input asp-for="Detalle.PrecioPorUnidadSinIVADespuesDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.IVADelPrecioporUnidadDespuesDescuento" class="form-label flex-grow-1">Impuesto p/u $ <br /><small class="text-muted">(despues del descuento)</small></label>
-                    <input asp-for="Detalle.IVADelPrecioporUnidadDespuesDescuento" class="form-control form-control-sm" readonly />
+                    <input asp-for="Detalle.IVADelPrecioporUnidadDespuesDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
             </div>
             <div class="row mb-3 small">
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.AhorroPorUnidadSinIVA" class="form-label flex-grow-1">Ahorro p/u $ <br /><small class="text-muted">(Sin impuesto despues del descuento)</small></label>
-                    <input asp-for="Detalle.AhorroPorUnidadSinIVA" class="form-control form-control-sm" readonly />
+                    <input asp-for="Detalle.AhorroPorUnidadSinIVA" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.AhorroEnIVAPorUnidadDespuesDescuento" class="form-label flex-grow-1">Ahorro en impuesto p/u $ <br /><small class="text-muted">(despues del descuento)</small></label>
-                    <input asp-for="Detalle.AhorroEnIVAPorUnidadDespuesDescuento" class="form-control form-control-sm" readonly />
+                    <input asp-for="Detalle.AhorroEnIVAPorUnidadDespuesDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.AhorroTotalPorUnidadConIVA" class="form-label flex-grow-1">Ahorro total p/u $ <br /><small class="text-muted">(con impuesto despues del descuento)</small></label>
-                    <input asp-for="Detalle.AhorroTotalPorUnidadConIVA" class="form-control form-control-sm" readonly />
+                    <input asp-for="Detalle.AhorroTotalPorUnidadConIVA" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Detalle.PrecioPorUnidadConIVADespuesDescuento" class="form-label flex-grow-1">Precio p/u $ <br /><small class="text-muted">(con impuesto incluido despues del descuento)</small></label>
-                    <input asp-for="Detalle.PrecioPorUnidadConIVADespuesDescuento" class="form-control form-control-sm" readonly />
+                    <input asp-for="Detalle.PrecioPorUnidadConIVADespuesDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
             </div>
             <fieldset class="border rounded p-3 mb-3">
@@ -274,37 +274,37 @@
                 <div class="row mb-3 small">
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelImporteConIVAIncluido" class="form-label flex-grow-1">Subtotal del importe $ <br /><small class="text-muted">(Precio con impuesto incluido)</small></label>
-                        <input asp-for="Detalle.SubtotalDelImporteConIVAIncluido" class="form-control form-control-sm" readonly />
+                        <input asp-for="Detalle.SubtotalDelImporteConIVAIncluido" type="text" class="form-control form-control-sm text-end" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelImporteSinIVASinDescuento" class="form-label flex-grow-1">Subtotal del importe sin impuesto antes del descuento $ <br /><small class="text-muted">(Precio sin impuesto incluido antes del descuento)</small></label>
-                        <input asp-for="Detalle.SubtotalDelImporteSinIVASinDescuento" class="form-control form-control-sm" readonly />
+                        <input asp-for="Detalle.SubtotalDelImporteSinIVASinDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelImporteDelIVASinDescuento" class="form-label flex-grow-1">Subtotal del impuesto incluido $ <br /><small class="text-muted">(Antes del descuento)</small></label>
-                        <input asp-for="Detalle.SubtotalDelImporteDelIVASinDescuento" class="form-control form-control-sm" readonly />
+                        <input asp-for="Detalle.SubtotalDelImporteDelIVASinDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelImporteSinIVAConDescuento" class="form-label flex-grow-1">Subtotal del importe sin impuesto despues del descuento $ <br /><small class="text-muted">(Precio sin impuesto incluido despues del descuento)</small></label>
-                        <input asp-for="Detalle.SubtotalDelImporteSinIVAConDescuento" class="form-control form-control-sm" readonly />
+                        <input asp-for="Detalle.SubtotalDelImporteSinIVAConDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                     </div>
                 </div>
                 <div class="row mb-3 small">
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalIVADespuesDelDescuento" class="form-label flex-grow-1">Subtotal del impuesto despues del descuento $</label>
-                        <input asp-for="Detalle.SubtotalIVADespuesDelDescuento" class="form-control form-control-sm" readonly />
+                        <input asp-for="Detalle.SubtotalIVADespuesDelDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelAhorroSinIvaDespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro sin impuesto $ <br /><small class="text-muted">(despues del descuento)</small></label>
-                        <input asp-for="Detalle.SubtotalDelAhorroSinIvaDespuesDescuento" class="form-control form-control-sm" readonly />
+                        <input asp-for="Detalle.SubtotalDelAhorroSinIvaDespuesDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelAhorroEnIVADespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro en impuesto $ <br /><small class="text-muted">(despues del descuento)</small></label>
-                        <input asp-for="Detalle.SubtotalDelAhorroEnIVADespuesDescuento" class="form-control form-control-sm" readonly />
+                        <input asp-for="Detalle.SubtotalDelAhorroEnIVADespuesDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.SubtotalDelAhorroTotalDespuesDescuento" class="form-label flex-grow-1">Subtotal del ahorro total $ <br /><small class="text-muted">(despues del descuento)</small></label>
-                        <input asp-for="Detalle.SubtotalDelAhorroTotalDespuesDescuento" class="form-control form-control-sm" readonly />
+                        <input asp-for="Detalle.SubtotalDelAhorroTotalDespuesDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                     </div>
                 </div>
                 <div class="row mb-3 small">
@@ -316,7 +316,7 @@
                     </div>
                     <div class="col-md-3 d-flex flex-column">
                         <label asp-for="Detalle.Subtotal" class="form-label flex-grow-1"><strong>Total del producto $</strong></label>
-                        <input asp-for="Detalle.Subtotal" class="form-control form-control-sm" readonly />
+                        <input asp-for="Detalle.Subtotal" type="text" class="form-control form-control-sm text-end" readonly />
                     </div>
                 </div>
             </fieldset>
@@ -358,37 +358,37 @@
             <div class="row mb-3 small">
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.NumeroProductos" class="form-label flex-grow-1">Número de productos</label>
-                    <input asp-for="Totales.NumeroProductos" class="form-control form-control-sm" readonly />
+                    <input asp-for="Totales.NumeroProductos" type="text" class="form-control form-control-sm text-center" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.TotalUnidades" class="form-label flex-grow-1">Total de unidades</label>
-                    <input asp-for="Totales.TotalUnidades" class="form-control form-control-sm" readonly />
+                    <input asp-for="Totales.TotalUnidades" type="text" class="form-control form-control-sm text-center" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.TotalImporteConIVA" class="form-label flex-grow-1">Subtotal del importe $ <br /><small class="text-muted">(precio con impuesto incluido)</small></label>
-                    <input asp-for="Totales.TotalImporteConIVA" class="form-control form-control-sm" readonly />
+                    <input asp-for="Totales.TotalImporteConIVA" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.TotalDescuento" class="form-label flex-grow-1">Subtotal del importe del descuento $</label>
-                    <input asp-for="Totales.TotalDescuento" class="form-control form-control-sm" readonly />
+                    <input asp-for="Totales.TotalDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
             </div>
             <div class="row mb-3 small">
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.TotalImporteConDescuento" class="form-label flex-grow-1">Subtotal del importe con descuento $</label>
-                    <input asp-for="Totales.TotalImporteConDescuento" class="form-control form-control-sm" readonly />
+                    <input asp-for="Totales.TotalImporteConDescuento" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.TotalImporteSinIVA" class="form-label flex-grow-1">Subtotal del importe sin impuesto $</label>
-                    <input asp-for="Totales.TotalImporteSinIVA" class="form-control form-control-sm" readonly />
+                    <input asp-for="Totales.TotalImporteSinIVA" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.TotalIVA" class="form-label flex-grow-1">Subtotal del importe del impuesto $ <br /><small class="text-muted">(incluido)</small></label>
-                    <input asp-for="Totales.TotalIVA" class="form-control form-control-sm" readonly />
+                    <input asp-for="Totales.TotalIVA" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
                 <div class="col-md-3 d-flex flex-column">
                     <label asp-for="Totales.Total" class="form-label flex-grow-1"><strong>Total</strong></label>
-                    <input asp-for="Totales.Total" class="form-control form-control-sm" readonly />
+                    <input asp-for="Totales.Total" type="text" class="form-control form-control-sm text-end" readonly />
                 </div>
             </div>
         </fieldset>
@@ -484,6 +484,89 @@
 </div>
 @section Scripts {
     <script>
+
+        const urlActualizarEncabezado =
+            '@Url.Action("ActualizarEncabezado", "Ventas")';
+        const urlActualizarEnvio =
+            '@Url.Action("ActualizarEnvio", "Ventas")';
+        const urlAgregarDetalleEditar =
+            '@Url.Action("AgregarDetalleEditar", "Ventas")';
+        const urlProductosPorCategoria =
+            '@Url.Action("ProductosPorCategoria", "Ventas")';
+        const urlProductoCostoEInventario =
+            '@Url.Action("ProductoCostoEInventario", "Ventas")';
+
+        const urlCalcularDetalle =
+            '@Url.Action("CalcularDetalle", "Ventas")';
+
+        const urlActualizarDetalle =
+            '@Url.Action("ActualizarDetalle", "Ventas")';
+
+        const urlEliminarDetalle =
+            '@Url.Action("EliminarDetalle", "Ventas")';
+
+        const urlObtenerDetalleEditar =
+            '@Url.Action("ObtenerDetalleEditar", "Ventas")';
+
+        const urlUltimaInformacionEnvio =
+            '@Url.Action("UltimaInformacionEnvio", "Ventas")';
+
+        const urlFormasEnvioCliente =
+            '@Url.Action("FormasEnvioCliente", "Ventas")';
+
+        // Formato numérico entero: 1,234
+        function formatearEntero(valor) {
+            return (Number(valor) || 0).toLocaleString("en-US", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+        }
+
+        // Formato numérico: 1,234.56
+        function formatearNumero(valor) {
+            return (Number(valor) || 0).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // Formato monetario: $1,234.56
+        function formatearMoneda(valor) {
+            const numero = Number(valor ?? 0);
+
+            return (Number.isFinite(numero) ? numero : 0).toLocaleString("en-US", {
+                style: "currency",
+                currency: "MXN",
+                currencyDisplay: "narrowSymbol",
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function mostrarCalculosEnCero() {
+            $("#Detalle_PrecioPorUnidadSinIVASinDescuento").val(formatearMoneda(0));
+            $("#Detalle_IVADelPrecioPorUnidadSinDescuento").val(formatearMoneda(0));
+            $("#Detalle_PrecioPorUnidadSinIVADespuesDescuento").val(formatearMoneda(0));
+            $("#Detalle_IVADelPrecioporUnidadDespuesDescuento").val(formatearMoneda(0));
+
+            $("#Detalle_AhorroPorUnidadSinIVA").val(formatearMoneda(0));
+            $("#Detalle_AhorroEnIVAPorUnidadDespuesDescuento").val(formatearMoneda(0));
+            $("#Detalle_AhorroTotalPorUnidadConIVA").val(formatearMoneda(0));
+            $("#Detalle_PrecioPorUnidadConIVADespuesDescuento").val(formatearMoneda(0));
+
+            $("#Detalle_SubtotalDelImporteConIVAIncluido").val(formatearMoneda(0));
+            $("#Detalle_SubtotalDelImporteSinIVASinDescuento").val(formatearMoneda(0));
+            $("#Detalle_SubtotalDelImporteDelIVASinDescuento").val(formatearMoneda(0));
+            $("#Detalle_SubtotalDelImporteSinIVAConDescuento").val(formatearMoneda(0));
+            $("#Detalle_SubtotalIVADespuesDelDescuento").val(formatearMoneda(0));
+
+            $("#Detalle_SubtotalDelAhorroSinIvaDespuesDescuento").val(formatearMoneda(0));
+            $("#Detalle_SubtotalDelAhorroEnIVADespuesDescuento").val(formatearMoneda(0));
+            $("#Detalle_SubtotalDelAhorroTotalDespuesDescuento").val(formatearMoneda(0));
+
+            $("#Detalle_Subtotal").val(formatearMoneda(0));
+        }
+
         function activarNotaRemision() {
             $("#btnNotaRemision").prop("disabled", false);
         }
@@ -571,7 +654,7 @@
                 RowVersion: $("#VentaVM_RowVersion").val()
             };
             $.ajax({
-                url: "?handler=ActualizarEncabezado",
+                url: urlActualizarEncabezado,
                 type: "POST",
                 contentType: "application/json",
                 headers: {
@@ -614,15 +697,13 @@
                                         <td class="text-center">${indice + 1}</td>
                                         <td>${item.productName}</td>
                                         <td class="text-center">
-                                            ${Number(item.unitPrice).toLocaleString('es-MX',
-                    { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            ${formatearMoneda(item.unitPrice)}
                                         </td>
                                         <td class="text-center">
-                                            ${item.quantity}
+                                            ${formatearEntero(item.quantity)}
                                         </td>
                                         <td class="text-end">
-                                            ${Number(item.subtotalDelImporteConIVAIncluido).toLocaleString('es-MX',
-                        { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            ${formatearMoneda(item.subtotalDelImporteConIVAIncluido)}
                                         </td>
                                         <td class="text-center">
                                             <nobr>
@@ -630,12 +711,10 @@
                                             </nobr>
                                         </td>
                                         <td class="text-end">
-                                            ${Number(item.subtotalDelAhorroTotalDespuesDescuento).toLocaleString('es-MX',
-                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            ${formatearMoneda(item.subtotalDelAhorroTotalDespuesDescuento)}
                                         </td>
                                         <td class="text-end">
-                                            ${Number(item.subtotalDelImporteConIVAConDescuento).toLocaleString('es-MX',
-                                { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            ${formatearMoneda(item.subtotalDelImporteConIVAConDescuento)}
                                         </td>
                                         <td class="text-center">
                                             <nobr>
@@ -643,16 +722,13 @@
                                             </nobr>
                                         </td>
                                         <td class="text-end">
-                                            ${Number(item.subtotalDelImporteSinIVAConDescuento).toLocaleString('es-MX',
-                                    { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            ${formatearMoneda(item.subtotalDelImporteSinIVAConDescuento)}
                                         </td>
                                         <td class="text-end">
-                                            ${Number(item.subtotalIVADespuesDelDescuento).toLocaleString('es-MX',
-                                        { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            ${formatearMoneda(item.subtotalIVADespuesDelDescuento)}
                                         </td>
                                         <td class="text-end fw-bold">
-                                            ${Number(item.subtotal).toLocaleString('es-MX',
-                                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            ${formatearMoneda(item.subtotal)}
                                         </td>
                                         <td class="text-center">
                                             <button type="button"
@@ -691,7 +767,7 @@
                 RowVersion: $("#VentaVM_RowVersion").val()
             };
             $.ajax({
-                url: "?handler=ActualizarEnvio",
+                url: urlActualizarEnvio,
                 type: "POST",
                 contentType: "application/json",
                 headers: {
@@ -776,7 +852,7 @@
             }
 
             $.getJSON(
-                "?handler=UltimaInformacionEnvio",
+                urlUltimaInformacionEnvio,
                 { customerId: customerId },
                 function(data) {
                     alTerminar(data);
@@ -819,7 +895,7 @@
                 return;
             }
             $.getJSON(
-                "?handler=FormasEnvioCliente",
+                urlFormasEnvioCliente,
                 { customerId: customerId },
                 function(lista) {
                     llenarTablaFormasEnvio(lista);
@@ -874,7 +950,7 @@
                 return;
             }
             $.getJSON(
-                "?handler=ProductosPorCategoria",
+                urlProductosPorCategoria,
                 { categoriaId: categoriaId },
                 function(data) {
                     $.each(data, function(i, item) {
@@ -956,7 +1032,7 @@
             };
 
             $.ajax({
-                url: "?handler=AgregarDetalle",
+                url: urlAgregarDetalleEditar,
                 type: "POST",
                 contentType: "application/json",
                 dataType: "json",
@@ -1003,21 +1079,21 @@
 
         function mostrarTotales(t) {
             $("#Totales_NumeroProductos")
-                .val(t.numeroProductos);
+                .val(formatearEntero(t.numeroProductos));
             $("#Totales_TotalUnidades")
-                .val(t.totalUnidades);
+                .val(formatearEntero(t.totalUnidades));
             $("#Totales_TotalImporteConIVA")
-                .val(t.totalImporteConIVA);
+                .val(formatearMoneda(t.totalImporteConIVA));
             $("#Totales_TotalDescuento")
-                .val(t.totalDescuento);
+                .val(formatearMoneda(t.totalDescuento));
             $("#Totales_TotalImporteConDescuento")
-                .val(t.totalImporteConDescuento);
+                .val(formatearMoneda(t.totalImporteConDescuento));
             $("#Totales_TotalImporteSinIVA")
-                .val(t.totalImporteSinIVA);
+                .val(formatearMoneda(t.totalImporteSinIVA));
             $("#Totales_TotalIVA")
-                .val(t.totalIVA);
+                .val(formatearMoneda(t.totalIVA));
             $("#Totales_Total")
-                .val(t.total);
+                .val(formatearMoneda(t.total));
         }
 
         function limpiarCapturaProducto() {
@@ -1034,27 +1110,27 @@
             $("#Detalle_Discount").val(0);
 
             // Limpiar cálculos
-            $("#Detalle_PrecioPorUnidadSinIVASinDescuento").val(0);
-            $("#Detalle_IVADelPrecioPorUnidadSinDescuento").val(0);
-            $("#Detalle_PrecioPorUnidadSinIVADespuesDescuento").val(0);
-            $("#Detalle_IVADelPrecioporUnidadDespuesDescuento").val(0);
+            $("#Detalle_PrecioPorUnidadSinIVASinDescuento").val(formatearMoneda(0));
+            $("#Detalle_IVADelPrecioPorUnidadSinDescuento").val(formatearMoneda(0));
+            $("#Detalle_PrecioPorUnidadSinIVADespuesDescuento").val(formatearMoneda(0));
+            $("#Detalle_IVADelPrecioporUnidadDespuesDescuento").val(formatearMoneda(0));
 
-            $("#Detalle_AhorroPorUnidadSinIVA").val(0);
-            $("#Detalle_AhorroEnIVAPorUnidadDespuesDescuento").val(0);
-            $("#Detalle_AhorroTotalPorUnidadConIVA").val(0);
-            $("#Detalle_PrecioPorUnidadConIVADespuesDescuento").val(0);
+            $("#Detalle_AhorroPorUnidadSinIVA").val(formatearMoneda(0));
+            $("#Detalle_AhorroEnIVAPorUnidadDespuesDescuento").val(formatearMoneda(0));
+            $("#Detalle_AhorroTotalPorUnidadConIVA").val(formatearMoneda(0));
+            $("#Detalle_PrecioPorUnidadConIVADespuesDescuento").val(formatearMoneda(0));
 
-            $("#Detalle_SubtotalDelImporteConIVAIncluido").val(0);
-            $("#Detalle_SubtotalDelImporteSinIVASinDescuento").val(0);
-            $("#Detalle_SubtotalDelImporteDelIVASinDescuento").val(0);
-            $("#Detalle_SubtotalDelImporteSinIVAConDescuento").val(0);
-            $("#Detalle_SubtotalIVADespuesDelDescuento").val(0);
+            $("#Detalle_SubtotalDelImporteConIVAIncluido").val(formatearMoneda(0));
+            $("#Detalle_SubtotalDelImporteSinIVASinDescuento").val(formatearMoneda(0));
+            $("#Detalle_SubtotalDelImporteDelIVASinDescuento").val(formatearMoneda(0));
+            $("#Detalle_SubtotalDelImporteSinIVAConDescuento").val(formatearMoneda(0));
+            $("#Detalle_SubtotalIVADespuesDelDescuento").val(formatearMoneda(0));
 
-            $("#Detalle_SubtotalDelAhorroSinIvaDespuesDescuento").val(0);
-            $("#Detalle_SubtotalDelAhorroEnIVADespuesDescuento").val(0);
-            $("#Detalle_SubtotalDelAhorroTotalDespuesDescuento").val(0);
+            $("#Detalle_SubtotalDelAhorroSinIvaDespuesDescuento").val(formatearMoneda(0));
+            $("#Detalle_SubtotalDelAhorroEnIVADespuesDescuento").val(formatearMoneda(0));
+            $("#Detalle_SubtotalDelAhorroTotalDespuesDescuento").val(formatearMoneda(0));
 
-            $("#Detalle_Subtotal").val(0);
+            $("#Detalle_Subtotal").val(formatearMoneda(0));
 
             // Dejar el foco en Producto
             if (!ventaBloqueada) {
@@ -1070,7 +1146,7 @@
                 return;
             }
             $.getJSON(
-                "?handler=ProductoCostoEInventario",
+                urlProductoCostoEInventario,
                 { productId: productId },
                 function(data) {
                     if (data == null)
@@ -1093,7 +1169,7 @@
                 tasaIVA: tasaIVA
             };
             $.ajax({
-                url: "?handler=CalcularDetalle",
+                url: urlCalcularDetalle,
                 type: "POST",
                 contentType: "application/json",
                 headers: {
@@ -1104,43 +1180,43 @@
                 success: function(r) {
                     // Datos básicos
                     $("#Detalle_PrecioPorUnidadSinIVASinDescuento")
-                        .val(r.precioPorUnidadSinIVASinDescuento);
+                        .val(formatearMoneda(r.precioPorUnidadSinIVASinDescuento));
                     $("#Detalle_IVADelPrecioPorUnidadSinDescuento")
-                        .val(r.ivaDelPrecioPorUnidadSinDescuento);
+                        .val(formatearMoneda(r.ivaDelPrecioPorUnidadSinDescuento));
                     $("#Detalle_PrecioPorUnidadSinIVADespuesDescuento")
-                        .val(r.precioPorUnidadSinIVADespuesDescuento);
+                        .val(formatearMoneda(r.precioPorUnidadSinIVADespuesDescuento));
                     $("#Detalle_IVADelPrecioporUnidadDespuesDescuento")
-                        .val(r.ivaDelPrecioporUnidadDespuesDescuento);
+                        .val(formatearMoneda(r.ivaDelPrecioporUnidadDespuesDescuento));
                     // Ahorros por unidad
                     $("#Detalle_AhorroPorUnidadSinIVA")
-                        .val(r.ahorroPorUnidadSinIVA);
+                        .val(formatearMoneda(r.ahorroPorUnidadSinIVA));
                     $("#Detalle_AhorroEnIVAPorUnidadDespuesDescuento")
-                        .val(r.ahorroEnIVAPorUnidadDespuesDescuento);
+                        .val(formatearMoneda(r.ahorroEnIVAPorUnidadDespuesDescuento));
                     $("#Detalle_AhorroTotalPorUnidadConIVA")
-                        .val(r.ahorroTotalPorUnidadConIVA);
+                        .val(formatearMoneda(r.ahorroTotalPorUnidadConIVA));
                     $("#Detalle_PrecioPorUnidadConIVADespuesDescuento")
-                        .val(r.precioPorUnidadConIVADespuesDescuento);
+                        .val(formatearMoneda(r.precioPorUnidadConIVADespuesDescuento));
                     // Subtotales del producto
                     $("#Detalle_SubtotalDelImporteConIVAIncluido")
-                        .val(r.subtotalDelImporteConIVAIncluido);
+                        .val(formatearMoneda(r.subtotalDelImporteConIVAIncluido));
                     $("#Detalle_SubtotalDelImporteSinIVASinDescuento")
-                        .val(r.subtotalDelImporteSinIVASinDescuento);
+                        .val(formatearMoneda(r.subtotalDelImporteSinIVASinDescuento));
                     $("#Detalle_SubtotalDelImporteDelIVASinDescuento")
-                        .val(r.subtotalDelImporteDelIVASinDescuento);
+                        .val(formatearMoneda(r.subtotalDelImporteDelIVASinDescuento));
                     $("#Detalle_SubtotalDelImporteSinIVAConDescuento")
-                        .val(r.subtotalDelImporteSinIVAConDescuento);
+                        .val(formatearMoneda(r.subtotalDelImporteSinIVAConDescuento));
                     $("#Detalle_SubtotalIVADespuesDelDescuento")
-                        .val(r.subtotalIVADespuesDelDescuento);
+                        .val(formatearMoneda(r.subtotalIVADespuesDelDescuento));
                     // Ahorros subtotal
                     $("#Detalle_SubtotalDelAhorroSinIvaDespuesDescuento")
-                        .val(r.subtotalDelAhorroSinIvaDespuesDescuento);
+                        .val(formatearMoneda(r.subtotalDelAhorroSinIvaDespuesDescuento));
                     $("#Detalle_SubtotalDelAhorroEnIVADespuesDescuento")
-                        .val(r.subtotalDelAhorroEnIVADespuesDescuento);
+                        .val(formatearMoneda(r.subtotalDelAhorroEnIVADespuesDescuento));
                     $("#Detalle_SubtotalDelAhorroTotalDespuesDescuento")
-                        .val(r.subtotalDelAhorroTotalDespuesDescuento);
+                        .val(formatearMoneda(r.subtotalDelAhorroTotalDespuesDescuento));
                     // Total del producto
                     $("#Detalle_Subtotal")
-                        .val(r.subtotal);
+                        .val(formatearMoneda(r.subtotal));
                 },
                 error: function(xhr) {
                     console.log(xhr.responseText);
@@ -1171,7 +1247,7 @@
             };
             $("#btnAgregarProducto").prop("disabled", true);
             $.ajax({
-                url: "?handler=ActualizarDetalle",
+                url: urlActualizarDetalle,
                 type: "POST",
                 contentType: "application/json",
                 dataType: "json",
@@ -1277,7 +1353,7 @@
             };
             $.ajax({
                 type: "POST",
-                url: "?handler=EliminarDetalle",
+                url: urlEliminarDetalle,
                 contentType: "application/json; charset=utf-8",
                 headers: {
                     "RequestVerificationToken":
@@ -1335,7 +1411,7 @@
             };
 
             $.ajax({
-                url: "?handler=ObtenerDetalleEditar",
+                url: urlObtenerDetalleEditar,
                 type: "POST",
                 contentType: "application/json",
 
@@ -1624,6 +1700,14 @@
             llenarTabla(detalleVenta);
         }
         mostrarTotales(@Html.Raw(Model.TotalesJson));
+
+        // Inicializar los importes de la captura de producto pone $0.00 en los calculos al cargar el formulario
+        if ($("#cboProducto").val() !== "") {
+            calcularDetalle();
+        }
+        else {
+            mostrarCalculosEnCero();
+        }
 
     </script>
 }

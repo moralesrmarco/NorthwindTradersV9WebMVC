@@ -1,0 +1,9 @@
+﻿namespace NorthwindTradersV9Entities.DTOs
+{
+    public class ObtenerDetalleEditarRequest
+    {
+        public int OrderID { get; set; }
+        public int ProductID { get; set; }
+        public string? RowVersion { get; set; }
+    }
+}

@@ -19,5 +19,23 @@ namespace NorthwindTradersV9BLL
                 Thread.Sleep(_appSettings.TiempoDemora);
             return _ventaDetalleDAL.ObtenerVentaDetallePorVentaId(orderId);
         }
+        public List<VentaDetalle> ObtenerDetallesPorVentaId(int orderID)
+        {
+            return _ventaDetalleDAL.ObtenerDetallesPorVentaId(orderID);
+        }
+        public (int Codigo, byte[]? RowVersion) InsertarDetalle(
+            VentaDetalle detalle)
+        {
+            return _ventaDetalleDAL.InsertarDetalle(detalle);
+        }
+        public (int Codigo, byte[]? RowVersion) EliminarDetalle(VentaDetalle detalle)
+        {
+            return _ventaDetalleDAL.EliminarDetalle(detalle);
+        }
+        public (int Codigo, byte[]? RowVersion) ActualizarDetalle(VentaDetalle detalle)
+        {
+            return _ventaDetalleDAL.ActualizarDetalle(detalle);
+        }
+
     }
 }
