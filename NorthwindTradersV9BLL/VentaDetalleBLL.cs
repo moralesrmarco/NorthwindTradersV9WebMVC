@@ -15,8 +15,6 @@ namespace NorthwindTradersV9BLL
         }
         public List<VentaDetalle> ObtenerVentaDetallePorVentaId(int orderId)
         {
-            if (_appSettings.EjecutarTiempoDemora)
-                Thread.Sleep(_appSettings.TiempoDemora);
             return _ventaDetalleDAL.ObtenerVentaDetallePorVentaId(orderId);
         }
         public List<VentaDetalle> ObtenerDetallesPorVentaId(int orderID)
@@ -36,6 +34,5 @@ namespace NorthwindTradersV9BLL
         {
             return _ventaDetalleDAL.ActualizarDetalle(detalle);
         }
-
     }
 }

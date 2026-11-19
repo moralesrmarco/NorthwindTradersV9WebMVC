@@ -1,0 +1,330 @@
+﻿
+@model NorthwindTradersV9WebMVC.Models.Ventas.RptVentasViewModel
+
+@{
+    ViewData["Title"] = "Reporte de ventas";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<ul class="nav nav-tabs mb-0">
+    <li class="nav-item small">
+        <span class="nav-link active pestaña-buscar">
+            <i class="bi bi-search"></i>
+            Buscar una venta
+        </span>
+    </li>
+</ul>
+
+<div class="border border-top-0 p-3 small">
+    <form method="get"
+          asp-controller="RptVentas"
+          asp-action="Index">
+
+        <div class="row mb-2">
+            <div class="col-md-2">
+                <label asp-for="Filtros.IdIni" class="form-label">Id inicial</label>
+                <input asp-for="Filtros.IdIni"
+                       class="form-control form-control-sm"
+                       id="txtIdIni" />
+            </div>
+
+            <div class="col-md-2">
+                <label asp-for="Filtros.IdFin" class="form-label">ID final</label>
+                <input asp-for="Filtros.IdFin"
+                       class="form-control form-control-sm"
+                       id="txtIdFin" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Filtros.Cliente" class="form-label">Cliente</label>
+                <input asp-for="Filtros.Cliente"
+                       class="form-control form-control-sm" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Filtros.Empleado" class="form-label">Vendedor</label>
+                <input asp-for="Filtros.Empleado"
+                       class="form-control form-control-sm" />
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-4">
+                <label asp-for="Filtros.CompañiaT" class="form-label">Compañía transportista</label>
+                <input asp-for="Filtros.CompañiaT"
+                       class="form-control form-control-sm" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Filtros.DirigidoA" class="form-label">Enviar a</label>
+                <input asp-for="Filtros.DirigidoA"
+                       class="form-control form-control-sm" />
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-4">
+                <label asp-for="Filtros.FVentaIni" class="form-label">Fecha de venta inicial</label>
+                <input asp-for="Filtros.FVentaIni"
+                       class="form-control form-control-sm"
+                       type="date" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Filtros.FVentaFin" class="form-label">Fecha de venta final</label>
+                <input asp-for="Filtros.FVentaFin"
+                       class="form-control form-control-sm"
+                       type="date" />
+            </div>
+
+            <div class="col-md-4">
+                <div class="mt-4">
+                    <label asp-for="Filtros.FVentaNull" class="me-2">
+                        Fecha de venta nula
+                    </label>
+                    <input asp-for="Filtros.FVentaNull"
+                           class="form-check-input" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-4">
+                <label asp-for="Filtros.FRequeridoIni" class="form-label">Fecha de entrega inicial</label>
+                <input asp-for="Filtros.FRequeridoIni"
+                       class="form-control form-control-sm"
+                       type="date" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Filtros.FRequeridoFin" class="form-label">Fecha de entrega final</label>
+                <input asp-for="Filtros.FRequeridoFin"
+                       class="form-control form-control-sm"
+                       type="date" />
+            </div>
+
+            <div class="col-md-4">
+                <div class="mt-4">
+                    <label asp-for="Filtros.FRequeridoNull" class="me-2">
+                        Fecha de entrega nula
+                    </label>
+                    <input asp-for="Filtros.FRequeridoNull"
+                           class="form-check-input" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label asp-for="Filtros.FEnvioIni" class="form-label">Fecha de envío inicial</label>
+                <input asp-for="Filtros.FEnvioIni"
+                       class="form-control form-control-sm"
+                       type="date" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Filtros.FEnvioFin" class="form-label">Fecha de envío final</label>
+                <input asp-for="Filtros.FEnvioFin"
+                       class="form-control form-control-sm"
+                       type="date" />
+            </div>
+
+            <div class="col-md-4">
+                <div class="mt-4">
+                    <label asp-for="Filtros.FEnvioNull" class="me-2">
+                        Fecha de envío nula
+                    </label>
+                    <input asp-for="Filtros.FEnvioNull"
+                           class="form-check-input" />
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <button type="submit"
+                    id="btnImprimir"
+                    class="btn btn-sm btn-buscar"
+                    title="Imprimir">
+                <i class="bi bi-printer"></i>
+                <span class="d-none d-md-inline"> Imprimir</span>
+            </button>
+
+            <a asp-controller="RptVentas"
+               asp-action="Index"
+               id="btnLimpiar"
+               class="btn btn-sm btn-primary"
+               title="Limpiar"
+               data-show-overlay>
+                <i class="bi bi-eraser"></i>
+                <span class="d-none d-md-inline"> Limpiar</span>
+            </a>
+
+            <a asp-controller="Ventas"
+               asp-action="Index"
+               id="btnCancelar"
+               class="btn btn-sm btn-cancelar navigation-btn"
+               title="Cancelar">
+                <i class="bi bi-x-circle"></i>
+                <span class="d-none d-md-inline"> Cancelar</span>
+            </a>
+        </div>
+    </form>
+</div>
+
+<p>&nbsp;</p>
+
+<iframe id="visorReporte"
+        width="100%"
+        height="600"
+        style="border:1px solid #ccc;">
+</iframe>
+
+@section Scripts {
+
+    <script src="~/js/navigation-actions.js"></script>
+    <script src="~/js/form-buscar.js"></script>
+    <script src="~/js/loading-overlay.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            // =====================================================
+            // CONFIGURAR UN GRUPO DE FECHAS
+            // =====================================================
+            function configurarFechas(idFechaIni, idFechaFin, idFechaNull) {
+
+                const fechaIni = document.getElementById(idFechaIni);
+                const fechaFin = document.getElementById(idFechaFin);
+                const fechaNull = document.getElementById(idFechaNull);
+
+                if (!fechaIni || !fechaFin || !fechaNull) {
+                    return;
+                }
+
+                // =================================================
+                // ACTUALIZAR ESTADO CUANDO SE SELECCIONA
+                // "FECHA NULA"
+                // =================================================
+                function actualizarEstadoFecha() {
+
+                    if (fechaNull.checked) {
+
+                        // Borrar ambas fechas
+                        fechaIni.value = "";
+                        fechaFin.value = "";
+
+                        // Deshabilitar ambas fechas
+                        fechaIni.disabled = true;
+                        fechaFin.disabled = true;
+
+                    } else {
+
+                        // Habilitar ambas fechas
+                        fechaIni.disabled = false;
+                        fechaFin.disabled = false;
+                    }
+                }
+
+                // =================================================
+                // CAMBIO DE FECHA INICIAL
+                // =================================================
+                fechaIni.addEventListener("change", function() {
+
+                    if (!fechaIni.value) {
+                        return;
+                    }
+
+                    // Si la fecha final está vacía,
+                    // copiar la fecha inicial.
+                    if (!fechaFin.value) {
+                        fechaFin.value = fechaIni.value;
+                        return;
+                    }
+
+                    // Si la fecha inicial es mayor que la final,
+                    // igualar la final a la inicial.
+                    if (fechaIni.value > fechaFin.value) {
+                        fechaFin.value = fechaIni.value;
+                    }
+                });
+
+                // =================================================
+                // CAMBIO DE FECHA FINAL
+                // =================================================
+                fechaFin.addEventListener("change", function() {
+
+                    if (!fechaFin.value) {
+                        return;
+                    }
+
+                    // Si la fecha inicial está vacía,
+                    // copiar la fecha final.
+                    if (!fechaIni.value) {
+                        fechaIni.value = fechaFin.value;
+                        return;
+                    }
+
+                    // Si la fecha final es menor que la inicial,
+                    // igualar la inicial a la final.
+                    if (fechaFin.value < fechaIni.value) {
+                        fechaIni.value = fechaFin.value;
+                    }
+                });
+
+                // =================================================
+                // CAMBIO DEL CHECKBOX "FECHA NULA"
+                // =================================================
+                fechaNull.addEventListener("change", actualizarEstadoFecha);
+
+                // =================================================
+                // ESTADO INICIAL AL CARGAR LA PÁGINA
+                // =================================================
+                actualizarEstadoFecha();
+            }
+
+            // =====================================================
+            // FECHA DE VENTA
+            // =====================================================
+            configurarFechas(
+                "Filtros_FVentaIni",
+                "Filtros_FVentaFin",
+                "Filtros_FVentaNull"
+            );
+
+            // =====================================================
+            // FECHA DE ENTREGA
+            // =====================================================
+            configurarFechas(
+                "Filtros_FRequeridoIni",
+                "Filtros_FRequeridoFin",
+                "Filtros_FRequeridoNull"
+            );
+
+            // =====================================================
+            // FECHA DE ENVÍO
+            // =====================================================
+            configurarFechas(
+                "Filtros_FEnvioIni",
+                "Filtros_FEnvioFin",
+                "Filtros_FEnvioNull"
+            );
+
+            // =====================================================
+            // CARGAR EL REPORTE SOLO SI SE REALIZÓ UNA BÚSQUEDA
+            // =====================================================
+            const iframe = document.getElementById("visorReporte");
+
+            if (iframe && window.location.search) {
+
+                const parametros = new URLSearchParams(
+                    window.location.search
+                );
+
+                const urlVerPdf = '@Url.Action("VerPdf", "RptVentas")';
+
+                iframe.src = urlVerPdf + "?" + parametros.toString();
+            }
+        });
+    </script>
+}

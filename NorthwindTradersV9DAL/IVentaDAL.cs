@@ -36,5 +36,6 @@ namespace NorthwindTradersV9DAL
             int? shipVia,
             decimal? freight,
             byte[] rowVersion);
+        List<Venta> ObtenerVentas(bool selectorRealizaBusqueda, VentasBuscarDto criterios, bool top100 = false);
     }
 }

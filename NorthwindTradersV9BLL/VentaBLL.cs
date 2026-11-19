@@ -173,6 +173,27 @@ namespace NorthwindTradersV9BLL
                 request.Freight,
                 rowVersion);
         }
-
+        public List<VentaRptDto> ObtenerVentasRpt(bool selectorRealizaBusqueda, VentasBuscarDto criterios)
+        {
+            List<Venta> ventas = _ventaDAL.ObtenerVentas(selectorRealizaBusqueda, criterios);
+            var ventasRpt = ventas.Select(v => new VentaRptDto
+            {
+                OrderID = v.OrderID,
+                Cliente = v.Cliente.CompanyName,
+                Vendedor = v.Empleado.NameByLastName,
+                FechaDePedido = v.OrderDate,
+                FechaRequerido = v.RequiredDate,
+                FechaDeEnvio = v.ShippedDate,
+                CompaniaTransportista = v.Transportista.CompanyName,
+                DirigidoA = v.ShipName,
+                Domicilio = v.ShipAddress,
+                Ciudad = v.ShipCity,
+                Region = v.ShipRegion,
+                CodigoPostal = v.ShipPostalCode,
+                Pais = v.ShipCountry,
+                Flete = v.Freight ?? 0m
+            }).ToList();
+            return ventasRpt;
+        }
     }
 }
