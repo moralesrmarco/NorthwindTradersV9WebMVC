@@ -1,0 +1,1858 @@
+﻿@using System.Data
+@model NorthwindTradersV9WebMVC.Models.Graficas.EjemploGraficas4ViewModel
+
+<div class="container-fluid">
+
+    <div class="row mb-3">
+
+        <div class="col-auto">
+
+            <label for="cboAnio" class="form-label small fw-bold">
+                Año:
+            </label>
+
+            <select asp-for="Anio" id="cboAnio" class="form-select form-select-sm">
+                @foreach (DataRow row in Model.AñosVentas.Rows)
+                {
+                    <option value="@row["Valor"]">@row["Texto"]</option>
+                }
+            </select>
+        </div>
+
+        <div class="col d-flex justify-content-end align-items-end">
+
+            <span id="totalVentas"
+                  class="fw-bold">
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header fw-bold">
+
+            » Ejemplo de gráficas - Ventas mensuales por vendedores «
+
+        </div>
+
+        <div class="card-body">
+
+            <div id="mensaje" class="text-muted mb-3">
+                Seleccione un año.
+            </div>
+
+            <div class="row g-3">
+
+                <!-- 1 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            1. Barras agrupadas
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica1"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            2. Barras apiladas
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica2"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            3. Barras horizontales
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica3"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            4. Barras horizontales apiladas
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica4"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            5. Línea
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica5"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            6. Línea escalonada
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica6"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            7. Línea suavizada
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica7"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            8. Área
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica8"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            9. Área apilada
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica9"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            10. Barras + línea
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica10"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 11 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            11. Dos ejes Y
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica11"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            12. Radar
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica12"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 13 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            13. Pie
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica13"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 14 -->
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            14. Dona
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height: 300px;">
+                                <canvas id="grafica14"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nota -->
+                <div class="col-12 col-xl-6">
+                    <div class="card h-100">
+                        <div class="card-header fw-bold">
+                            Nota
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-0">
+                                Las 14 gráficas representan los mismos datos
+                                de ventas mensuales por vendedor para el año
+                                seleccionado.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let grafica1 = null;
+        let grafica2 = null;
+        let grafica3 = null;
+        let grafica4 = null;
+        let grafica5 = null;
+        let grafica6 = null;
+        let grafica7 = null;
+        let grafica8 = null;
+        let grafica9 = null;
+        let grafica10 = null;
+        let grafica11 = null;
+        let grafica12 = null;
+        let grafica13 = null;
+        let grafica14 = null;
+
+
+        function formatearMoneda(valor) {
+
+            return new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2
+            }).format(valor);
+
+        }
+
+
+        async function cargarDatos() {
+
+            mostrarLoadingOverlay();
+
+            try {
+
+                const anio =
+                    document.getElementById("cboAnio").value;
+
+                const url =
+                    '@Url.Action("ObtenerVentasMensualesPorVendedoresEjemplo4", "Graficas")'
+                    + '?anio=' + anio;
+
+                const response = await fetch(url);
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Error HTTP: " + response.status
+                    );
+
+                }
+
+                const datos = await response.json();
+
+
+                // ==========================================
+                // TOTAL DE VENTAS
+                // ==========================================
+
+                const totalVentas = datos.reduce(
+                    (total, dato) =>
+                        total + Number(dato.totalVentas || 0),
+                    0
+                );
+
+
+                document.getElementById("totalVentas").textContent =
+                    "Total de ventas (" +
+                    anio +
+                    "): " +
+                    formatearMoneda(totalVentas);
+
+
+                // ==========================================
+                // VENDEDORES
+                // ==========================================
+
+                const vendedores = [
+                    ...new Set(
+                        datos.map(dato => dato.vendedor)
+                    )
+                ];
+
+
+                // ==========================================
+                // MESES
+                // ==========================================
+
+                const meses = [
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Septiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                ];
+
+
+                // ==========================================
+                // DATASETS
+                // ==========================================
+
+                const datasets = vendedores.map(vendedor => {
+
+                    return {
+
+                        label: vendedor,
+
+                        data: meses.map((mes, indice) => {
+
+                            const numeroMes = indice + 1;
+
+                            const registro = datos.find(dato =>
+                                dato.vendedor === vendedor &&
+                                Number(dato.mes) === numeroMes
+                            );
+
+                            return registro
+                                ? Number(registro.totalVentas || 0)
+                                : 0;
+
+                        })
+
+                    };
+
+                });
+
+
+                // ==========================================
+                // DESTRUIR GRÁFICA ANTERIOR
+                // ==========================================
+
+                if (grafica1) {
+
+                    grafica1.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 1
+                // ==========================================
+
+                const canvas =
+                    document.getElementById("grafica1");
+
+
+                grafica1 = new Chart(canvas, {
+
+                    type: "bar",
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: datasets
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                position: "bottom"
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 2 ANTERIOR
+                // ==========================================
+
+                if (grafica2) {
+
+                    grafica2.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 2
+                // ==========================================
+
+                const canvas2 =
+                    document.getElementById("grafica2");
+
+
+                grafica2 = new Chart(canvas2, {
+
+                    type: "bar",
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: datasets
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                position: "bottom"
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                stacked: true
+
+                            },
+
+                            y: {
+
+                                stacked: true,
+
+                                beginAtZero: true,
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 3 ANTERIOR
+                // ==========================================
+
+                if (grafica3) {
+
+                    grafica3.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 3
+                // ==========================================
+
+                const canvas3 =
+                    document.getElementById("grafica3");
+
+
+                grafica3 = new Chart(canvas3, {
+
+                    type: "bar",
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: datasets
+
+                    },
+
+                    options: {
+
+                        indexAxis: "y",
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                position: "bottom"
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                beginAtZero: true,
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            },
+
+                            y: {
+
+                                beginAtZero: true
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 4 ANTERIOR
+                // ==========================================
+
+                if (grafica4) {
+
+                    grafica4.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 4
+                // ==========================================
+
+                const canvas4 =
+                    document.getElementById("grafica4");
+
+
+                grafica4 = new Chart(canvas4, {
+
+                    type: "bar",
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: datasets
+
+                    },
+
+                    options: {
+
+                        indexAxis: "y",
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                position: "bottom"
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                stacked: true,
+
+                                beginAtZero: true,
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            },
+
+                            y: {
+
+                                stacked: true
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 5 ANTERIOR
+                // ==========================================
+
+                if (grafica5) {
+
+                    grafica5.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 5
+                // ==========================================
+
+                const canvas5 =
+                    document.getElementById("grafica5");
+
+
+                grafica5 = new Chart(canvas5, {
+
+                    type: "line",
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: datasets.map(dataset => ({
+
+                            ...dataset,
+
+                            fill: false,
+
+                            tension: 0
+
+                        }))
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                position: "bottom"
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 6 ANTERIOR
+                // ==========================================
+
+                if (grafica6) {
+
+                    grafica6.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 6
+                // ==========================================
+
+                const canvas6 =
+                    document.getElementById("grafica6");
+
+
+                grafica6 = new Chart(canvas6, {
+
+                    type: "line",
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: datasets.map(dataset => ({
+
+                            ...dataset,
+
+                            fill: false,
+
+                            stepped: true,
+
+                            tension: 0
+
+                        }))
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                position: "bottom"
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 7 ANTERIOR
+                // ==========================================
+
+                if (grafica7) {
+
+                    grafica7.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 7
+                // ==========================================
+
+                const canvas7 =
+                    document.getElementById("grafica7");
+
+
+                grafica7 = new Chart(canvas7, {
+
+                    type: "line",
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: datasets.map(dataset => ({
+
+                            ...dataset,
+
+                            fill: false,
+
+                            tension: 0.4
+
+                        }))
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                position: "bottom"
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 8 ANTERIOR
+                // ==========================================
+
+                if (grafica8) {
+
+                    grafica8.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 8
+                // ==========================================
+
+                const canvas8 =
+                    document.getElementById("grafica8");
+
+
+                grafica8 = new Chart(canvas8, {
+
+                    type: "line",
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: datasets.map(dataset => ({
+
+                            ...dataset,
+
+                            fill: true,
+
+                            tension: 0
+
+                        }))
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                position: "bottom"
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 9 ANTERIOR
+                // ==========================================
+
+                if (grafica9) {
+
+                    grafica9.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 9
+                // ==========================================
+
+                const canvas9 =
+                    document.getElementById("grafica9");
+
+
+                grafica9 = new Chart(canvas9, {
+
+                    type: "line",
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: datasets.map(dataset => ({
+
+                            ...dataset,
+
+                            fill: true,
+
+                            tension: 0
+
+                        }))
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                position: "bottom"
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            x: {
+
+                                stacked: true
+
+                            },
+
+                            y: {
+
+                                stacked: true,
+
+                                beginAtZero: true,
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // TOTALES MENSUALES
+                // ==========================================
+
+                const totalesMensuales = meses.map((mes, indice) => {
+
+                    const numeroMes = indice + 1;
+
+                    return datos
+                        .filter(dato =>
+                            Number(dato.mes) === numeroMes
+                        )
+                        .reduce(
+                            (total, dato) =>
+                                total + Number(dato.totalVentas || 0),
+                            0
+                        );
+
+                });
+
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 10 ANTERIOR
+                // ==========================================
+
+                if (grafica10) {
+
+                    grafica10.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 10
+                // ==========================================
+
+                const canvas10 =
+                    document.getElementById("grafica10");
+
+
+                grafica10 = new Chart(canvas10, {
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: [
+
+                            {
+
+                                type: "bar",
+
+                                label: "Ventas mensuales",
+
+                                data: totalesMensuales
+
+                            },
+
+                            {
+
+                                type: "line",
+
+                                label: "Tendencia",
+
+                                data: totalesMensuales,
+
+                                fill: false,
+
+                                tension: 0.2
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                position: "bottom"
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // PROMEDIO MENSUAL
+                // ==========================================
+
+                const promedioMensual =
+                    totalesMensuales.length > 0
+                        ? totalesMensuales.reduce(
+                            (total, valor) => total + valor,
+                            0
+                        ) / totalesMensuales.length
+                        : 0;
+
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 11 ANTERIOR
+                // ==========================================
+
+                if (grafica11) {
+
+                    grafica11.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 11
+                // ==========================================
+
+                const canvas11 =
+                    document.getElementById("grafica11");
+
+
+                grafica11 = new Chart(canvas11, {
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: [
+
+                            {
+
+                                type: "bar",
+
+                                label: "Ventas mensuales",
+
+                                data: totalesMensuales,
+
+                                yAxisID: "y"
+
+                            },
+
+                            {
+
+                                type: "line",
+
+                                label: "Promedio mensual",
+
+                                data: meses.map(() => promedioMensual),
+
+                                yAxisID: "y1",
+
+                                fill: false,
+
+                                tension: 0.2
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+                                position: "bottom"
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            y: {
+
+                                type: "linear",
+
+                                position: "left",
+
+                                beginAtZero: true,
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            },
+
+                            y1: {
+
+                                type: "linear",
+
+                                position: "right",
+
+                                beginAtZero: true,
+
+                                grid: {
+
+                                    drawOnChartArea: false
+
+                                },
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 12 ANTERIOR
+                // ==========================================
+
+                if (grafica12) {
+
+                    grafica12.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 12
+                // ==========================================
+
+                const canvas12 =
+                    document.getElementById("grafica12");
+
+
+                grafica12 = new Chart(canvas12, {
+
+                    type: "radar",
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: datasets.map(dataset => ({
+
+                            ...dataset,
+
+                            fill: true,
+
+                            tension: 0
+
+                        }))
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+
+                                position: "bottom"
+
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            r: {
+
+                                beginAtZero: true,
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 13 ANTERIOR
+                // ==========================================
+
+                if (grafica13) {
+
+                    grafica13.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 13
+                // ==========================================
+
+                const canvas13 =
+                    document.getElementById("grafica13");
+
+
+                grafica13 = new Chart(canvas13, {
+
+                    type: "pie",
+
+                    data: {
+
+                        labels: vendedores,
+
+                        datasets: [
+
+                            {
+
+                                label: "Ventas",
+
+                                data: vendedores.map(vendedor => {
+
+                                    return datos
+                                        .filter(dato =>
+                                            dato.vendedor === vendedor
+                                        )
+                                        .reduce(
+                                            (total, dato) =>
+                                                total +
+                                                Number(dato.totalVentas || 0),
+                                            0
+                                        );
+
+                                })
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+
+                                position: "bottom"
+
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // DESTRUIR GRÁFICA 14 ANTERIOR
+                // ==========================================
+
+                if (grafica14) {
+
+                    grafica14.destroy();
+
+                }
+
+
+                // ==========================================
+                // CREAR GRÁFICA 14
+                // ==========================================
+
+                const canvas14 =
+                    document.getElementById("grafica14");
+
+
+                grafica14 = new Chart(canvas14, {
+
+                    type: "doughnut",
+
+                    data: {
+
+                        labels: vendedores,
+
+                        datasets: [
+
+                            {
+
+                                label: "Ventas",
+
+                                data: vendedores.map(vendedor => {
+
+                                    return datos
+                                        .filter(dato =>
+                                            dato.vendedor === vendedor
+                                        )
+                                        .reduce(
+                                            (total, dato) =>
+                                                total +
+                                                Number(dato.totalVentas || 0),
+                                            0
+                                        );
+
+                                })
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+
+                            legend: {
+
+                                position: "bottom"
+
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.label +
+                                            ": " +
+                                            formatearMoneda(context.raw);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+                // ==========================================
+                // MENSAJE
+                // ==========================================
+
+                document.getElementById("mensaje").textContent =
+                    "Ventas mensuales por vendedor - " +
+                    anio +
+                    ". Registros: " +
+                    datos.length;
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                mostrarErrorValidacion(
+                    "Ocurrió un error al obtener las ventas."
+                );
+
+            }
+            finally {
+
+                ocultarLoadingOverlay();
+
+            }
+
+        }
+
+
+        document
+            .getElementById("cboAnio")
+            .addEventListener(
+                "change",
+                function() {
+
+                    cargarDatos();
+
+                }
+            );
+
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                cargarDatos();
+
+            }
+        );
+
+    </script>
+}

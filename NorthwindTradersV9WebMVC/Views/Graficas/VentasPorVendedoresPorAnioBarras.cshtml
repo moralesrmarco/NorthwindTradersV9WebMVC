@@ -1,0 +1,476 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Graficas.VentasPorVendedoresPorAnioBarrasViewModel
+<div class="container-fluid">
+
+    <div class="row mb-3">
+
+        <div class="col-auto">
+
+            <label for="cboAnio" class="form-label small fw-bold">
+                Ventas mensuales por vendedores del año:
+            </label>
+
+            <select id="cboAnio" class="form-select form-select-sm">
+
+                @foreach (System.Data.DataRow fila in Model.Años.Rows)
+                {
+                    var valor = Convert.ToInt32(fila["Valor"]);
+
+                    <option value="@valor"
+                            selected="@(valor == Model.AñoActual)">
+                        @fila["Texto"]
+                    </option>
+                }
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+
+            <span id="tituloGrafica">
+                » Gráfica de ventas mensuales por vendedores
+                <span id="tituloAnio"></span>
+                «
+            </span>
+
+            <span id="totalVentas" class="small">
+            </span>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div style="position: relative; height: 550px;">
+
+                <canvas id="chartVentas"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <script>
+
+        let chartVentas = null;
+
+
+        async function cargarVentasMensualesPorVendedores(anio) {
+
+            mostrarLoadingOverlay();
+
+            try {
+
+                const url =
+                    '@Url.Action("ObtenerVentasMensualesPorVendedoresPorAnioBarras", "Graficas")'
+                    + '?anio='
+                    + anio;
+
+                const response = await fetch(url);
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Error al obtener las ventas mensuales por vendedores."
+                    );
+                }
+
+
+                const datos = await response.json();
+
+
+                dibujarGrafica(datos, anio);
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Ocurrió un error al cargar las ventas mensuales por vendedores."
+                );
+
+            }
+            finally {
+
+                ocultarLoadingOverlay();
+            }
+        }
+
+
+        function dibujarGrafica(datos, anio) {
+
+            // -------------------------------------------------
+            // Meses
+            // -------------------------------------------------
+
+            const meses = [
+                "Ene.",
+                "Feb.",
+                "Mar.",
+                "Abr.",
+                "May.",
+                "Jun.",
+                "Jul.",
+                "Ago.",
+                "Sep.",
+                "Oct.",
+                "Nov.",
+                "Dic."
+            ];
+
+
+            // -------------------------------------------------
+            // Vendedores
+            // -------------------------------------------------
+
+            const vendedores = [
+                ...new Set(
+                    datos.map(x => x.vendedor)
+                )
+            ];
+
+
+            // -------------------------------------------------
+            // Crear una serie por vendedor
+            // -------------------------------------------------
+
+            const datasets = vendedores.map(vendedor => {
+
+                const datosVendedor =
+                    datos.filter(
+                        x => x.vendedor === vendedor
+                    );
+
+
+                // 12 meses inicializados en cero
+
+                const valores =
+                    new Array(12).fill(0);
+
+
+                // Colocar cada venta en su mes
+
+                datosVendedor.forEach(row => {
+
+                    const mes =
+                        Number(row.mes);
+
+                    if (mes >= 1 && mes <= 12) {
+
+                        valores[mes - 1] =
+                            Number(row.totalVentas);
+                    }
+
+                });
+
+
+                // Total del vendedor
+
+                const totalVendedor =
+                    valores.reduce(
+                        (total, valor) =>
+                            total + valor,
+                        0
+                    );
+
+
+                return {
+
+                    label:
+                        vendedor
+                        + " (Total: "
+                        + formatearMoneda(totalVendedor)
+                        + ")",
+
+                    data: valores,
+
+                    borderWidth: 1
+                };
+
+            });
+
+
+            // -------------------------------------------------
+            // Total general
+            // -------------------------------------------------
+
+            const totalVentas =
+                datos.reduce(
+                    (total, row) =>
+                        total +
+                        Number(row.totalVentas || 0),
+                    0
+                );
+
+
+            // -------------------------------------------------
+            // Título
+            // -------------------------------------------------
+
+            if (anio === -1) {
+
+                document.getElementById("tituloAnio")
+                    .textContent =
+                    "de todos los años";
+
+            }
+            else {
+
+                document.getElementById("tituloAnio")
+                    .textContent =
+                    "del año " + anio;
+            }
+
+
+            // -------------------------------------------------
+            // Total
+            // -------------------------------------------------
+
+            let textoTotal;
+
+            if (anio === -1) {
+
+                textoTotal =
+                    "Total de ventas (todos los años): ";
+
+            }
+            else {
+
+                textoTotal =
+                    "Total de ventas (" + anio + "): ";
+            }
+
+
+            document.getElementById("totalVentas")
+                .textContent =
+                textoTotal +
+                formatearMoneda(totalVentas);
+
+
+            // -------------------------------------------------
+            // Canvas
+            // -------------------------------------------------
+
+            const ctx =
+                document
+                    .getElementById("chartVentas")
+                    .getContext("2d");
+
+
+            Chart.register(ChartDataLabels);
+
+
+            if (chartVentas !== null) {
+
+                chartVentas.destroy();
+            }
+
+
+            // -------------------------------------------------
+            // Chart.js
+            // -------------------------------------------------
+
+            chartVentas = new Chart(ctx, {
+
+                type: "bar",
+
+                data: {
+
+                    labels: meses,
+
+                    datasets: datasets
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+
+                    plugins: {
+
+                        legend: {
+
+                            position: "top"
+                        },
+
+
+                        datalabels: {
+
+                            display: function(context) {
+
+                                return context.dataset.data[
+                                    context.dataIndex
+                                ] > 0;
+
+                            },
+
+                            anchor: "end",
+
+                            align: "top",
+
+
+                            formatter: function(value) {
+
+                                if (value <= 0) {
+                                    return "";
+                                }
+
+                                return formatearMoneda(value);
+                            },
+
+
+                            font: {
+
+                                size: 10,
+
+                                weight: "bold"
+                            }
+                        },
+
+
+                        tooltip: {
+
+                            callbacks: {
+
+                                label: function(context) {
+
+                                    return context.dataset.label
+                                        + "\nMes: "
+                                        + context.label
+                                        + "\nVentas: "
+                                        + formatearMoneda(
+                                            context.parsed.y
+                                        );
+                                }
+                            }
+                        }
+                    },
+
+
+                    scales: {
+
+                        x: {
+
+                            title: {
+
+                                display: true,
+
+                                text: "Meses"
+                            }
+                        },
+
+
+                        y: {
+
+                            beginAtZero: true,
+
+
+                            title: {
+
+                                display: true,
+
+                                text: "Ventas Totales"
+                            },
+
+
+                            ticks: {
+
+                                callback: function(value) {
+
+                                    return new Intl.NumberFormat(
+                                        "es-MX",
+                                        {
+                                            style: "currency",
+                                            currency: "MXN",
+                                            maximumFractionDigits: 0
+                                        }
+                                    ).format(value);
+
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        function formatearMoneda(valor) {
+
+            return new Intl.NumberFormat(
+                "es-MX",
+                {
+                    style: "currency",
+                    currency: "MXN",
+                    minimumFractionDigits: 2
+                }
+            ).format(valor);
+        }
+
+
+        // -----------------------------------------------------
+        // Cambio de año
+        // -----------------------------------------------------
+
+        document
+            .getElementById("cboAnio")
+            .addEventListener("change", function() {
+
+                const year =
+                    parseInt(this.value);
+
+
+                if (year === 0) {
+                    return;
+                }
+
+
+                cargarVentasMensualesPorVendedores(year);
+            });
+
+
+        // -----------------------------------------------------
+        // Carga inicial
+        // -----------------------------------------------------
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                const combo =
+                    document.getElementById("cboAnio");
+
+
+                if (combo &&
+                    combo.value !== "0") {
+
+                    cargarVentasMensualesPorVendedores(
+                        parseInt(combo.value)
+                    );
+                }
+
+            }
+        );
+
+    </script>
+}

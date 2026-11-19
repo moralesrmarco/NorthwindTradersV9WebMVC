@@ -1,0 +1,455 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Graficas.VentasAnualesViewModel
+<div class="container-fluid">
+
+    <div class="row mb-3">
+        <div class="col-auto">
+            <label for="cboAnios" class="form-label small fw-bold">
+                Comparar ventas de:
+            </label>
+
+            <select id="cboAnios" class="form-select form-select-sm">
+
+                @for (int i = 2;
+                      i <= Math.Min(Model.TotalAñosDisponibles, 10);
+                      i++)
+                {
+                    <option value="@i" selected="@(i == Model.AñosIniciales)">
+                        @i Años
+                    </option>
+                }
+
+            </select>
+        </div>
+    </div>
+
+    <div class="card">
+
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+
+            <span id="tituloGrafica">
+                » Comparativo de ventas mensuales de los últimos
+                <span id="tituloAnios">@Model.AñosIniciales</span>
+                años «
+            </span>
+
+        </div>
+
+        <div class="card-body">
+
+            <div style="position: relative; height: 550px;">
+                <canvas id="chartVentasAnuales"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <script>
+
+        let chartVentasAnuales = null;
+
+        async function cargarComparativoVentas(years) {
+
+            mostrarLoadingOverlay();
+
+            try {
+
+                const url =
+                    '@Url.Action("ObtenerVentasMensualesPorAnios", "Graficas")'
+                    + '?years=' + years;
+
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Error al obtener las ventas mensuales por años."
+                    );
+                }
+
+                const datos = await response.json();
+
+                dibujarGrafica(datos, years);
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Ocurrió un error al cargar el comparativo de ventas."
+                );
+
+            }
+            finally {
+
+                ocultarLoadingOverlay();
+
+            }
+        }
+
+
+        function dibujarGrafica(datos, years) {
+
+            document.getElementById("tituloAnios").textContent = years;
+
+
+            // =========================================================
+            // AGRUPAR DATOS POR AÑO
+            // =========================================================
+
+            const datosAgrupados = {};
+
+            datos.forEach(x => {
+
+                if (!datosAgrupados[x.year]) {
+                    datosAgrupados[x.year] = [];
+                }
+
+                datosAgrupados[x.year].push(x);
+
+            });
+
+
+            // =========================================================
+            // ORDENAR AÑOS DEL MÁS RECIENTE AL MÁS ANTIGUO
+            // =========================================================
+
+            const anios = Object.keys(datosAgrupados)
+                .map(Number)
+                .sort((a, b) => b - a);
+
+
+            // =========================================================
+            // COLORES
+            // =========================================================
+
+            const colores = [
+                'rgb(52, 152, 219)',
+                'rgb(231, 76, 60)',
+                'rgb(46, 204, 113)',
+                'rgb(155, 89, 182)',
+                'rgb(241, 196, 15)',
+                'rgb(230, 126, 34)',
+                'rgb(26, 188, 156)',
+                'rgb(52, 73, 94)',
+                'rgb(127, 140, 141)',
+                'rgb(192, 57, 43)'
+            ];
+
+
+            // =========================================================
+            // CREAR DATASETS
+            // =========================================================
+
+            const datasets = anios.map((anio, index) => {
+
+                const grupo = datosAgrupados[anio]
+                    .sort((a, b) => a.mes - b.mes);
+
+
+                const totalAnual = grupo.reduce(
+                    (total, dato) =>
+                        total + Number(dato.total),
+                    0
+                );
+
+
+                const color =
+                    colores[index % colores.length];
+
+
+                return {
+
+                    label:
+                        'Ventas ' +
+                        anio +
+                        ' (Total: ' +
+                        new Intl.NumberFormat('es-MX', {
+                            style: 'currency',
+                            currency: 'MXN',
+                            minimumFractionDigits: 2
+                        }).format(totalAnual) +
+                        ')',
+
+                    data: grupo.map(dato =>
+                        Number(dato.total)
+                    ),
+
+                    borderColor: color,
+                    backgroundColor: color,
+                    pointBackgroundColor: color,
+                    pointBorderColor: '#ffffff',
+
+                    borderWidth: 3,
+
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+
+                    tension: 0.4,
+
+                    fill: false
+                };
+
+            });
+
+
+            // =========================================================
+            // DESTRUIR GRÁFICA ANTERIOR
+            // =========================================================
+
+            if (chartVentasAnuales !== null) {
+                chartVentasAnuales.destroy();
+            }
+
+
+            // =========================================================
+            // REGISTRAR DATALABELS
+            // =========================================================
+
+            Chart.register(ChartDataLabels);
+
+
+            // =========================================================
+            // CREAR GRÁFICA
+            // =========================================================
+
+            const ctx =
+                document
+                    .getElementById("chartVentasAnuales")
+                    .getContext("2d");
+
+
+            chartVentasAnuales = new Chart(ctx, {
+
+                type: 'line',
+
+                data: {
+
+                    labels: datosAgrupados[anios[0]]
+                        .sort((a, b) => a.mes - b.mes)
+                        .map(x => x.nombreMes),
+
+                    datasets: datasets
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    interaction: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+
+                    plugins: {
+
+                        legend: {
+
+                            display: true,
+
+                            position: 'top',
+
+                            labels: {
+                                usePointStyle: true
+                            }
+
+                        },
+
+
+                        datalabels: {
+
+                            display: function(context) {
+
+                                return context.dataset.data[
+                                    context.dataIndex
+                                ] !== 0;
+
+                            },
+
+                            anchor: 'end',
+
+                            align: 'top',
+
+                            formatter: function(value) {
+
+                                return new Intl.NumberFormat(
+                                    'es-MX',
+                                    {
+                                        style: 'currency',
+                                        currency: 'MXN',
+                                        minimumFractionDigits: 2
+                                    }
+                                ).format(value);
+
+                            },
+
+                            font: {
+                                size: 10,
+                                weight: 'bold'
+                            }
+
+                        },
+
+
+                        tooltip: {
+
+                            callbacks: {
+
+                                title: function(context) {
+
+                                    const index =
+                                        context[0].dataIndex;
+
+                                    const mes =
+                                        datosAgrupados[
+                                            context[0].dataset.label
+                                                .match(/\d{4}/)[0]
+                                        ][index].nombreMes;
+
+                                    return mes;
+
+                                },
+
+                                label: function(context) {
+
+                                    const anio =
+                                        context.dataset.label
+                                            .match(/\d{4}/)[0];
+
+                                    return (
+                                        'Ventas ' +
+                                        anio +
+                                        ': ' +
+                                        new Intl.NumberFormat(
+                                            'es-MX',
+                                            {
+                                                style: 'currency',
+                                                currency: 'MXN',
+                                                minimumFractionDigits: 2
+                                            }
+                                        ).format(
+                                            context.parsed.y
+                                        )
+                                    );
+
+                                }
+
+                            }
+
+                        }
+
+                    },
+
+
+                    scales: {
+
+                        x: {
+
+                            title: {
+                                display: true,
+                                text: 'Meses'
+                            },
+
+                            ticks: {
+                                autoSkip: false
+                            },
+
+                            grid: {
+                                display: true,
+                                borderDash: [5, 5]
+                            }
+
+                        },
+
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            title: {
+                                display: true,
+                                text: 'Ventas Totales'
+                            },
+
+                            ticks: {
+
+                                callback: function(value) {
+
+                                    return new Intl.NumberFormat(
+                                        'es-MX',
+                                        {
+                                            style: 'currency',
+                                            currency: 'MXN',
+                                            maximumFractionDigits: 0
+                                        }
+                                    ).format(value);
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+
+        // =============================================================
+        // CAMBIO DE NÚMERO DE AÑOS
+        // =============================================================
+
+        document
+            .getElementById("cboAnios")
+            .addEventListener("change", function() {
+
+                const years =
+                    parseInt(this.value);
+
+                if (!isNaN(years) && years >= 2) {
+
+                    cargarComparativoVentas(years);
+
+                }
+
+            });
+
+
+        // =============================================================
+        // CARGA INICIAL
+        // =============================================================
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                const combo =
+                    document.getElementById("cboAnios");
+
+                if (combo) {
+
+                    cargarComparativoVentas(
+                        parseInt(combo.value)
+                    );
+
+                }
+
+            }
+        );
+
+    </script>
+}

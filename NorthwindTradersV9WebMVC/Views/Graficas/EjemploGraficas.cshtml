@@ -1,0 +1,392 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Graficas.EjemploGraficasViewModel
+<div class="container-fluid">
+
+    <div class="row mb-3">
+        <div class="col-auto">
+
+            <label for="cboTipoGrafica" class="form-label small fw-bold">
+                Tipo de gráfica:
+            </label>
+
+            <select id="cboTipoGrafica" class="form-select form-select-sm">
+                <option value="bar">Barras</option>
+                <option value="line">Líneas</option>
+                <option value="area">Área</option>
+                <option value="pie">Circular</option>
+                <option value="doughnut">Dona</option>
+                <option value="polarArea">Área polar</option>
+                <option value="radar">Radar</option>
+                <option value="scatter">Dispersión</option>
+                <option value="bubble">Burbujas</option>
+                <option value="mixed">Mixta</option>
+            </select>
+
+        </div>
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+
+            <span id="tituloGrafica">
+                » Ejemplo de gráfica
+                <span id="tituloTipo"></span>
+                «
+            </span>
+
+            <span id="totalVentas" class="small">
+            </span>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div style="position: relative; height: 550px;">
+                <canvas id="chartEjemplo"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <script>
+
+        let chartEjemplo = null;
+
+        const meses = [
+            "Ene.",
+            "Feb.",
+            "Mar.",
+            "Abr.",
+            "May.",
+            "Jun.",
+            "Jul.",
+            "Ago.",
+            "Sep.",
+            "Oct.",
+            "Nov.",
+            "Dic."
+        ];
+
+
+        function formatearMoneda(valor) {
+
+            return new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2
+            }).format(valor);
+
+        }
+
+
+        async function cargarDatos() {
+
+            mostrarLoadingOverlay();
+
+            try {
+
+                const url =
+                    '@Url.Action("ObtenerVentasMensualesEjemplo", "Graficas")';
+
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error("Error HTTP: " + response.status);
+                }
+
+                const datos = await response.json();
+
+                dibujarGrafica(datos);
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                mostrarErrorValidacion(
+                    "Ocurrió un error al obtener las ventas."
+                );
+
+            }
+            finally {
+
+                ocultarLoadingOverlay();
+
+            }
+        }
+
+
+        function dibujarGrafica(datos) {
+
+            const tipo = document.getElementById("cboTipoGrafica").value;
+
+            const nombreTipo =
+                document.getElementById("cboTipoGrafica")
+                    .selectedOptions[0].text;
+
+
+            document.getElementById("tituloTipo").textContent =
+                nombreTipo;
+
+
+            const totalVentas = datos.reduce(
+                (total, dato) => total + Number(dato.total || 0),
+                0
+            );
+
+
+            document.getElementById("totalVentas").textContent =
+                "Total de ventas: " + formatearMoneda(totalVentas);
+
+
+            if (chartEjemplo) {
+                chartEjemplo.destroy();
+            }
+
+
+            const labels = datos.map(x => x.nombreMes);
+
+            const valores = datos.map(x => Number(x.total || 0));
+
+
+            let tipoChart = tipo;
+
+
+            /*
+             * Chart.js no tiene un tipo "area".
+             *
+             * Se consigue utilizando una gráfica
+             * de líneas con fill: true.
+             */
+            if (tipo === "area") {
+                tipoChart = "line";
+            }
+
+
+            /*
+             * Para Scatter y Bubble utilizaremos
+             * datos con coordenadas.
+             */
+            let dataSet;
+
+
+            if (tipo === "scatter") {
+
+                dataSet = datos.map((x, i) => ({
+                    x: i + 1,
+                    y: Number(x.total || 0)
+                }));
+
+            }
+            else if (tipo === "bubble") {
+
+                dataSet = datos.map((x, i) => ({
+                    x: i + 1,
+                    y: Number(x.total || 0),
+                    r: 8
+                }));
+
+            }
+            else {
+
+                dataSet = valores;
+
+            }
+
+
+            /*
+             * Gráfica mixta:
+             * barras + línea.
+             */
+            if (tipo === "mixed") {
+
+                chartEjemplo = new Chart(
+                    document.getElementById("chartEjemplo"),
+                    {
+                        data: {
+                            labels: labels,
+
+                            datasets: [
+
+                                {
+                                    type: "bar",
+                                    label: "Ventas",
+                                    data: valores
+                                },
+
+                                {
+                                    type: "line",
+                                    label: "Tendencia",
+                                    data: valores,
+                                    tension: 0.3
+                                }
+
+                            ]
+                        },
+
+                        options: obtenerOpciones(labels)
+                    }
+                );
+
+                return;
+            }
+
+
+            const dataset = {
+                label: "Ventas",
+                data: dataSet,
+                borderWidth: 2
+            };
+
+
+            if (tipo === "area") {
+
+                dataset.fill = true;
+                dataset.tension = 0.3;
+
+            }
+
+
+            chartEjemplo = new Chart(
+                document.getElementById("chartEjemplo"),
+                {
+                    type: tipoChart,
+
+                    data: {
+                        labels: labels,
+
+                        datasets: [
+                            dataset
+                        ]
+                    },
+
+                    plugins: [ChartDataLabels],
+
+                    options: obtenerOpciones(labels)
+                }
+            );
+
+        }
+
+
+        function obtenerOpciones(labels) {
+
+            const tipo =
+                document.getElementById("cboTipoGrafica").value;
+
+
+            const esCircular =
+                tipo === "pie" ||
+                tipo === "doughnut" ||
+                tipo === "polarArea";
+
+
+            return {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+                        display: true
+                    },
+
+                    datalabels: {
+
+                        display: function(context) {
+
+                            return Number(
+                                context.dataset.data[context.dataIndex]
+                            ) > 0;
+
+                        },
+
+                        formatter: function(value) {
+
+                            if (esCircular) {
+                                return formatearMoneda(value);
+                            }
+
+                            return formatearMoneda(value);
+
+                        }
+
+                    },
+
+                    tooltip: {
+
+                        callbacks: {
+
+                            label: function(context) {
+
+                                const valor =
+                                    context.raw?.y ??
+                                    context.raw ??
+                                    0;
+
+                                return "Ventas: " +
+                                    formatearMoneda(valor);
+
+                            }
+
+                        }
+
+                    }
+
+                },
+
+                scales: esCircular
+                    ? {}
+                    : {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+
+                                callback: function(value) {
+                                    return formatearMoneda(value);
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+            };
+
+        }
+
+
+        document
+            .getElementById("cboTipoGrafica")
+            .addEventListener("change", function () {
+
+                cargarDatos();
+
+            });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            cargarDatos();
+
+        });
+
+    </script>
+}

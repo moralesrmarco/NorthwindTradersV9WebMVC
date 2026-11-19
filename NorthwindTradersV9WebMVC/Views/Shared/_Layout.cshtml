@@ -443,6 +443,58 @@
                                 </span>
                             </li>
                         }
+                        <!-- Menú Gráficas con submenús -->
+                        @if (User.HasClaim("Permiso", Permisos.Graficas.ToString()))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="graficasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Gráficas
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="graficasDropdown">
+
+                                    <!-- Consultas con submenú -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item dropdown-toggle" href="#">Consultas</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" asp-controller="Graficas" asp-action="VentasMensuales">Ventas mensuales</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Graficas" asp-action="VentasAnuales">Comparativo de ventas anuales</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Graficas" asp-action="TopProductosMasVendidos">Top productos más vendidos</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Graficas" asp-action="VentasPorVendedoresPorAnio">Ventas por vendedores por año</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Graficas" asp-action="VentasMensualesPorVendedorPorAnio">Ventas mensuales por vendedores por año</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Graficas" asp-action="VentasPorVendedoresPorAnioBarras">Ventas mensuales por vendedores por año (Barras)</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Graficas" asp-action="EjemploGraficas">Ejemplo de gráficas</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Graficas" asp-action="EjemploGraficas2">Ejemplo de gráficas 2</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Graficas" asp-action="EjemploGraficas3">Ejemplo de gráficas 3</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Graficas" asp-action="EjemploGraficas4">Ejemplo de gráficas 4</a></li>
+                                        </ul>
+                                    </li>
+
+                                    <!-- Reportes con submenú -->
+                                    <li class="dropdown-submenu">
+                                        <a class="dropdown-item dropdown-toggle" href="#">Reportes</a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" asp-page="/Graficas/Reportes/VentasMensuales">Ventas mensuales</a></li>
+                                            <li><a class="dropdown-item" asp-page="/Graficas/Reportes/VentasAnuales">Comparativo de ventas anuales</a></li>
+                                            <li><a class="dropdown-item" asp-page="/Graficas/Reportes/TopProductosMasVendidos">Top productos más vendidos</a></li>
+                                            <li><a class="dropdown-item" asp-page="/Graficas/Reportes/VentasPorVendedoresPorAnio">Ventas por vendedores por año</a></li>
+                                            <li><a class="dropdown-item" asp-page="/Graficas/Reportes/VentasMensualesPorVendedorPorAnio">Ventas mensuales por vendedores por año</a></li>
+                                            <li><a class="dropdown-item" asp-page="/Graficas/Reportes/VentasMensualesPorVendedorPorAnioBarras">Ventas mensuales por vendedores por año (barras)</a></li>
+                                            <li><a class="dropdown-item" asp-page="/Graficas/Reportes/VentasMensualesPorVendedorPorAnioBarras2">Ventas mensuales por vendedores por año (barras 2)</a></li>
+
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-dark menu-deshabilitado">
+                                    Gráficas
+                                </span>
+                            </li>
+                        }
+
                         <!-- Menú Administración con submenús -->
                         @if (User.HasClaim("Permiso", Permisos.Administracion.ToString()))
                         {

@@ -1,0 +1,579 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Graficas.TopProductosMasVendidosViewModel
+<div class="container-fluid">
+
+    <div class="row mb-3">
+
+        <div class="col-auto">
+            <label for="cboTopProductos" class="form-label small fw-bold">
+                Mostrar:
+            </label>
+
+            <select id="cboTopProductos" class="form-select form-select-sm">
+
+                @for (int i = 10; i <= 50; i += 5)
+                {
+                    <option value="@i" selected="@(i == Model.CantidadInicial)">
+                        @i productos
+                    </option>
+                }
+
+            </select>
+        </div>
+
+
+        <div class="col-auto">
+            <label for="cboAnio" class="form-label small fw-bold">
+                Año:
+            </label>
+
+            <select id="cboAnio" class="form-select form-select-sm">
+
+                @foreach (System.Data.DataRow fila in Model.Años.Rows)
+                {
+                    var valor = Convert.ToInt32(fila["Valor"]);
+
+                    <option value="@valor" selected="@(valor == Model.AñoInicial)">
+                        @fila["Texto"]
+                    </option>
+                }
+
+            </select>
+        </div>
+
+
+        <div class="col-auto d-flex align-items-end">
+
+            <button type="button"
+                    id="btnMostrar"
+                    class="btn btn-sm btn-primary">
+
+                <i class="bi bi-bar-chart-fill"></i>
+                <span class="d-none d-md-inline">Mostrar</span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+
+            <span id="tituloGrafica">
+                » Top @Model.CantidadInicial productos más vendidos
+                (todos los años) «
+            </span>
+
+            <span id="totalUnidades" class="small"></span>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div style="position: relative; height: 600px;">
+                <canvas id="chartTopProductos"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <script>
+
+        let chartTopProductos = null;
+
+
+        // =============================================================
+        // COLORES
+        // =============================================================
+
+        const colores = [
+            'rgb(52, 152, 219)',
+            'rgb(231, 76, 60)',
+            'rgb(46, 204, 113)',
+            'rgb(155, 89, 182)',
+            'rgb(241, 196, 15)',
+            'rgb(230, 126, 34)',
+            'rgb(26, 188, 156)',
+            'rgb(52, 73, 94)',
+            'rgb(127, 140, 141)',
+            'rgb(192, 57, 43)'
+        ];
+
+
+        // =============================================================
+        // CARGAR TOP PRODUCTOS
+        // =============================================================
+
+        async function cargarTopProductos(cantidad, anio) {
+
+            mostrarLoadingOverlay();
+
+            try {
+
+                const url =
+                    '@Url.Action("ObtenerTopProductos", "Graficas")'
+                    + '?cantidad=' + cantidad
+                    + '&anio=' + anio;
+
+                const response = await fetch(url);
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Error al obtener los productos más vendidos."
+                    );
+
+                }
+
+
+                const datos = await response.json();
+
+
+                dibujarGrafica(
+                    datos,
+                    cantidad,
+                    anio
+                );
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Ocurrió un error al cargar los productos más vendidos."
+                );
+
+            }
+            finally {
+
+                ocultarLoadingOverlay();
+
+            }
+
+        }
+
+
+        // =============================================================
+        // DIBUJAR GRÁFICA
+        // =============================================================
+
+        function dibujarGrafica(datos, cantidad, anio) {
+
+            const productos = datos.productos;
+
+
+            // ---------------------------------------------------------
+            // TÍTULO
+            // ---------------------------------------------------------
+
+            let titulo;
+
+            if (anio === -1) {
+
+                titulo =
+                    "» Top " +
+                    cantidad +
+                    " productos más vendidos (todos los años) «";
+
+            }
+            else {
+
+                titulo =
+                    "» Top " +
+                    cantidad +
+                    " productos más vendidos (" +
+                    anio +
+                    ") «";
+
+            }
+
+
+            document.getElementById("tituloGrafica").textContent =
+                titulo;
+
+
+            // ---------------------------------------------------------
+            // TOTAL
+            // ---------------------------------------------------------
+
+            let textoTotal;
+
+            if (anio === -1) {
+
+                textoTotal =
+                    "Total vendido en el Top (todos los años): ";
+
+            }
+            else {
+
+                textoTotal =
+                    "Total vendido en el Top (" +
+                    anio +
+                    "): ";
+
+            }
+
+
+            document.getElementById("totalUnidades").textContent =
+                textoTotal +
+                new Intl.NumberFormat('es-MX')
+                    .format(datos.totalUnidades) +
+                " unidades";
+
+
+            // ---------------------------------------------------------
+            // DESTRUIR GRÁFICA ANTERIOR
+            // ---------------------------------------------------------
+
+            if (chartTopProductos !== null) {
+
+                chartTopProductos.destroy();
+
+            }
+
+
+            // ---------------------------------------------------------
+            // ETIQUETAS
+            // ---------------------------------------------------------
+
+            const etiquetas = productos.map(
+                (producto, index) =>
+                    (index + 1) +
+                    ".- " +
+                    producto.nombreProducto
+            );
+
+
+            // ---------------------------------------------------------
+            // VALORES
+            // ---------------------------------------------------------
+
+            const valores = productos.map(
+                producto =>
+                    Number(producto.cantidadVendida)
+            );
+
+
+            // ---------------------------------------------------------
+            // REGISTRAR DATALABELS
+            // ---------------------------------------------------------
+
+            Chart.register(ChartDataLabels);
+
+
+            // ---------------------------------------------------------
+            // CONTEXTO
+            // ---------------------------------------------------------
+
+            const ctx =
+                document
+                    .getElementById("chartTopProductos")
+                    .getContext("2d");
+
+
+            // ---------------------------------------------------------
+            // GRÁFICA
+            // ---------------------------------------------------------
+
+            chartTopProductos = new Chart(ctx, {
+
+                type: 'bar',
+
+                data: {
+
+                    labels: etiquetas,
+
+                    datasets: [{
+
+                        label: 'Productos más vendidos',
+
+                        data: valores,
+
+                        backgroundColor:
+                            productos.map(
+                                (producto, index) =>
+                                    colores[
+                                    index % colores.length
+                                    ]
+                            ),
+
+                        borderColor:
+                            productos.map(
+                                (producto, index) =>
+                                    colores[
+                                    index % colores.length
+                                    ]
+                            ),
+
+                        borderWidth: 2,
+
+                        borderRadius: 3,
+
+                        hoverBorderWidth: 3
+
+                    }]
+
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+
+                    interaction: {
+
+                        mode: 'nearest',
+
+                        intersect: true
+
+                    },
+
+
+                    plugins: {
+
+                        legend: {
+
+                            display: false
+
+                        },
+
+
+                        datalabels: {
+
+                            display: true,
+
+                            anchor: 'end',
+
+                            align: 'top',
+
+                            formatter: function(value) {
+
+                                return new Intl.NumberFormat(
+                                    'es-MX'
+                                ).format(value);
+
+                            },
+
+                            font: {
+
+                                size: 10,
+
+                                weight: 'bold'
+
+                            }
+
+                        },
+
+
+                        tooltip: {
+
+                            callbacks: {
+
+                                label: function(context) {
+
+                                    return (
+                                        'Cantidad vendida: ' +
+                                        new Intl.NumberFormat(
+                                            'es-MX'
+                                        ).format(
+                                            context.parsed.y
+                                        )
+                                    );
+
+                                }
+
+                            }
+
+                        }
+
+                    },
+
+
+                    scales: {
+
+                        x: {
+
+                            title: {
+
+                                display: true,
+
+                                text: 'Productos más vendidos'
+
+                            },
+
+                            ticks: {
+
+                                autoSkip: false,
+
+                                maxRotation: 45,
+
+                                minRotation: 45
+
+                            },
+
+                            grid: {
+
+                                display: true,
+
+                                color: 'rgba(0, 0, 0, 0.15)',
+
+                                borderDash: [5, 5]
+
+                            }
+
+                        },
+
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            title: {
+
+                                display: true,
+
+                                text: 'Cantidad vendida (unidades)'
+
+                            },
+
+                            ticks: {
+
+                                callback: function(value) {
+
+                                    return new Intl.NumberFormat(
+                                        'es-MX'
+                                    ).format(value);
+
+                                }
+
+                            },
+
+                            grid: {
+
+                                display: true,
+
+                                color: 'rgba(0, 0, 0, 0.25)',
+
+                                borderDash: [5, 5]
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+
+        // =============================================================
+        // BOTÓN MOSTRAR
+        // =============================================================
+
+        document
+            .getElementById("btnMostrar")
+            .addEventListener("click", function() {
+
+                const cantidad =
+                    parseInt(
+                        document
+                            .getElementById("cboTopProductos")
+                            .value
+                    );
+
+
+                const anio =
+                    parseInt(
+                        document
+                            .getElementById("cboAnio")
+                            .value
+                    );
+
+
+                if (isNaN(cantidad) || cantidad < 10) {
+
+                    alert(
+                        "Seleccione un número de productos válido."
+                    );
+
+                    return;
+
+                }
+
+
+                if (isNaN(anio)) {
+
+                    alert(
+                        "Seleccione un año válido."
+                    );
+
+                    return;
+
+                }
+
+
+                cargarTopProductos(
+                    cantidad,
+                    anio
+                );
+
+            });
+
+
+        // =============================================================
+        // CARGA INICIAL
+        // =============================================================
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                const comboProductos =
+                    document.getElementById(
+                        "cboTopProductos"
+                    );
+
+                const comboAnio =
+                    document.getElementById(
+                        "cboAnio"
+                    );
+
+
+                if (comboProductos && comboAnio) {
+
+                    cargarTopProductos(
+                        parseInt(
+                            comboProductos.value
+                        ),
+                        parseInt(
+                            comboAnio.value
+                        )
+                    );
+
+                }
+
+            }
+        );
+
+    </script>
+}

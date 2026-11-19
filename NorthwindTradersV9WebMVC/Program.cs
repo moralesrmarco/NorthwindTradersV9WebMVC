@@ -163,6 +163,9 @@ builder.Services.AddScoped<VentaDetalleBLL>();
 
 builder.Services.AddScoped<TransportistaBLL>();
 
+builder.Services.AddScoped<IGraficasDAL, GraficasDAL>();
+builder.Services.AddScoped<GraficasBLL>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,0 +1,448 @@
+﻿<div class="container-fluid">
+
+    <div class="row mb-3">
+        <div class="col-auto">
+
+            <label for="cboTipoGrafica" class="form-label small fw-bold">
+                Tipo de gráfica:
+            </label>
+
+            <select id="cboTipoGrafica" class="form-select form-select-sm">
+
+                <option value="bar">Barras</option>
+                <option value="line">Líneas</option>
+                <option value="area">Área</option>
+                <option value="radar">Radar</option>
+
+            </select>
+
+        </div>
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+
+            <span id="tituloGrafica">
+                » Ventas mensuales por vendedores -
+                <span id="tituloTipo"></span>
+                «
+            </span>
+
+            <span id="totalVentas" class="small">
+            </span>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div style="position: relative; height: 550px;">
+                <canvas id="chartEjemplo2"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <script>
+
+        let chartEjemplo2 = null;
+
+
+        const meses = [
+            "Ene.",
+            "Feb.",
+            "Mar.",
+            "Abr.",
+            "May.",
+            "Jun.",
+            "Jul.",
+            "Ago.",
+            "Sep.",
+            "Oct.",
+            "Nov.",
+            "Dic."
+        ];
+
+
+        function formatearMoneda(valor) {
+
+            return new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2
+            }).format(valor);
+
+        }
+
+
+        async function cargarDatos() {
+
+            mostrarLoadingOverlay();
+
+            try {
+
+                const url =
+                    '@Url.Action("ObtenerVentasMensualesPorVendedoresEjemplo3", "Graficas")';
+
+                const response = await fetch(url);
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Error HTTP: " + response.status
+                    );
+
+                }
+
+
+                const datos = await response.json();
+
+
+                dibujarGrafica(datos);
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                mostrarErrorValidacion(
+                    "Ocurrió un error al obtener las ventas."
+                );
+
+            }
+            finally {
+
+                ocultarLoadingOverlay();
+
+            }
+
+        }
+
+
+        function dibujarGrafica(datos) {
+
+            const tipo =
+                document.getElementById("cboTipoGrafica").value;
+
+
+            const nombreTipo =
+                document.getElementById("cboTipoGrafica")
+                    .selectedOptions[0].text;
+
+
+            document.getElementById("tituloTipo").textContent =
+                nombreTipo;
+
+
+            /*
+             * Total general.
+             */
+            const totalVentas = datos.reduce(
+                (total, dato) =>
+                    total + Number(dato.totalVentas || 0),
+                0
+            );
+
+
+            document.getElementById("totalVentas").textContent =
+                "Total de ventas: " +
+                formatearMoneda(totalVentas);
+
+
+            /*
+             * Elimina la gráfica anterior.
+             */
+            if (chartEjemplo2) {
+
+                chartEjemplo2.destroy();
+
+            }
+
+
+            /*
+             * Obtiene los vendedores únicos.
+             */
+            const vendedores = [
+                ...new Set(
+                    datos.map(x => x.vendedor)
+                )
+            ];
+
+
+            /*
+             * Cada vendedor será una serie.
+             */
+            const datasets = vendedores.map(
+                vendedor => {
+
+                    const datosVendedor =
+                        datos.filter(
+                            x => x.vendedor === vendedor
+                        );
+
+
+                    const valores = meses.map(
+                        (_, indiceMes) => {
+
+                            const mes =
+                                indiceMes + 1;
+
+
+                            const fila =
+                                datosVendedor.find(
+                                    x => x.mes === mes
+                                );
+
+
+                            return fila
+                                ? Number(fila.totalVentas || 0)
+                                : 0;
+
+                        }
+                    );
+
+
+                    const totalVendedor =
+                        valores.reduce(
+                            (total, valor) =>
+                                total + valor,
+                            0
+                        );
+
+
+                    const dataset = {
+
+                        label:
+                            vendedor +
+                            " (Total: " +
+                            formatearMoneda(totalVendedor) +
+                            ")",
+
+                        data: valores,
+
+                        borderWidth: 2,
+
+                        pointRadius: 4,
+
+                        pointHoverRadius: 6
+
+                    };
+
+
+                    /*
+                     * Para Área.
+                     */
+                    if (tipo === "area") {
+
+                        dataset.fill = true;
+
+                        dataset.tension = 0.3;
+
+                    }
+
+
+                    /*
+                     * Para Líneas.
+                     */
+                    if (tipo === "line") {
+
+                        dataset.tension = 0.3;
+
+                    }
+
+
+                    return dataset;
+
+                }
+            );
+
+
+            /*
+             * Área realmente utiliza
+             * una gráfica de líneas.
+             */
+            let tipoChart = tipo;
+
+
+            if (tipo === "area") {
+
+                tipoChart = "line";
+
+            }
+
+
+            chartEjemplo2 = new Chart(
+
+                document.getElementById("chartEjemplo2"),
+
+                {
+
+                    type: tipoChart,
+
+
+                    data: {
+
+                        labels: meses,
+
+                        datasets: datasets
+
+                    },
+
+
+                    plugins: [ChartDataLabels],
+
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+
+                        plugins: {
+
+                            legend: {
+
+                                display: true,
+
+                                position: "top"
+
+                            },
+
+
+                            datalabels: {
+
+                                display: function(context) {
+
+                                    return Number(
+                                        context.dataset.data[
+                                            context.dataIndex
+                                        ]
+                                    ) > 0;
+
+                                },
+
+
+                                formatter: function(value) {
+
+                                    return formatearMoneda(value);
+
+                                },
+
+
+                                font: {
+
+                                    size: 8
+
+                                }
+
+                            },
+
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function(context) {
+
+                                        return context.dataset.label +
+                                            "\nVentas: " +
+                                            formatearMoneda(
+                                                context.raw
+                                            );
+
+                                    }
+
+                                }
+
+                            }
+
+                        },
+
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                title: {
+
+                                    display: true,
+
+                                    text: "Ventas totales"
+
+                                },
+
+
+                                ticks: {
+
+                                    callback: function(value) {
+
+                                        return formatearMoneda(value);
+
+                                    }
+
+                                }
+
+                            },
+
+
+                            x: {
+
+                                title: {
+
+                                    display: true,
+
+                                    text: "Meses"
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            );
+
+        }
+
+
+        document
+            .getElementById("cboTipoGrafica")
+            .addEventListener(
+                "change",
+                function () {
+
+                    cargarDatos();
+
+                }
+            );
+
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                cargarDatos();
+
+            }
+        );
+
+    </script>
+}

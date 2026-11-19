@@ -1,0 +1,277 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Graficas.VentasMensualesViewModel
+<div class="container-fluid">
+
+    <div class="row mb-3">
+        <div class="col-auto">
+
+            <label for="cboAnio" class="form-label fw-bold">
+                Ventas mensuales del año:
+            </label>
+
+            <select id="cboAnio" class="form-select form-select-sm">
+                @foreach (System.Data.DataRow fila in Model.Años.Rows)
+                {
+                    var valor = Convert.ToInt32(fila["Valor"]);
+
+                    <option value="@valor" selected="@(valor == Model.AñoActual)">
+                        @fila["Texto"]
+                    </option>
+                }
+            </select>
+
+        </div>
+    </div>
+
+    <div class="card">
+
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+
+            <span id="tituloGrafica">
+                » Gráfica de ventas mensuales 
+                <span id="tituloAnio"></span>
+                «
+            </span>
+
+            <span id="totalVentas" class="small">
+            </span>
+
+        </div>
+
+        <div class="card-body">
+
+            <div style="position: relative; height: 550px;">
+                <canvas id="chartVentas"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <script>
+
+        let chartVentas = null;
+
+        async function cargarVentasMensuales(year) {
+
+            mostrarLoadingOverlay();
+
+            try {
+
+                const url =
+                    '@Url.Action("ObtenerVentasMensuales", "Graficas")'
+                    + '?year=' + year;
+
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error("Error al obtener las ventas mensuales.");
+                }
+
+                const datos = await response.json();
+
+                dibujarGrafica(datos, year);
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                alert("Ocurrió un error al cargar las ventas mensuales.");
+
+            }
+            finally {
+
+                ocultarLoadingOverlay();
+            }
+        }
+
+        function dibujarGrafica(datos, year) {
+
+            const etiquetas = datos.map(x => x.nombreMes);
+            const valores = datos.map(x => Number(x.total));
+
+            const totalVentas = valores.reduce(
+                (total, valor) => total + valor,
+                0
+            );
+
+            if (year === -1) {
+                document.getElementById("tituloAnio").textContent = "de todos los años";
+            } else {
+                document.getElementById("tituloAnio").textContent = "del año " + year;
+            }
+
+            let textoTotal;
+
+            if (year === -1) {
+                textoTotal = "Total de ventas (todos los años): ";
+            } else {
+                textoTotal = "Total de ventas (" + year + "): ";
+            }
+
+            document.getElementById("totalVentas").textContent =
+                textoTotal +
+                new Intl.NumberFormat('es-MX', {
+                    style: 'currency',
+                    currency: 'MXN',
+                    minimumFractionDigits: 2
+                }).format(totalVentas);
+
+            const ctx = document
+                .getElementById("chartVentas")
+                .getContext("2d");
+
+            Chart.register(ChartDataLabels);
+
+            if (chartVentas !== null) {
+                chartVentas.destroy();
+            }
+
+            chartVentas = new Chart(ctx, {
+
+                type: 'line',
+
+                data: {
+                    labels: etiquetas,
+
+                    datasets: [{
+                        label: 'Ventas mensuales',
+                        data: valores,
+
+                        backgroundColor: 'rgb(52, 152, 219)',
+                        borderColor: 'rgb(52, 152, 219)',
+                        pointBackgroundColor: 'rgb(52, 152, 219)',
+                        pointBorderColor: 'rgb(52, 152, 219)',
+
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+
+                        tension: 0.4,
+
+                        fill: false
+                    }]
+                },
+
+                options: {
+
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+                            display: false
+                        },
+
+                        datalabels: {
+
+                            display: true,
+
+                            anchor: 'end',
+                            align: 'top',
+
+                            formatter: function(value) {
+
+                                return new Intl.NumberFormat('es-MX', {
+                                    style: 'currency',
+                                    currency: 'MXN',
+                                    minimumFractionDigits: 2
+                                }).format(value);
+                            },
+
+                            font: {
+                                size: 11,
+                                weight: 'bold'
+                            }
+                        },
+
+                        tooltip: {
+
+                            callbacks: {
+
+                                label: function(context) {
+
+                                    return 'Ventas: ' +
+                                        new Intl.NumberFormat('es-MX', {
+                                            style: 'currency',
+                                            currency: 'MXN',
+                                            minimumFractionDigits: 2
+                                        }).format(context.parsed.y);
+
+                                }
+                            }
+                        }
+                    },
+
+                    scales: {
+
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Meses'
+                            }
+                        },
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            title: {
+                                display: true,
+                                text: 'Ventas Totales'
+                            },
+
+                            ticks: {
+                                callback: function(value) {
+
+                                    return new Intl.NumberFormat('es-MX', {
+                                        style: 'currency',
+                                        currency: 'MXN',
+                                        maximumFractionDigits: 0
+                                    }).format(value);
+
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        document
+            .getElementById("cboAnio")
+            .addEventListener("change", function() {
+
+                const year = parseInt(this.value);
+
+                if (year === 0) {
+                    return;
+                }
+
+                cargarVentasMensuales(year);
+            });
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const combo = document.getElementById("cboAnio");
+
+            if (combo && combo.value !== "0") {
+
+                cargarVentasMensuales(
+                    parseInt(combo.value)
+                );
+            }
+
+        });
+
+    </script>
+}

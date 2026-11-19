@@ -1,0 +1,1522 @@
+﻿<div class="container-fluid">
+
+    <div class="row mb-3">
+
+        <div class="col-auto">
+
+            <label for="cboTipoGrafica" class="form-label small fw-bold">
+                Tipo de gráfica:
+            </label>
+
+            <select id="cboTipoGrafica" class="form-select form-select-sm">
+
+                <optgroup label="Barras">
+
+                    <option value="bar">
+                        Barras agrupadas
+                    </option>
+
+                    <option value="barStacked">
+                        Barras apiladas
+                    </option>
+
+                    <option value="barHorizontal">
+                        Barras horizontales
+                    </option>
+
+                    <option value="barHorizontalStacked">
+                        Barras horizontales apiladas
+                    </option>
+
+                </optgroup>
+
+                <optgroup label="Líneas">
+
+                    <option value="linePoints">
+                        Línea con puntos
+                    </option>
+
+                    <option value="lineStepped">
+                        Línea escalonada
+                    </option>
+
+                    <option value="lineSmooth">
+                        Línea suavizada
+                    </option>
+
+                    <option value="area">
+                        Área
+                    </option>
+
+                    <option value="areaStacked">
+                        Área apilada
+                    </option>
+
+                </optgroup>
+
+                <optgroup label="Combinadas">
+
+                    <option value="mixed">
+                        Barras + línea
+                    </option>
+
+                    <option value="dualAxis">
+                        Dos ejes Y
+                    </option>
+
+                </optgroup>
+
+                <optgroup label="Comparativas">
+
+                    <option value="radar">
+                        Radar con varias series
+                    </option>
+
+                </optgroup>
+
+                <optgroup label="Distribución">
+
+                    <option value="pie">
+                        Pie con porcentajes
+                    </option>
+
+                    <option value="doughnut">
+                        Dona con porcentajes
+                    </option>
+
+                </optgroup>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+
+            <span id="tituloGrafica">
+                » Ventas mensuales por vendedores -
+                <span id="tituloTipo"></span>
+                «
+            </span>
+
+            <span id="totalVentas" class="small">
+            </span>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div style="position: relative; height: 550px;">
+
+                <canvas id="chartEjemplo2"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+
+    <script>
+
+        let chartEjemplo2 = null;
+
+
+        const meses = [
+            "Ene.",
+            "Feb.",
+            "Mar.",
+            "Abr.",
+            "May.",
+            "Jun.",
+            "Jul.",
+            "Ago.",
+            "Sep.",
+            "Oct.",
+            "Nov.",
+            "Dic."
+        ];
+
+
+        function formatearMoneda(valor) {
+
+            return new Intl.NumberFormat('es-MX', {
+
+                style: 'currency',
+
+                currency: 'MXN',
+
+                minimumFractionDigits: 2
+
+            }).format(valor);
+
+        }
+
+
+        async function cargarDatos() {
+
+            mostrarLoadingOverlay();
+
+            try {
+
+                const url =
+                    '@Url.Action("ObtenerVentasMensualesPorVendedoresEjemplo2", "Graficas")';
+
+                const response = await fetch(url);
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Error HTTP: " + response.status
+                    );
+
+                }
+
+
+                const datos = await response.json();
+
+
+                dibujarGrafica(datos);
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                mostrarErrorValidacion(
+                    "Ocurrió un error al obtener las ventas."
+                );
+
+            }
+            finally {
+
+                ocultarLoadingOverlay();
+
+            }
+
+        }
+
+
+        function obtenerVendedores(datos) {
+
+            return [
+                ...new Set(
+                    datos.map(x => x.vendedor)
+                )
+            ];
+
+        }
+
+
+        function obtenerDatosVendedor(datos, vendedor) {
+
+            const datosVendedor =
+                datos.filter(
+                    x => x.vendedor === vendedor
+                );
+
+
+            return meses.map(
+                (_, indiceMes) => {
+
+                    const mes =
+                        indiceMes + 1;
+
+
+                    const fila =
+                        datosVendedor.find(
+                            x => x.mes === mes
+                        );
+
+
+                    return fila
+                        ? Number(fila.totalVentas || 0)
+                        : 0;
+
+                }
+            );
+
+        }
+
+
+        function crearDatasetsVendedores(datos) {
+
+            const vendedores =
+                obtenerVendedores(datos);
+
+
+            return vendedores.map(
+                vendedor => {
+
+                    const valores =
+                        obtenerDatosVendedor(
+                            datos,
+                            vendedor
+                        );
+
+
+                    const totalVendedor =
+                        valores.reduce(
+                            (total, valor) =>
+                                total + valor,
+                            0
+                        );
+
+
+                    return {
+
+                        label:
+                            vendedor +
+                            " (Total: " +
+                            formatearMoneda(
+                                totalVendedor
+                            ) +
+                            ")",
+
+                        data: valores,
+
+                        borderWidth: 2,
+
+                        pointRadius: 4,
+
+                        pointHoverRadius: 6
+
+                    };
+
+                }
+            );
+
+        }
+
+
+        function configurarTooltips() {
+
+            return {
+
+                callbacks: {
+
+                    label: function(context) {
+
+                        const valor =
+                            Number(context.raw || 0);
+
+
+                        return context.dataset.label +
+                            " — " +
+                            formatearMoneda(valor);
+
+                    }
+
+                }
+
+            };
+
+        }
+
+
+        function dibujarGrafica(datos) {
+
+            const tipo =
+                document.getElementById(
+                    "cboTipoGrafica"
+                ).value;
+
+
+            const nombreTipo =
+                document.getElementById(
+                    "cboTipoGrafica"
+                ).selectedOptions[0].text;
+
+
+            document.getElementById(
+                "tituloTipo"
+            ).textContent = nombreTipo;
+
+
+            const totalVentas =
+                datos.reduce(
+                    (total, dato) =>
+                        total +
+                        Number(
+                            dato.totalVentas || 0
+                        ),
+                    0
+                );
+
+
+            document.getElementById(
+                "totalVentas"
+            ).textContent =
+                "Total de ventas: " +
+                formatearMoneda(totalVentas);
+
+
+            if (chartEjemplo2) {
+
+                chartEjemplo2.destroy();
+
+                chartEjemplo2 = null;
+
+            }
+
+
+            if (
+                tipo === "pie" ||
+                tipo === "doughnut"
+            ) {
+
+                dibujarGraficaCircular(
+                    datos,
+                    tipo
+                );
+
+                return;
+
+            }
+
+
+            if (tipo === "mixed") {
+
+                dibujarGraficaMixta(datos);
+
+                return;
+
+            }
+
+
+            if (tipo === "dualAxis") {
+
+                dibujarDosEjesY(datos);
+
+                return;
+
+            }
+
+
+            const datasets =
+                crearDatasetsVendedores(datos);
+
+
+            let tipoChart = "bar";
+
+
+            const options = {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        display: true,
+
+                        position: "top"
+
+                    },
+
+                    datalabels: {
+
+                        display: function(context) {
+
+                            return Number(
+                                context.dataset.data[
+                                context.dataIndex
+                                ]
+                            ) > 0;
+
+                        },
+
+                        formatter: function(value) {
+
+                            return formatearMoneda(
+                                value
+                            );
+
+                        },
+
+                        font: {
+
+                            size: 8
+
+                        }
+
+                    },
+
+                    tooltip:
+                        configurarTooltips()
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        title: {
+
+                            display: true,
+
+                            text: "Ventas totales"
+
+                        },
+
+                        ticks: {
+
+                            callback:
+                                function(value) {
+
+                                    return formatearMoneda(
+                                        value
+                                    );
+
+                                }
+
+                        }
+
+                    },
+
+                    x: {
+
+                        title: {
+
+                            display: true,
+
+                            text: "Meses"
+
+                        }
+
+                    }
+
+                }
+
+            };
+
+
+            /*
+             * BARRAS AGRUPADAS
+             */
+
+            if (tipo === "bar") {
+
+                tipoChart = "bar";
+
+                options.scales.x.stacked = false;
+
+                options.scales.y.stacked = false;
+
+            }
+
+
+            /*
+             * BARRAS APILADAS
+             */
+
+            if (tipo === "barStacked") {
+
+                tipoChart = "bar";
+
+                options.scales.x.stacked = true;
+
+                options.scales.y.stacked = true;
+
+            }
+
+
+            /*
+             * BARRAS HORIZONTALES
+             */
+
+            if (tipo === "barHorizontal") {
+
+                tipoChart = "bar";
+
+                options.indexAxis = "y";
+
+                options.scales.x.stacked = false;
+
+                options.scales.y.stacked = false;
+
+                options.scales.x.title.text =
+                    "Ventas totales";
+
+                options.scales.y.title.text =
+                    "Meses";
+
+            }
+
+
+            /*
+             * BARRAS HORIZONTALES APILADAS
+             */
+
+            if (
+                tipo ===
+                "barHorizontalStacked"
+            ) {
+
+                tipoChart = "bar";
+
+                options.indexAxis = "y";
+
+                options.scales.x.stacked = true;
+
+                options.scales.y.stacked = true;
+
+                options.scales.x.title.text =
+                    "Ventas totales";
+
+                options.scales.y.title.text =
+                    "Meses";
+
+            }
+
+
+            /*
+             * LÍNEA CON PUNTOS
+             */
+
+            if (tipo === "linePoints") {
+
+                tipoChart = "line";
+
+                datasets.forEach(
+                    dataset => {
+
+                        dataset.tension = 0;
+
+                        dataset.pointRadius = 5;
+
+                        dataset.pointHoverRadius = 7;
+
+                    }
+                );
+
+            }
+
+
+            /*
+             * LÍNEA ESCALONADA
+             */
+
+            if (tipo === "lineStepped") {
+
+                tipoChart = "line";
+
+                datasets.forEach(
+                    dataset => {
+
+                        dataset.tension = 0;
+
+                        dataset.stepped = true;
+
+                        dataset.pointRadius = 4;
+
+                    }
+                );
+
+            }
+
+
+            /*
+             * LÍNEA SUAVIZADA
+             */
+
+            if (tipo === "lineSmooth") {
+
+                tipoChart = "line";
+
+                datasets.forEach(
+                    dataset => {
+
+                        dataset.tension = 0.4;
+
+                        dataset.pointRadius = 4;
+
+                    }
+                );
+
+            }
+
+
+            /*
+             * ÁREA
+             */
+
+            if (tipo === "area") {
+
+                tipoChart = "line";
+
+                datasets.forEach(
+                    dataset => {
+
+                        dataset.fill = true;
+
+                        dataset.tension = 0.3;
+
+                    }
+                );
+
+            }
+
+
+            /*
+             * ÁREA APILADA
+             */
+
+            if (tipo === "areaStacked") {
+
+                tipoChart = "line";
+
+                datasets.forEach(
+                    dataset => {
+
+                        dataset.fill = true;
+
+                        dataset.tension = 0.3;
+
+                    }
+                );
+
+
+                options.scales.x.stacked = true;
+
+                options.scales.y.stacked = true;
+
+            }
+
+
+            /*
+             * RADAR
+             */
+
+            if (tipo === "radar") {
+
+                tipoChart = "radar";
+
+                options.scales = {
+
+                    r: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            callback:
+                                function(value) {
+
+                                    return formatearMoneda(
+                                        value
+                                    );
+
+                                }
+
+                        }
+
+                    }
+
+                };
+
+
+                datasets.forEach(
+                    dataset => {
+
+                        dataset.fill = false;
+
+                        dataset.tension = 0;
+
+                        dataset.pointRadius = 4;
+
+                    }
+                );
+
+            }
+
+
+            chartEjemplo2 =
+                new Chart(
+
+                    document.getElementById(
+                        "chartEjemplo2"
+                    ),
+
+                    {
+
+                        type: tipoChart,
+
+                        data: {
+
+                            labels: meses,
+
+                            datasets: datasets
+
+                        },
+
+                        plugins: [
+                            ChartDataLabels
+                        ],
+
+                        options: options
+
+                    }
+
+                );
+
+        }
+
+
+        /*
+         * ==========================================
+         * PIE / DONA
+         * ==========================================
+         */
+
+        function dibujarGraficaCircular(
+            datos,
+            tipo
+        ) {
+
+            const vendedores =
+                obtenerVendedores(datos);
+
+
+            const valores =
+                vendedores.map(
+                    vendedor => {
+
+                        return datos
+                            .filter(
+                                x =>
+                                    x.vendedor ===
+                                    vendedor
+                            )
+                            .reduce(
+                                (
+                                    total,
+                                    x
+                                ) =>
+                                    total +
+                                    Number(
+                                        x.totalVentas ||
+                                        0
+                                    ),
+                                0
+                            );
+
+                    }
+                );
+
+
+            const total =
+                valores.reduce(
+                    (a, b) => a + b,
+                    0
+                );
+
+
+            const etiquetas =
+                vendedores.map(
+                    (vendedor, indice) => {
+
+                        const porcentaje =
+                            total > 0
+                                ? (
+                                    valores[indice] /
+                                    total
+                                ) * 100
+                                : 0;
+
+
+                        return vendedor +
+                            " (" +
+                            porcentaje.toFixed(1) +
+                            "%)";
+
+                    }
+                );
+
+
+            chartEjemplo2 =
+                new Chart(
+
+                    document.getElementById(
+                        "chartEjemplo2"
+                    ),
+
+                    {
+
+                        type: tipo,
+
+                        data: {
+
+                            labels: etiquetas,
+
+                            datasets: [
+
+                                {
+
+                                    data: valores,
+
+                                    borderWidth: 1
+
+                                }
+
+                            ]
+
+                        },
+
+                        plugins: [
+                            ChartDataLabels
+                        ],
+
+                        options: {
+
+                            responsive: true,
+
+                            maintainAspectRatio: false,
+
+                            plugins: {
+
+                                legend: {
+
+                                    display: true,
+
+                                    position: "right"
+
+                                },
+
+                                datalabels: {
+
+                                    formatter:
+                                        function(
+                                            value,
+                                            context
+                                        ) {
+
+                                            const porcentaje =
+                                                total > 0
+                                                    ? (
+                                                        value /
+                                                        total
+                                                    ) *
+                                                    100
+                                                    : 0;
+
+
+                                            return
+                                            porcentaje.toFixed(
+                                                1
+                                            ) +
+                                                "%";
+
+                                        },
+
+                                    font: {
+
+                                        size: 11,
+
+                                        weight: "bold"
+
+                                    }
+
+                                },
+
+                                tooltip: {
+
+                                    callbacks: {
+
+                                        label:
+                                            function(
+                                                context
+                                            ) {
+
+                                                const valor =
+                                                    Number(
+                                                        context.raw ||
+                                                        0
+                                                    );
+
+
+                                                const porcentaje =
+                                                    total > 0
+                                                        ? (
+                                                            valor /
+                                                            total
+                                                        ) *
+                                                        100
+                                                        : 0;
+
+
+                                                return context.label +
+                                                    " — " +
+                                                    formatearMoneda(
+                                                        valor
+                                                    ) +
+                                                    " (" +
+                                                    porcentaje.toFixed(
+                                                        1
+                                                    ) +
+                                                    "%)";
+
+                                            }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                );
+
+        }
+
+
+        /*
+         * ==========================================
+         * BARRAS + LÍNEA
+         * ==========================================
+         */
+
+        function dibujarGraficaMixta(datos) {
+
+            const vendedores =
+                obtenerVendedores(datos);
+
+
+            /*
+             * Para la gráfica mixta utilizaremos:
+             *
+             * Barras = total mensual de todos
+             * Línea = tendencia promedio
+             */
+
+
+            const ventasMensuales =
+                meses.map(
+                    (_, indiceMes) => {
+
+                        const mes =
+                            indiceMes + 1;
+
+
+                        return datos
+                            .filter(
+                                x =>
+                                    x.mes === mes
+                            )
+                            .reduce(
+                                (
+                                    total,
+                                    x
+                                ) =>
+                                    total +
+                                    Number(
+                                        x.totalVentas ||
+                                        0
+                                    ),
+                                0
+                            );
+
+                    }
+                );
+
+
+            const promedio =
+                ventasMensuales.reduce(
+                    (a, b) => a + b,
+                    0
+                ) / 12;
+
+
+            const tendencia =
+                meses.map(
+                    () => promedio
+                );
+
+
+            chartEjemplo2 =
+                new Chart(
+
+                    document.getElementById(
+                        "chartEjemplo2"
+                    ),
+
+                    {
+
+                        data: {
+
+                            labels: meses,
+
+                            datasets: [
+
+                                {
+
+                                    type: "bar",
+
+                                    label:
+                                        "Ventas mensuales",
+
+                                    data:
+                                        ventasMensuales,
+
+                                    borderWidth: 1
+
+                                },
+
+                                {
+
+                                    type: "line",
+
+                                    label:
+                                        "Promedio anual",
+
+                                    data:
+                                        tendencia,
+
+                                    borderWidth: 3,
+
+                                    tension: 0.3,
+
+                                    pointRadius: 4
+
+                                }
+
+                            ]
+
+                        },
+
+                        plugins: [
+                            ChartDataLabels
+                        ],
+
+                        options: {
+
+                            responsive: true,
+
+                            maintainAspectRatio: false,
+
+                            plugins: {
+
+                                legend: {
+
+                                    display: true,
+
+                                    position: "top"
+
+                                },
+
+                                datalabels: {
+
+                                    display:
+                                        function(context) {
+
+                                            return context.dataset
+                                                .type ===
+                                                "bar" &&
+                                                Number(
+                                                    context.raw ||
+                                                    0
+                                                ) > 0;
+
+                                        },
+
+                                    formatter:
+                                        function(value) {
+
+                                            return formatearMoneda(
+                                                value
+                                            );
+
+                                        },
+
+                                    font: {
+
+                                        size: 8
+
+                                    }
+
+                                },
+
+                                tooltip:
+                                    configurarTooltips()
+
+                            },
+
+                            scales: {
+
+                                y: {
+
+                                    beginAtZero: true,
+
+                                    ticks: {
+
+                                        callback:
+                                            function(value) {
+
+                                                return formatearMoneda(
+                                                    value
+                                                );
+
+                                            }
+
+                                    },
+
+                                    title: {
+
+                                        display: true,
+
+                                        text:
+                                            "Ventas totales"
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                );
+
+        }
+
+
+        /*
+         * ==========================================
+         * DOS EJES Y
+         * ==========================================
+         */
+
+        function dibujarDosEjesY(datos) {
+
+            const ventasMensuales =
+                meses.map(
+                    (_, indiceMes) => {
+
+                        const mes =
+                            indiceMes + 1;
+
+
+                        return datos
+                            .filter(
+                                x =>
+                                    x.mes === mes
+                            )
+                            .reduce(
+                                (
+                                    total,
+                                    x
+                                ) =>
+                                    total +
+                                    Number(
+                                        x.totalVentas ||
+                                        0
+                                    ),
+                                0
+                            );
+
+                    }
+                );
+
+
+            const crecimiento =
+                ventasMensuales.map(
+                    (valor, indice) => {
+
+                        if (indice === 0) {
+
+                            return 0;
+
+                        }
+
+
+                        const anterior =
+                            ventasMensuales[
+                            indice - 1
+                            ];
+
+
+                        if (anterior === 0) {
+
+                            return 0;
+
+                        }
+
+
+                        return (
+                            (
+                                valor -
+                                anterior
+                            ) /
+                            anterior
+                        ) *
+                            100;
+
+                    }
+                );
+
+
+            chartEjemplo2 =
+                new Chart(
+
+                    document.getElementById(
+                        "chartEjemplo2"
+                    ),
+
+                    {
+
+                        data: {
+
+                            labels: meses,
+
+                            datasets: [
+
+                                {
+
+                                    type: "bar",
+
+                                    label:
+                                        "Ventas",
+
+                                    data:
+                                        ventasMensuales,
+
+                                    yAxisID:
+                                        "yVentas",
+
+                                    borderWidth: 1
+
+                                },
+
+                                {
+
+                                    type: "line",
+
+                                    label:
+                                        "% crecimiento",
+
+                                    data:
+                                        crecimiento,
+
+                                    yAxisID:
+                                        "yPorcentaje",
+
+                                    borderWidth: 3,
+
+                                    tension: 0.3,
+
+                                    pointRadius: 4
+
+                                }
+
+                            ]
+
+                        },
+
+                        plugins: [
+                            ChartDataLabels
+                        ],
+
+                        options: {
+
+                            responsive: true,
+
+                            maintainAspectRatio: false,
+
+                            plugins: {
+
+                                legend: {
+
+                                    display: true,
+
+                                    position: "top"
+
+                                },
+
+                                datalabels: {
+
+                                    display:
+                                        function(context) {
+
+                                            return context.dataset
+                                                .type ===
+                                                "bar";
+
+                                        },
+
+                                    formatter:
+                                        function(value) {
+
+                                            return formatearMoneda(
+                                                value
+                                            );
+
+                                        },
+
+                                    font: {
+
+                                        size: 8
+
+                                    }
+
+                                }
+
+                            },
+
+                            scales: {
+
+                                yVentas: {
+
+                                    type: "linear",
+
+                                    position: "left",
+
+                                    beginAtZero: true,
+
+                                    title: {
+
+                                        display: true,
+
+                                        text:
+                                            "Ventas"
+
+                                    },
+
+                                    ticks: {
+
+                                        callback:
+                                            function(value) {
+
+                                                return formatearMoneda(
+                                                    value
+                                                );
+
+                                            }
+
+                                    }
+
+                                },
+
+                                yPorcentaje: {
+
+                                    type: "linear",
+
+                                    position: "right",
+
+                                    beginAtZero: false,
+
+                                    grid: {
+
+                                        drawOnChartArea: false
+
+                                    },
+
+                                    title: {
+
+                                        display: true,
+
+                                        text:
+                                            "% crecimiento"
+
+                                    },
+
+                                    ticks: {
+
+                                        callback:
+                                            function(value) {
+
+                                                return value +
+                                                    "%";
+
+                                            }
+
+                                    }
+
+                                },
+
+                                x: {
+
+                                    title: {
+
+                                        display: true,
+
+                                        text:
+                                            "Meses"
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                );
+
+        }
+
+
+        /*
+         * ==========================================
+         * CAMBIO DE TIPO
+         * ==========================================
+         */
+
+        document
+            .getElementById(
+                "cboTipoGrafica"
+            )
+            .addEventListener(
+                "change",
+                function() {
+
+                    cargarDatos();
+
+                }
+            );
+
+
+        /*
+         * ==========================================
+         * CARGA INICIAL
+         * ==========================================
+         */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                cargarDatos();
+
+            }
+        );
+
+    </script>
+
+}
