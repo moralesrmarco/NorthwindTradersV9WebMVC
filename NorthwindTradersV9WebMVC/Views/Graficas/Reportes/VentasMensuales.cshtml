@@ -1,0 +1,134 @@
+﻿
+@model NorthwindTradersV9WebMVC.Models.Graficas.Reportes.VentasMensualesViewModel
+
+<div class="container-fluid">
+
+    <div class="row mb-3">
+
+        <div class="col-auto">
+
+            <label for="cboAnio" class="form-label small fw-bold">
+                Ventas mensuales del año:
+            </label>
+
+            <select id="cboAnio" class="form-select form-select-sm">
+
+                @foreach (System.Data.DataRow fila in Model.Años.Rows)
+                {
+                    var valor = Convert.ToInt32(fila["Valor"]);
+
+                    <option value="@valor"
+                            selected="@(valor == Model.Anio)">
+                        @fila["Texto"]
+                    </option>
+                }
+
+            </select>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+
+            <span id="tituloGrafica">
+                » Gráfica de ventas mensuales
+                <span id="tituloAnio"></span>
+                «
+            </span>
+
+        </div>
+
+        <div class="card-body">
+
+            <div style="position: relative; height: 750px;">
+
+                <iframe id="iframeReporte"
+                        style="width:100%; height:100%; border:0;"
+                        title="Reporte gráfico de ventas mensuales">
+                </iframe>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script>
+
+        function cargarReporte(year) {
+
+            mostrarLoadingOverlay();
+
+            const iframeReporte =
+                document.getElementById("iframeReporte");
+
+            const tituloAnio =
+                document.getElementById("tituloAnio");
+
+            if (year === -1) {
+
+                tituloAnio.textContent =
+                    "de todos los años";
+
+            }
+            else {
+
+                tituloAnio.textContent =
+                    "del año " + year;
+
+            }
+
+            iframeReporte.src =
+                '@Url.Action("VerPdfVentasMensuales", "Graficas")'
+                + '?anio=' + encodeURIComponent(year);
+        }
+
+
+        document
+            .getElementById("iframeReporte")
+            .addEventListener("load", function () {
+
+                ocultarLoadingOverlay();
+
+            });
+
+
+        document
+            .getElementById("cboAnio")
+            .addEventListener("change", function () {
+
+                const year = parseInt(this.value);
+
+                if (year === 0) {
+                    return;
+                }
+
+                cargarReporte(year);
+
+            });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const combo =
+                document.getElementById("cboAnio");
+
+            if (combo && combo.value !== "0") {
+
+                cargarReporte(
+                    parseInt(combo.value)
+                );
+
+            }
+
+        });
+
+    </script>
+}

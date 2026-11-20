@@ -1,0 +1,178 @@
+﻿
+@model NorthwindTradersV9WebMVC.Models.Graficas.Reportes.TopProductosMasVendidosViewModel
+
+<div class="container-fluid">
+
+    <div class="row mb-3 align-items-end">
+
+        <div class="col-auto">
+
+            <label for="cboTopProductos" class="form-label small fw-bold">
+                Número de productos:
+            </label>
+
+            <select id="cboTopProductos" class="form-select form-select-sm">
+
+                @foreach (var item in Model.OpcionesProductos)
+                {
+                    <option value="@item.Valor"
+                            selected="@(item.Valor == Model.TopProductos)">
+                        @item.Texto
+                    </option>
+                }
+
+            </select>
+
+        </div>
+
+        <div class="col-auto">
+
+            <label for="cboAnio" class="form-label small fw-bold">
+                Año:
+            </label>
+
+            <select id="cboAnio" class="form-select form-select-sm">
+
+                @foreach (System.Data.DataRow fila in Model.Años.Rows)
+                {
+                    var valor = Convert.ToInt32(fila["Valor"]);
+
+                    <option value="@valor"
+                            selected="@(valor == Model.Anio)">
+                        @fila["Texto"]
+                    </option>
+                }
+
+            </select>
+
+        </div>
+
+        <div class="col-auto">
+
+            <button type="button"
+                    id="btnMostrar"
+                    class="btn btn-sm btn-primary">
+
+                <i class="bi bi-bar-chart-line"></i>
+                Mostrar
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-header fw-bold">
+
+            <span id="tituloGrafica">
+                » Reporte gráfico top
+                <span id="tituloTop">@Model.TopProductos</span>
+                productos más vendidos
+                <span id="tituloAnio">
+                    (@(Model.Anio == -1 ? "Todos los años" : Model.Anio.ToString()))
+                </span>
+                «
+            </span>
+
+        </div>
+
+        <div class="card-body">
+
+            <div style="position: relative; height: 750px;">
+
+                <iframe id="iframeReporte"
+                        style="width:100%; height:100%; border:0;"
+                        title="Reporte gráfico top productos más vendidos">
+                </iframe>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script>
+
+        const btnMostrar =
+            document.getElementById("btnMostrar");
+
+        const cboTopProductos =
+            document.getElementById("cboTopProductos");
+
+        const cboAnio =
+            document.getElementById("cboAnio");
+
+        const iframeReporte =
+            document.getElementById("iframeReporte");
+
+        const tituloTop =
+            document.getElementById("tituloTop");
+
+        const tituloAnio =
+            document.getElementById("tituloAnio");
+
+
+        function cargarReporte() {
+
+            const topProductos =
+                parseInt(cboTopProductos.value);
+
+            const anio =
+                parseInt(cboAnio.value);
+
+
+            if (topProductos < 10) {
+                return;
+            }
+
+            if (anio === 0) {
+                alert("Seleccione un año válido.");
+                return;
+            }
+
+
+            mostrarLoadingOverlay();
+
+
+            tituloTop.textContent =
+                topProductos;
+
+            tituloAnio.textContent =
+                "(" + (anio === -1 ? "Todos los años" : anio) + ")";
+
+            iframeReporte.src =
+                '@Url.Action("VerPdfTopProductosMasVendidos", "Graficas")'
+                + '?topProductos='
+                + encodeURIComponent(topProductos)
+                + '&anio='
+                + encodeURIComponent(anio);
+
+        }
+
+
+        iframeReporte.addEventListener("load", function () {
+
+            ocultarLoadingOverlay();
+
+        });
+
+
+        btnMostrar.addEventListener("click", function () {
+
+            cargarReporte();
+
+        });
+
+        // Cargar inicialmente los productos del año seleccionado.
+        document.addEventListener("DOMContentLoaded", function() {
+            cargarReporte();
+        });
+
+    </script>
+}

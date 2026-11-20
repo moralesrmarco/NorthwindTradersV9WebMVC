@@ -12,5 +12,6 @@ namespace NorthwindTradersV9DAL
         DataTable ObtenerTopProductos(int cantidad, int anio);
         List<(string Vendedor, decimal TotalVentas)> ObtenerVentasPorVendedores(int anio);
         DataTable ObtenerVentasMensualesPorVendedoresPorAño(int anio);
+        DataTable ObtenerTopProductosRpt(int cantidad, int anio);
     }
 }

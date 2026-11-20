@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace NorthwindTradersV9WebMVC.Models.Graficas
+namespace NorthwindTradersV9WebMVC.Models.Graficas.Consultas
 {
     public class EjemploGraficas4ViewModel
     {

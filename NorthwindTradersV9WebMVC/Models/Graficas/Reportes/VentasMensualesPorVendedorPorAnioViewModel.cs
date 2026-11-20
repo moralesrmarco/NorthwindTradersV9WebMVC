@@ -1,11 +1,11 @@
 ﻿using System.Data;
 
-namespace NorthwindTradersV9WebMVC.Models.Graficas
+namespace NorthwindTradersV9WebMVC.Models.Graficas.Reportes
 {
     public class VentasMensualesPorVendedorPorAnioViewModel
     {
         public DataTable Años { get; set; } = new();
 
-        public int AñoActual { get; set; }
+        public int Anio { get; set; }
     }
 }

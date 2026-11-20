@@ -1,0 +1,142 @@
+﻿
+@model NorthwindTradersV9WebMVC.Models.Graficas.Reportes.VentasMensualesPorVendedorPorAnioViewModel
+
+<div class="container-fluid">
+
+    <div class="row mb-3">
+        <div class="col-auto">
+
+            <label for="cboAnio" class="form-label small fw-bold">
+                Ventas mensuales por vendedores del año:
+            </label>
+
+            <select id="cboAnio" class="form-select form-select-sm">
+
+                @foreach (System.Data.DataRow fila in Model.Años.Rows)
+                {
+                    var valor = Convert.ToInt32(fila["Valor"]);
+
+                    <option value="@valor"
+                            selected="@(valor == Model.Anio)">
+                        @fila["Texto"]
+                    </option>
+                }
+
+            </select>
+
+        </div>
+    </div>
+
+    <div class="card">
+
+        <div class="card-header fw-bold">
+
+            <span id="tituloGrafica">
+
+                » Reporte gráfico comparativo de ventas mensuales
+                por vendedores
+                <span id="tituloAnio">
+                    @(Model.Anio > 0
+                        ? $"({Model.Anio})"
+                        : "(todos los años)")
+                </span>
+                «
+
+            </span>
+
+        </div>
+
+        <div class="card-body">
+
+            <div style="position: relative; height: 750px;">
+
+                <iframe id="iframeReporte"
+                        style="width:100%; height:100%; border:0;"
+                        title="Reporte gráfico comparativo de ventas mensuales por vendedores">
+                </iframe>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script>
+
+        const cboAnio =
+            document.getElementById("cboAnio");
+
+        const iframeReporte =
+            document.getElementById("iframeReporte");
+
+        const tituloAnio =
+            document.getElementById("tituloAnio");
+
+
+        function cargarReporte(anio) {
+
+            mostrarLoadingOverlay();
+
+            if (anio > 0) {
+
+                tituloAnio.textContent =
+                    "(" + anio + ")";
+
+            }
+            else {
+
+                tituloAnio.textContent =
+                    "(todos los años)";
+
+            }
+
+            iframeReporte.src =
+                '@Url.Action("VerPdfVentasMensualesPorVendedorPorAnio", "Graficas")'
+                + '?anio='
+                + encodeURIComponent(anio);
+        }
+
+
+        iframeReporte.addEventListener("load", function () {
+
+            ocultarLoadingOverlay();
+
+        });
+
+
+        cboAnio.addEventListener("change", function () {
+
+            const anio =
+                parseInt(this.value);
+
+            if (anio === 0) {
+
+                alert("Seleccione un año válido.");
+                return;
+
+            }
+
+            cargarReporte(anio);
+
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const anioInicial =
+                parseInt(cboAnio.value);
+
+            if (anioInicial !== 0) {
+
+                cargarReporte(anioInicial);
+
+            }
+
+        });
+
+    </script>
+}

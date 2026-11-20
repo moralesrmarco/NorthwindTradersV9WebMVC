@@ -176,5 +176,26 @@ namespace NorthwindTradersV9DAL
             }
             return dt;
         }
+        public DataTable ObtenerTopProductosRpt(int cantidad, int anio)
+        {
+            var dt = new DataTable();
+            try
+            {
+                using (var cn = _connectionFactory.CreateConnection())
+                using (var cmd = new SqlCommand("SpVentasObtenerTopProductosRpt", cn))
+                using (var da = new SqlDataAdapter(cmd))
+                {
+                    cmd.Parameters.AddWithValue("@Cantidad", cantidad);
+                    cmd.Parameters.AddWithValue("@Anio", anio);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    da.Fill(dt);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los productos más vendidos: " + ex.Message);
+            }
+            return dt;
+        }
     }
 }

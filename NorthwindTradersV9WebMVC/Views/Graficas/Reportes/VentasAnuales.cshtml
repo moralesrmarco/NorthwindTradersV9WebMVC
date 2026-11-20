@@ -1,0 +1,122 @@
+﻿
+@model NorthwindTradersV9WebMVC.Models.Graficas.Reportes.VentasAnualesViewModel
+
+<div class="container-fluid">
+
+    <div class="row mb-3">
+
+        <div class="col-auto">
+
+            <label for="cboAños" class="form-label small fw-bold">
+                Comparativo de ventas anuales:
+            </label>
+
+            <select id="cboAños" class="form-select form-select-sm">
+
+                @foreach (var item in Model.Años)
+                {
+                    <option value="@item.Valor"
+                            selected="@(item.Valor == Model.Years)">
+                        @item.Texto
+                    </option>
+                }
+
+            </select>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+
+            <span id="tituloGrafica">
+                » Comparativo de ventas anuales
+                <span id="tituloAños"></span>
+                «
+            </span>
+
+        </div>
+
+        <div class="card-body">
+
+            <div style="position: relative; height: 750px;">
+
+                <iframe id="iframeReporte"
+                        style="width:100%; height:100%; border:0;"
+                        title="Reporte gráfico de ventas anuales">
+                </iframe>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script>
+
+        function cargarReporte(years) {
+
+            mostrarLoadingOverlay();
+
+            const iframeReporte =
+                document.getElementById("iframeReporte");
+
+            const tituloAños =
+                document.getElementById("tituloAños");
+
+            tituloAños.textContent =
+                "de los últimos " + years + " años";
+
+            iframeReporte.src =
+                '@Url.Action("VerPdfVentasAnuales", "Graficas")'
+                + '?years=' + encodeURIComponent(years);
+        }
+
+
+        document
+            .getElementById("iframeReporte")
+            .addEventListener("load", function () {
+
+                ocultarLoadingOverlay();
+
+            });
+
+
+        document
+            .getElementById("cboAños")
+            .addEventListener("change", function () {
+
+                const years = parseInt(this.value);
+
+                if (years < 2) {
+                    return;
+                }
+
+                cargarReporte(years);
+
+            });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const combo =
+                document.getElementById("cboAños");
+
+            if (combo && combo.value !== "") {
+
+                cargarReporte(
+                    parseInt(combo.value)
+                );
+
+            }
+
+        });
+
+    </script>
+}
