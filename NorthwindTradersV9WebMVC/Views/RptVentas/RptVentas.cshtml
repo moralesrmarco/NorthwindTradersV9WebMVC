@@ -315,15 +315,28 @@
             // =====================================================
             const iframe = document.getElementById("visorReporte");
 
-            if (iframe && window.location.search) {
+            if (iframe) {
 
-                const parametros = new URLSearchParams(
-                    window.location.search
-                );
+                // Ocultar el overlay cuando termine de cargar el PDF
+                iframe.addEventListener("load", function () {
 
-                const urlVerPdf = '@Url.Action("VerPdf", "RptVentas")';
+                    ocultarLoadingOverlay();
 
-                iframe.src = urlVerPdf + "?" + parametros.toString();
+                });
+
+                if (window.location.search) {
+
+                    const parametros = new URLSearchParams(
+                        window.location.search
+                    );
+
+                    const urlVerPdf = '@Url.Action("VerPdf", "RptVentas")';
+
+                    // Mostrar overlay antes de cargar el PDF
+                    mostrarLoadingOverlay();
+
+                    iframe.src = urlVerPdf + "?" + parametros.toString();
+                }
             }
         });
     </script>
