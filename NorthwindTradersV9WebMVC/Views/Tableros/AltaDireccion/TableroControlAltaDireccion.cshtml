@@ -1,0 +1,76 @@
+﻿@model NorthwindTradersV9WebMVC.Models.Tableros.AltaDireccion.TableroControlAltaDireccionViewModel
+@using System.Data
+@{
+    ViewData["Title"] = "Tablero de alta dirección";
+    var maxAnios = Math.Min(Model.TotalAniosDisponibles, 10);
+}
+
+<div id="tableroAltaDireccion" class="container-fluid" data-anio-inicial="@Model.AnioInicial">
+    <h1 class="h3 mb-4">Tablero de control — Alta dirección</h1>
+
+    <div class="row g-4">
+        <div class="col-12 col-xxl-6">
+            <section class="card h-100 shadow-sm">
+                <div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center"><strong>Ventas mensuales</strong><select id="anioMensual" class="form-select form-select-sm w-auto">@foreach (DataRow fila in Model.Anios.Rows) { var valor = Convert.ToInt32(fila["Valor"]);
+                    <option value="@valor" selected="@(valor == Model.AnioInicial)">@fila["Texto"]</option>
+                }
+            </select></div>
+            <div class="card-body chart-container"><canvas id="chartMensual"></canvas></div>
+        </section>
+    </div>
+    <div class="col-12 col-xxl-6">
+        <section class="card h-100 shadow-sm">
+            <div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center"><strong>Comparativo mensual</strong><select id="aniosComparativo" class="form-select form-select-sm w-auto">@for (var i = 2; i <= maxAnios; i++) {
+                <option value="@i" selected="@(i == maxAnios)">Últimos @i años</option>
+            }
+        </select></div>
+        <div class="card-body chart-container"><canvas id="chartComparativo"></canvas></div>
+    </section>
+</div>
+<div class="col-12 col-xxl-6">
+    <section class="card h-100 shadow-sm">
+        <div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center"><strong>Productos más vendidos</strong><div class="d-flex gap-2"><select id="cantidadProductos" class="form-select form-select-sm">@for (var i = 10; i <= 30; i += 5) {
+            <option value="@i" selected="@(i == 20)">Top @i</option>
+        }
+    </select><select id="anioProductos" class="form-select form-select-sm">@foreach (DataRow fila in Model.Anios.Rows) { var valor = Convert.ToInt32(fila["Valor"]);
+    <option value="@valor" selected="@(valor == Model.AnioInicial)">@fila["Texto"]</option>
+}
+</select></div></div>
+<div class="card-body chart-container"><canvas id="chartProductos"></canvas></div>
+</section>
+</div>
+<div class="col-12 col-xxl-6">
+    <section class="card h-100 shadow-sm">
+        <div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center"><strong>Ventas por vendedor</strong><select id="anioVendedores" class="form-select form-select-sm w-auto">@foreach (DataRow fila in Model.Anios.Rows) { var valor = Convert.ToInt32(fila["Valor"]);
+            <option value="@valor" selected="@(valor == Model.AnioInicial)">@fila["Texto"]</option>
+        }
+    </select></div>
+    <div class="card-body chart-container"><canvas id="chartVendedores"></canvas></div>
+</section>
+</div>
+<div class="col-12 col-xxl-6">
+    <section class="card h-100 shadow-sm">
+        <div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center"><strong>Ventas mensuales por vendedor</strong><select id="anioVendedoresLinea" class="form-select form-select-sm w-auto">@foreach (DataRow fila in Model.Anios.Rows) { var valor = Convert.ToInt32(fila["Valor"]);
+            <option value="@valor" selected="@(valor == Model.AnioInicial)">@fila["Texto"]</option>
+        }
+    </select></div>
+    <div class="card-body chart-container"><canvas id="chartVendedoresLinea"></canvas></div>
+</section>
+</div>
+<div class="col-12 col-xxl-6">
+    <section class="card h-100 shadow-sm">
+        <div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center"><strong>Comparativo de vendedores por mes</strong><select id="anioVendedoresBarra" class="form-select form-select-sm w-auto">@foreach (DataRow fila in Model.Anios.Rows) { var valor = Convert.ToInt32(fila["Valor"]);
+            <option value="@valor" selected="@(valor == Model.AnioInicial)">@fila["Texto"]</option>
+        }
+    </select></div>
+    <div class="card-body chart-container"><canvas id="chartVendedoresBarra"></canvas></div>
+</section>
+</div>
+</div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script src="~/js/tablero-alta-direccion.js" asp-append-version="true"></script>
+}

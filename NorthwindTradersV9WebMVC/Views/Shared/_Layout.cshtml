@@ -495,6 +495,64 @@
                             </li>
                         }
 
+                        @{
+                            var tienePermisoTableroAltaDireccion =
+                                User.HasClaim("Permiso", Permisos.TableroAltaDireccion.ToString());
+                            var tienePermisoTableroVendedores =
+                                User.HasClaim("Permiso", Permisos.TableroVendedores.ToString());
+                        }
+
+                        @if (tienePermisoTableroAltaDireccion || tienePermisoTableroVendedores)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="tableroDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Tableros
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="tableroDropdown">
+                                    <li>
+                                        @if (tienePermisoTableroAltaDireccion)
+                                        {
+                                            <a class="dropdown-item"
+                                                asp-controller="Tableros"
+                                                asp-action="TableroControlAltaDireccion">
+                                                Tablero de control para la alta dirección
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="dropdown-item menu-deshabilitado" aria-disabled="true">
+                                                Tablero de control para la alta dirección
+                                            </span>
+                                        }
+                                    </li>
+                                    <li>
+                                        @if (tienePermisoTableroVendedores)
+                                        {
+                                            <a class="dropdown-item"
+                                                asp-controller="Tableros"
+                                                asp-action="TableroControlVendedores">
+                                                Tablero de control para los vendedores
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="dropdown-item menu-deshabilitado" aria-disabled="true">
+                                                Tablero de control para los vendedores
+                                            </span>
+                                        }
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-dark menu-deshabilitado">
+                                    Tableros
+                                </span>
+                            </li>
+                        }
+
                         <!-- Menú Administración con submenús -->
                         @if (User.HasClaim("Permiso", Permisos.Administracion.ToString()))
                         {
@@ -538,6 +596,7 @@
 
                             </li>
                         }
+
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item dropdown">
