@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NorthwindTradersV9Common;
 
 namespace NorthwindTradersV9WebMVC.Controllers
 {
@@ -11,6 +12,20 @@ namespace NorthwindTradersV9WebMVC.Controllers
         }
         public IActionResult Index()
         {
+            if (User.HasClaim("Permiso", Permisos.TableroAltaDireccion.ToString()))
+            {
+                return RedirectToAction(
+                    "TableroControlAltaDireccion",
+                    "Tableros");
+            }
+
+            if (User.HasClaim("Permiso", Permisos.TableroVendedores.ToString()))
+            {
+                return RedirectToAction(
+                    "TableroControlVendedores",
+                    "Tableros");
+            }
+
             return View();
         }
         public IActionResult Privacy()
