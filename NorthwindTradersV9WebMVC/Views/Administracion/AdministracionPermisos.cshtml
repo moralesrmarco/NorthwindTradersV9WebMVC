@@ -157,9 +157,12 @@
                                 <button type="button"
                                         class="btn btn-sm @(usuario.Estatus ? "btn-primary" : "btn-danger") btn-seleccionar-usuario"
                                         data-id="@usuario.Id"
-                                        title="@(usuario.Estatus ? "Seleccionar" : "Usuario inactivo")"
-                                        @(usuario.Estatus ? "" : "disabled")>
-
+                                        title="@(usuario.Id == 1 || usuario.Id == 90
+                                                    ? "No está permitido administrar los permisos de este usuario"
+                                                    : usuario.Estatus
+                                                        ? "Seleccionar"
+                                                        : "Usuario inactivo")"
+                                        disabled="@(!usuario.Estatus || usuario.Id == 1 || usuario.Id == 90)">
                                     @if (usuario.Estatus)
                                     {
                                         <i class="bi bi-check-circle"></i>

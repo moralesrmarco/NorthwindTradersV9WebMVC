@@ -26,7 +26,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
         [AllowAnonymous]
         public IActionResult Login()
         {
-            return View();
+            return View(new LoginViewModel());
         }
         [HttpPost]
         [AllowAnonymous]
@@ -140,6 +140,25 @@ namespace NorthwindTradersV9WebMVC.Controllers
             // =====================================================
             string? usuario =
                 User.FindFirst("Usuario")?.Value;
+
+            // =====================================================
+            // PROTEGER USUARIOS DEL SISTEMA
+            // =====================================================
+            string? usuarioId =
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (usuarioId == "1" || usuarioId == "90")
+            {
+                return new JsonResult(new
+                {
+                    ok = false,
+                    mensaje =
+                        "No está permitido cambiar la contraseña de este usuario."
+                })
+                {
+                    StatusCode = StatusCodes.Status403Forbidden
+                };
+            }
 
             if (string.IsNullOrWhiteSpace(usuario))
             {

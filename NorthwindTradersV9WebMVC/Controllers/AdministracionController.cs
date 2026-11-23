@@ -146,6 +146,30 @@ namespace NorthwindTradersV9WebMVC.Controllers
         {
             bool esNuevo = !usuarioEdicion.Id.HasValue;
 
+            // =====================================================
+            // PROTEGER USUARIOS DEL SISTEMA
+            // =====================================================
+            if (!esNuevo &&
+                (usuarioEdicion.Id == 1 ||
+                 usuarioEdicion.Id == 90))
+            {
+                TempData["Error"] =
+                    "No está permitido modificar este usuario.";
+
+                return RedirectToAction(
+                    nameof(AdministracionUsuarios),
+                    new
+                    {
+                        pageIndex,
+                        IdIni,
+                        IdFin,
+                        Paterno,
+                        Materno,
+                        Nombres,
+                        NombreUsuario
+                    });
+            }
+
             // Validaciones básicas
             if (string.IsNullOrWhiteSpace(usuarioEdicion.Nombres))
             {
@@ -391,6 +415,28 @@ namespace NorthwindTradersV9WebMVC.Controllers
         {
             try
             {
+                // =====================================================
+                // PROTEGER USUARIOS DEL SISTEMA
+                // =====================================================
+                if (usuarioEliminar.Id == 1 ||
+                    usuarioEliminar.Id == 90)
+                {
+                    TempData["Error"] =
+                        "No está permitido eliminar este usuario.";
+
+                    return RedirectToAction(
+                        nameof(AdministracionUsuarios),
+                        new
+                        {
+                            pageIndex,
+                            IdIni,
+                            IdFin,
+                            Paterno,
+                            Materno,
+                            Nombres,
+                            NombreUsuario
+                        });
+                }
                 var usuario = new Usuario
                 {
                     Id = usuarioEliminar.Id,
@@ -527,6 +573,15 @@ namespace NorthwindTradersV9WebMVC.Controllers
         [HttpGet]
         public IActionResult SeleccionarUsuario(int id)
         {
+            if (EsUsuarioProtegido(id))
+            {
+                return Json(new
+                {
+                    exito = false,
+                    mensaje = "No está permitido administrar los permisos de este usuario."
+                });
+            }
+
             Usuario? usuario = _usuarioBLL.ObtenerPorId(id);
 
             if (usuario == null)
@@ -588,6 +643,15 @@ namespace NorthwindTradersV9WebMVC.Controllers
         {
             try
             {
+                if (EsUsuarioProtegido(idUsuario))
+                {
+                    return Json(new
+                    {
+                        exito = false,
+                        mensaje = "No está permitido modificar los permisos de este usuario."
+                    });
+                }
+
                 _permisoBLL.InsertarPermiso(idUsuario, permisoId);
 
                 return Json(new
@@ -610,6 +674,15 @@ namespace NorthwindTradersV9WebMVC.Controllers
         {
             try
             {
+                if (EsUsuarioProtegido(idUsuario))
+                {
+                    return Json(new
+                    {
+                        exito = false,
+                        mensaje = "No está permitido consultar los permisos de este usuario."
+                    });
+                }
+
                 DataTable permisos =
                     _permisoBLL.ObtenerPermisosConcedidos(idUsuario);
 
@@ -645,6 +718,15 @@ namespace NorthwindTradersV9WebMVC.Controllers
         {
             try
             {
+                if (EsUsuarioProtegido(idUsuario))
+                {
+                    return Json(new
+                    {
+                        exito = false,
+                        mensaje = "No está permitido modificar los permisos de este usuario."
+                    });
+                }
+
                 _permisoBLL.EliminarPermiso(idUsuario, permisoId);
 
                 return Json(new
@@ -668,6 +750,15 @@ namespace NorthwindTradersV9WebMVC.Controllers
         {
             try
             {
+                if (EsUsuarioProtegido(idUsuario))
+                {
+                    return Json(new
+                    {
+                        exito = false,
+                        mensaje = "No está permitido modificar los permisos de este usuario."
+                    });
+                }
+
                 DataTable catalogo =
                     _permisoBLL.ObtenerPermisosDeCatalogo();
 
@@ -703,6 +794,15 @@ namespace NorthwindTradersV9WebMVC.Controllers
         {
             try
             {
+                if (EsUsuarioProtegido(idUsuario))
+                {
+                    return Json(new
+                    {
+                        exito = false,
+                        mensaje = "No está permitido modificar los permisos de este usuario."
+                    });
+                }
+
                 int registrosEliminados =
                     _permisoBLL.EliminarPermisos(idUsuario);
 
@@ -720,6 +820,13 @@ namespace NorthwindTradersV9WebMVC.Controllers
                     mensaje = "Ocurrió un error al quitar todos los permisos: " + ex.Message
                 });
             }
+        }
+        // =====================================================
+        // PROTEGER USUARIOS DEL SISTEMA
+        // =====================================================
+        private bool EsUsuarioProtegido(int idUsuario)
+        {
+            return idUsuario == 1 || idUsuario == 90;
         }
     }
 }

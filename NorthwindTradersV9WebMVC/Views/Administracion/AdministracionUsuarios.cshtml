@@ -165,35 +165,57 @@
                                 </span>
                             </td>
                             <td class="text-center text-nowrap">
-                                <a asp-controller="Administracion"
-                                   asp-action="AdministracionUsuarios"
-                                   asp-route-idUsuario="@usuario.Id"
-                                   asp-route-pageIndex="@Model.Paginacion.PageIndex"
-                                   asp-route-IdIni="@Model.IdIni"
-                                   asp-route-IdFin="@Model.IdFin"
-                                   asp-route-Paterno="@Model.Paterno"
-                                   asp-route-Materno="@Model.Materno"
-                                   asp-route-Nombres="@Model.Nombres"
-                                   asp-route-NombreUsuario="@Model.NombreUsuario"
-                                   class="btn btn-sm btn-outline-primary"
-                                   title="Modificar">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <a asp-controller="Administracion"
-                                    asp-action="AdministracionUsuarios"
-                                    asp-route-idUsuario="@usuario.Id"
-                                    asp-route-modo="eliminar"
-                                    asp-route-pageIndex="@Model.Paginacion.PageIndex"
-                                    asp-route-IdIni="@Model.IdIni"
-                                    asp-route-IdFin="@Model.IdFin"
-                                    asp-route-Paterno="@Model.Paterno"
-                                    asp-route-Materno="@Model.Materno"
-                                    asp-route-Nombres="@Model.Nombres"
-                                    asp-route-NombreUsuario="@Model.NombreUsuario"
-                                    class="btn btn-sm btn-outline-danger"
-                                    title="Eliminar">
-                                    <i class="bi bi-trash"></i>
-                                </a>
+
+                                @if (usuario.Id == 1 || usuario.Id == 90)
+                                {
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-primary"
+                                            title="No se permite modificar este usuario"
+                                            disabled>
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            title="No se permite eliminar este usuario"
+                                            disabled>
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Administracion"
+                                       asp-action="AdministracionUsuarios"
+                                       asp-route-idUsuario="@usuario.Id"
+                                       asp-route-pageIndex="@Model.Paginacion.PageIndex"
+                                       asp-route-IdIni="@Model.IdIni"
+                                       asp-route-IdFin="@Model.IdFin"
+                                       asp-route-Paterno="@Model.Paterno"
+                                       asp-route-Materno="@Model.Materno"
+                                       asp-route-Nombres="@Model.Nombres"
+                                       asp-route-NombreUsuario="@Model.NombreUsuario"
+                                       class="btn btn-sm btn-outline-primary"
+                                       title="Modificar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <a asp-controller="Administracion"
+                                       asp-action="AdministracionUsuarios"
+                                       asp-route-idUsuario="@usuario.Id"
+                                       asp-route-modo="eliminar"
+                                       asp-route-pageIndex="@Model.Paginacion.PageIndex"
+                                       asp-route-IdIni="@Model.IdIni"
+                                       asp-route-IdFin="@Model.IdFin"
+                                       asp-route-Paterno="@Model.Paterno"
+                                       asp-route-Materno="@Model.Materno"
+                                       asp-route-Nombres="@Model.Nombres"
+                                       asp-route-NombreUsuario="@Model.NombreUsuario"
+                                       class="btn btn-sm btn-outline-danger"
+                                       title="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                }
+
                             </td>
                         </tr>
                     }
