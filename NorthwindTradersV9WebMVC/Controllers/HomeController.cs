@@ -32,5 +32,10 @@ namespace NorthwindTradersV9WebMVC.Controllers
         {
             return View();
         }
+        [AllowAnonymous]
+        public IActionResult Error()
+        {
+            return View();
+        }
     }
 }
