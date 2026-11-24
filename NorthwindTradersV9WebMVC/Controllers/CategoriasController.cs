@@ -283,10 +283,10 @@ namespace NorthwindTradersV9WebMVC.Controllers
             var categoriaActual = _categoriaBLL.ObtenerCategoriaPorId(id);
             if (categoriaActual == null)
             {
-                TempData["Error"] = "No se encontró la categoría que deseas editar.";
-                return RedirectToAction("Index", "Categorias");
+                TempData["Error"] = $"<p>La categoría con Id: <strong>{model.Categoria.CategoryID}</strong> - Nombre: <strong>{model.Categoria.CategoryName}</strong>:</p> " + StringsCommons.Nfmfe;
+                model.BloquearEdicion = true;
+                return View(model);
             }
-
             byte[]? pictureBytes = null;
             // Las imágenes de las categorías 1 a 8 están protegidas.
             if (id >= 1 && id <= 8)
