@@ -1413,7 +1413,7 @@ namespace NorthwindTradersV9WebMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EliminarDetalle(
+        public IActionResult EliminarDetalle2(
             [FromBody] EliminarDetalleRequest request)
         {
             try

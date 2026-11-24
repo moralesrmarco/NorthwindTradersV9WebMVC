@@ -500,7 +500,7 @@
         const urlActualizarDetalle =
             '@Url.Action("ActualizarDetalle", "Ventas")';
         const urlEliminarDetalle =
-            '@Url.Action("EliminarDetalle", "Ventas")';
+            '@Url.Action("EliminarDetalle2", "Ventas")';
         const urlObtenerDetalleEditar =
             '@Url.Action("ObtenerDetalleEditar", "Ventas")';
         const urlUltimaInformacionEnvio =
@@ -1383,11 +1383,24 @@
                         }
                     }
                 },
-                error: function(xhr) {
-                    console.error(xhr);
-                    alert(
-                        "Ocurrió un error al eliminar el detalle."
-                    );
+                // error: function(xhr) {
+                //     console.error(xhr);
+                //     alert(
+                //         "Ocurrió un error al eliminar el detalle."
+                //     );
+                // }
+                error: function (xhr) {
+                    console.error("Error al eliminar detalle:", xhr);
+                    console.error("Status:", xhr.status);
+                    console.error("Response:", xhr.responseText);
+
+                    let mensaje =
+                        xhr.responseJSON?.mensaje ||
+                        xhr.responseJSON?.title ||
+                        "Error HTTP " + xhr.status +
+                        ". Revisa la consola del navegador.";
+
+                    mostrarErrorValidacion(mensaje);
                 }
             });
         }
