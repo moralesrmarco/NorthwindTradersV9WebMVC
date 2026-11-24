@@ -159,8 +159,13 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 HttpContext.Session.Remove(SessionDetalleVenta);
             }
 
-            // 2. Establecer la fecha y hora actuales.
-            var ahora = DateTime.Now;
+            // 2. Establecer la fecha y hora actuales de Ciudad de México.
+            TimeZoneInfo zonaMexico =
+                TimeZoneInfo.FindSystemTimeZoneById("America/Mexico_City");
+
+            var ahora = TimeZoneInfo.ConvertTimeFromUtc(
+                DateTime.UtcNow,
+                zonaMexico);
 
             model.VentaVM.OrderDate = ahora.Date;
             model.VentaVM.OrderTime = ahora.TimeOfDay;
@@ -723,45 +728,45 @@ namespace NorthwindTradersV9WebMVC.Controllers
                 model.VentaVM.TasaIVA = tasaIVA.Value;
             }
 
-            // Construir Fecha/Hora requerida.
-            var fechaHoraRequerido = CombinarFechaHora(
-                model.VentaVM.RequiredDate,
-                model.VentaVM.RequiredTime);
+            //// Construir Fecha/Hora requerida.
+            //var fechaHoraRequerido = CombinarFechaHora(
+            //    model.VentaVM.RequiredDate,
+            //    model.VentaVM.RequiredTime);
 
-            // Construir Fecha/Hora de envío.
-            var fechaHoraEnvio = CombinarFechaHora(
-                model.VentaVM.ShippedDate,
-                model.VentaVM.ShippedTime);
+            //// Construir Fecha/Hora de envío.
+            //var fechaHoraEnvio = CombinarFechaHora(
+            //    model.VentaVM.ShippedDate,
+            //    model.VentaVM.ShippedTime);
 
-            // 1. Validar Requerido vs Venta.
-            if (fechaHoraVenta.HasValue &&
-                fechaHoraRequerido.HasValue &&
-                fechaHoraRequerido.Value < fechaHoraVenta.Value)
-            {
-                ModelState.AddModelError(
-                    "VentaVM.RequiredTime",
-                    "La fecha y hora requerida no pueden ser anteriores a la venta.");
-            }
+            //// 1. Validar Requerido vs Venta.
+            //if (fechaHoraVenta.HasValue &&
+            //    fechaHoraRequerido.HasValue &&
+            //    fechaHoraRequerido.Value < fechaHoraVenta.Value)
+            //{
+            //    ModelState.AddModelError(
+            //        "VentaVM.RequiredTime",
+            //        "La fecha y hora requerida no pueden ser anteriores a la venta.");
+            //}
 
-            // 2. Validar Envío vs Venta.
-            if (fechaHoraVenta.HasValue &&
-                fechaHoraEnvio.HasValue &&
-                fechaHoraEnvio.Value < fechaHoraVenta.Value)
-            {
-                ModelState.AddModelError(
-                    "VentaVM.ShippedTime",
-                    "La fecha y hora de envío no pueden ser anteriores a la venta.");
-            }
+            //// 2. Validar Envío vs Venta.
+            //if (fechaHoraVenta.HasValue &&
+            //    fechaHoraEnvio.HasValue &&
+            //    fechaHoraEnvio.Value < fechaHoraVenta.Value)
+            //{
+            //    ModelState.AddModelError(
+            //        "VentaVM.ShippedTime",
+            //        "La fecha y hora de envío no pueden ser anteriores a la venta.");
+            //}
 
-            // 3. Validar Envío vs Requerido.
-            if (fechaHoraEnvio.HasValue &&
-                fechaHoraRequerido.HasValue &&
-                fechaHoraEnvio.Value > fechaHoraRequerido.Value)
-            {
-                ModelState.AddModelError(
-                    "VentaVM.ShippedTime",
-                    "La fecha y hora de envío no pueden ser posteriores a la fecha y hora requeridas.");
-            }
+            //// 3. Validar Envío vs Requerido.
+            //if (fechaHoraEnvio.HasValue &&
+            //    fechaHoraRequerido.HasValue &&
+            //    fechaHoraEnvio.Value > fechaHoraRequerido.Value)
+            //{
+            //    ModelState.AddModelError(
+            //        "VentaVM.ShippedTime",
+            //        "La fecha y hora de envío no pueden ser posteriores a la fecha y hora requeridas.");
+            //}
 
             if (!ModelState.IsValid || lista.Count == 0)
             {
@@ -771,7 +776,6 @@ namespace NorthwindTradersV9WebMVC.Controllers
 
                 return View("Insertar", model);
             }
-
             // Construir la entidad Venta.
             var venta = ConstruirVenta(model, lista);
 

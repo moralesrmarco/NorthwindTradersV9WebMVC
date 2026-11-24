@@ -1,4 +1,14 @@
 ﻿@model NorthwindTradersV9WebMVC.Models.Ventas.VentasInsertarViewModel
+@section Styles {
+    <style>
+        #VentaVM_OrderDate[readonly],
+        #VentaVM_OrderTime[readonly] {
+            background-color: var(--bs-secondary-bg);
+            opacity: 1;
+            cursor: not-allowed;
+        }
+    </style>
+}
 @{
     ViewData["Title"] = "Nueva venta";
 }
@@ -47,7 +57,7 @@
         <div class="row mb-3 small">
             <div class="col-md-2">
                 <label>Fecha de venta</label>
-                <input asp-for="VentaVM.OrderDate" type="date" class="form-control form-control-sm" disabled="@(Model.VentaTieneDetalles || Model.VentaGuardada)"/>
+                <input asp-for="VentaVM.OrderDate" type="date" class="form-control form-control-sm" readonly="@(Model.VentaTieneDetalles || Model.VentaGuardada)"/>
             </div>
             <div class="col-md-2">
                 <label>Hora</label>
@@ -57,7 +67,7 @@
                        value="@(Model.VentaVM.OrderTime?.ToString(@"hh\:mm"))"
                        step="60"
                        class="form-control form-control-sm"
-                       disabled="@(Model.VentaTieneDetalles || Model.VentaGuardada)" />
+                       readonly="@(Model.VentaTieneDetalles || Model.VentaGuardada)" />
             </div>
             <div class="col-md-2">
                 <label>Fecha requerido</label>
@@ -464,6 +474,30 @@
 </div>
 @section Scripts {
     <script>
+
+        // Obtener la hora actual de Ciudad de México.
+        function obtenerHoraMexico() {
+            return new Intl.DateTimeFormat("en-GB", {
+                timeZone: "America/Mexico_City",
+                hour: "2-digit",
+                minute: "2-digit",
+                hourCycle: "h23"
+            }).format(new Date());
+        }
+
+        // Cuando se selecciona Fecha requerido, establecer Hora requerido.
+        $("#VentaVM_RequiredDate").on("change", function () {
+            if ($(this).val()) {
+                $("#VentaVM_RequiredTime").val(obtenerHoraMexico());
+            }
+        });
+
+        // Cuando se selecciona Fecha envío, establecer Hora envío.
+        $("#VentaVM_ShippedDate").on("change", function () {
+            if ($(this).val()) {
+                $("#VentaVM_ShippedTime").val(obtenerHoraMexico());
+            }
+        });
 
         function actualizarTasaIVA() {
 
