@@ -57,17 +57,29 @@
         <div class="row mb-3 small">
             <div class="col-md-2">
                 <label>Fecha de venta</label>
-                <input asp-for="VentaVM.OrderDate" type="date" class="form-control form-control-sm" readonly="@(Model.VentaTieneDetalles || Model.VentaGuardada)"/>
+                <input asp-for="VentaVM.OrderDate"
+                       type="date"
+                       class="form-control form-control-sm"
+                       disabled />
+
+                <input type="hidden"
+                       name="VentaVM.OrderDate"
+                       value="@(Model.VentaVM.OrderDate?.ToString("yyyy-MM-dd"))" />
             </div>
             <div class="col-md-2">
                 <label>Hora</label>
+
                 <input type="time"
                        id="VentaVM_OrderTime"
-                       name="VentaVM.OrderTime"
                        value="@(Model.VentaVM.OrderTime?.ToString(@"hh\:mm"))"
                        step="60"
                        class="form-control form-control-sm"
-                       readonly="@(Model.VentaTieneDetalles || Model.VentaGuardada)" />
+                       disabled />
+
+                <input type="hidden"
+                       name="VentaVM.OrderTime"
+                       value="@(Model.VentaVM.OrderTime?.ToString(@"hh\:mm"))" />
+
             </div>
             <div class="col-md-2">
                 <label>Fecha requerido</label>
