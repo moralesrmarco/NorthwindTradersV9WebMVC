@@ -351,7 +351,8 @@ namespace NorthwindTradersV9WebMVC.Controllers
                     .ToList();
 
             // Forzar N/A si no tiene jefe
-            if (model.Empleado?.ReportsTo == null)
+            if (model.Empleado != null &&
+                model.Empleado.ReportsTo == null)
             {
                 model.Empleado.ReportsTo = -1;
             }
