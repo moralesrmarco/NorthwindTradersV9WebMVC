@@ -1,13 +1,31 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using NorthwindTradersV9BLL;
 using NorthwindTradersV9Common;
 using NorthwindTradersV9DAL;
 using NorthwindTradersV9DAL.Helpers;
 using NorthwindTradersV9DAL.Infrastructure;
 using NorthwindTradersV9Entities;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var keysPath = builder.Environment.IsProduction()
+    ? Path.GetFullPath(Path.Combine(
+        builder.Environment.ContentRootPath,
+        "..",
+        "private",
+        "keys"))
+    : Path.Combine(
+        builder.Environment.ContentRootPath,
+        "DataProtection-Keys");
+
+Directory.CreateDirectory(keysPath);
+
+builder.Services.AddDataProtection()
+    .SetApplicationName("NorthwindTradersV9WebMVC")
+    .PersistKeysToFileSystem(new DirectoryInfo(keysPath));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -16,7 +34,8 @@ builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    //options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.IdleTimeout = TimeSpan.FromHours(10);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -26,7 +45,7 @@ builder.Services.AddAuthentication(
     .AddCookie(options =>
     {
         options.Cookie.Name = "NorthwindTradersV9.Auth";
-        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+        options.ExpireTimeSpan = TimeSpan.FromDays(90);
         options.SlidingExpiration = true;
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
